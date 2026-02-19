@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.user.service;
 
+import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateInfo;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.user.dto.*;
 import com.sprint.mission.discodeit.user.entity.User;
@@ -16,6 +17,7 @@ import com.sprint.mission.discodeit.userstatus.repository.UserStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,7 +31,7 @@ public class BasicUserService implements UserService {
     private final UserStatusRepository userStatusRepository;
 
     @Override
-    public UserInfo createUser(UserCreateInfo userInfo) {
+    public UserInfo createUser(UserCreateInfo userInfo, Optional<BinaryContentCreateInfo> image) {
         // 유저 이름 & 이메일 검증
         validateUserExist(userInfo.userName());
         validateEmailExist(userInfo.email());
@@ -41,9 +43,9 @@ public class BasicUserService implements UserService {
         UserStatus status = new UserStatus(user.getId());
 
         // profile image가 존재한다면 생성
-        BinaryContent profileImage = null;
-        if(userInfo.profileImage() != null) {
-            profileImage = new BinaryContent(userInfo.profileImage());
+        if(image.isPresent()) {
+            BinaryContentCreateInfo createInfo = image.get();
+            BinaryContent profileImage = new BinaryContent(createInfo.fileName(), createInfo.contentType(), createInfo.content());
             user.setProfileId(profileImage.getId());
             contentRepository.save(profileImage);
         }
@@ -100,7 +102,7 @@ public class BasicUserService implements UserService {
     }
 
     @Override
-    public UserInfo updateUser(UUID userId, UserUpdateInfo updateInfo) {
+    public UserInfo updateUser(UUID userId, UserUpdateInfo updateInfo, Optional<BinaryContentCreateInfo> image) {
         validateUserExist(updateInfo.userName());
         validateEmailExist(updateInfo.email());
         User findUser = userRepository.findById(userId)
@@ -113,12 +115,13 @@ public class BasicUserService implements UserService {
                 .ifPresent(findUser::updateEmail);
 
         // profileId가 존재하면 업데이트
-        if(updateInfo.profileId() != null) {
+        if(image.isPresent()) {
             if(findUser.isProfileImageUploaded())
                 contentRepository.deleteById(findUser.getProfileId());
-            BinaryContent newContent = new BinaryContent(updateInfo.profileImage());
-            findUser.setProfileId(newContent.getId());
-            contentRepository.save(newContent);
+            BinaryContentCreateInfo createInfo = image.get();
+            BinaryContent profileImage = new BinaryContent(createInfo.fileName(), createInfo.contentType(), createInfo.content());
+            findUser.setProfileId(profileImage.getId());
+            contentRepository.save(profileImage);
         }
 
         // statusRepo.findByUserId로 찾기

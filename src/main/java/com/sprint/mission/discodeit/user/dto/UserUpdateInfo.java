@@ -6,6 +6,5 @@ public record UserUpdateInfo(
         String userName,
         String password,
         String email,
-        UUID profileId,
-        byte[] profileImage
+        UUID profileId
 ) {}

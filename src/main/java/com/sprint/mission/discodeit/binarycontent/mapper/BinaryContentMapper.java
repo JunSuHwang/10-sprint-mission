@@ -10,12 +10,16 @@ public class BinaryContentMapper {
         return new BinaryContentInfo(
                 binaryContent.getId(),
                 binaryContent.getCreatedAt(),
-                binaryContent.getContent()
+                binaryContent.getFileName(),
+                binaryContent.getContentType(),
+                binaryContent.getBytes()
         );
     }
 
     public static BinaryContent toBinaryContent(BinaryContentInfo binaryContentInfo) {
         return new BinaryContent(
+                binaryContentInfo.fileName(),
+                binaryContentInfo.contentType(),
                 binaryContentInfo.content()
         );
     }

@@ -6,5 +6,7 @@ import java.util.UUID;
 public record BinaryContentInfo(
         UUID contentId,
         Instant createdAt,
+        String fileName,
+        String contentType,
         byte[] content
 ) {}

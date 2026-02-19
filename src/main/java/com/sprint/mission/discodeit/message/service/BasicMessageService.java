@@ -34,7 +34,7 @@ public class BasicMessageService implements MessageService {
     public MessageInfo createMessage(MessageCreateInfo createInfo) {
         List<UUID> attachmentIds = createInfo.attachments()
                 .stream()
-                .map(BinaryContent::new)
+                .map(bytes -> new BinaryContent("", "", bytes))
                 .peek(contentRepository::save)
                 .map(BinaryContent::getId)
                 .toList();

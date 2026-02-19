@@ -1,6 +1,8 @@
 package com.sprint.mission.discodeit.user.controller;
 
 
+import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateInfo;
+import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoundException;
 import com.sprint.mission.discodeit.user.dto.UserCreateInfo;
 import com.sprint.mission.discodeit.user.dto.UserInfo;
 import com.sprint.mission.discodeit.user.dto.UserInfoWithStatus;
@@ -9,10 +11,14 @@ import com.sprint.mission.discodeit.user.service.UserService;
 import com.sprint.mission.discodeit.userstatus.dto.UserStatusInfo;
 import com.sprint.mission.discodeit.userstatus.service.UserStatusService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -32,9 +38,12 @@ public class UserController {
         return ResponseEntity.ok(userService.findAll());
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity<UserInfo> createUser(@RequestBody UserCreateInfo createInfo) {
-        return ResponseEntity.ok(userService.createUser(createInfo));
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserInfo> createUser(
+            @RequestPart UserCreateInfo createInfo,
+            @RequestPart MultipartFile image
+    ) {
+        return ResponseEntity.ok(userService.createUser(createInfo, resolveProfileFile(image)));
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
@@ -43,12 +52,14 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(value = "/{userId}", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/{userId}", method = RequestMethod.PATCH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateUser(
             @PathVariable UUID userId,
-            @RequestBody UserUpdateInfo updateInfo
+            @RequestPart UserUpdateInfo updateInfo,
+            @RequestPart MultipartFile image
+
     ) {
-        userService.updateUser(userId, updateInfo);
+        userService.updateUser(userId, updateInfo, resolveProfileFile(image));
         return ResponseEntity.noContent().build();
     }
 
@@ -60,5 +71,22 @@ public class UserController {
     @RequestMapping(value = "/status/{statusId}", method = RequestMethod.GET)
     public ResponseEntity<UserStatusInfo> getUserStatus(@PathVariable UUID statusId) {
         return ResponseEntity.ok(userStatusService.findUserStatus(statusId));
+    }
+
+    private Optional<BinaryContentCreateInfo> resolveProfileFile(MultipartFile profileFile) {
+        if (profileFile.isEmpty()) {
+            return Optional.empty();
+        } else {
+            try {
+                BinaryContentCreateInfo contentInfo = new BinaryContentCreateInfo(
+                        profileFile.getOriginalFilename(),
+                        profileFile.getContentType(),
+                        profileFile.getBytes()
+                );
+                return Optional.of(contentInfo);
+            } catch (IOException e) {
+                throw new BinaryContentNotFoundException();
+            }
+        }
     }
 }
