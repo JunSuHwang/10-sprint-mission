@@ -40,6 +40,12 @@ public class UserStatusService {
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
 
+  public UserStatusInfo findUserStatusByUserId(UUID userId) {
+    UserStatus userStatus = userStatusRepository.findByUserId(userId)
+        .orElseThrow(UserStatusNotFoundException::new);
+    return UserStatusMapper.toUserStatusInfo(userStatus);
+  }
+
   public List<UserStatusInfo> findAll() {
     return userStatusRepository.findAll()
         .stream()

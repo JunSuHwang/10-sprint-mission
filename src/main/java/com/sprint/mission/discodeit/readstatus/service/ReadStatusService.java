@@ -56,6 +56,13 @@ public class ReadStatusService {
         .toList();
   }
 
+  public List<ReadStatusInfo> findAll() {
+    return readStatusRepository.findAll()
+        .stream()
+        .map(ReadStatusMapper::toReadStatusInfo)
+        .toList();
+  }
+
   public ReadStatusInfo updateReadStatus(UUID statusId) {
     ReadStatus readStatus = readStatusRepository.findById(statusId)
         .orElseThrow(ReadStatusNotFoundException::new);

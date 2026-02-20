@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/readstatus")
+@RequestMapping("/api/readStatuses")
 public class ReadStatusController {
 
   private final ReadStatusService readStatusService;
@@ -42,6 +42,11 @@ public class ReadStatusController {
   @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
   public ResponseEntity<List<ReadStatusInfo>> getReadStatuses(@PathVariable UUID userId) {
     return ResponseEntity.ok(readStatusService.findAllByUserId(userId));
+  }
+
+  @RequestMapping(method = RequestMethod.GET)
+  public ResponseEntity<List<ReadStatusInfo>> getAllReadStatuses() {
+    return ResponseEntity.ok(readStatusService.findAll());
   }
 
   @RequestMapping(value = "/{statusId}", method = RequestMethod.GET)

@@ -67,14 +67,14 @@ public class UserController {
     return ResponseEntity.noContent().build();
   }
 
-  @RequestMapping(value = "/status/{userId}", method = RequestMethod.PATCH)
+  @RequestMapping(value = "/{userId}/userStatus", method = RequestMethod.PATCH)
   public ResponseEntity<UserStatusInfo> updateUserStatusByUserId(@PathVariable UUID userId) {
     return ResponseEntity.ok(userStatusService.updateUserStatusByUserId(userId));
   }
 
-  @RequestMapping(value = "/status/{statusId}", method = RequestMethod.GET)
-  public ResponseEntity<UserStatusInfo> getUserStatus(@PathVariable UUID statusId) {
-    return ResponseEntity.ok(userStatusService.findUserStatus(statusId));
+  @RequestMapping(value = "/{userId}/userStatus", method = RequestMethod.GET)
+  public ResponseEntity<UserStatusInfo> getUserStatus(@PathVariable UUID userId) {
+    return ResponseEntity.ok(userStatusService.findUserStatusByUserId(userId));
   }
 
   private Optional<BinaryContentCreateInfo> resolveProfileFile(MultipartFile profileFile) {
