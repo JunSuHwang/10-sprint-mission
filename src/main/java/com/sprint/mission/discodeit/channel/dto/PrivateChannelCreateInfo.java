@@ -4,5 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record PrivateChannelCreateInfo(
-        List<UUID> userIds
-) {}
+    List<UUID> userIds
+) {
+
+}

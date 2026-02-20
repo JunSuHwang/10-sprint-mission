@@ -4,9 +4,11 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record BinaryContentInfo(
-        UUID contentId,
-        Instant createdAt,
-        String fileName,
-        String contentType,
-        byte[] content
-) {}
+    UUID contentId,
+    Instant createdAt,
+    String fileName,
+    String contentType,
+    byte[] content
+) {
+
+}

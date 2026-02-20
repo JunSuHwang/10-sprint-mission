@@ -1,18 +1,29 @@
 package com.sprint.mission.discodeit.user.service;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateInfo;
-import com.sprint.mission.discodeit.user.dto.*;
-
+import com.sprint.mission.discodeit.user.dto.UserCreateInfo;
+import com.sprint.mission.discodeit.user.dto.UserDto;
+import com.sprint.mission.discodeit.user.dto.UserInfo;
+import com.sprint.mission.discodeit.user.dto.UserInfoWithStatus;
+import com.sprint.mission.discodeit.user.dto.UserUpdateInfo;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {
-    UserInfo createUser(UserCreateInfo userInfo, Optional<BinaryContentCreateInfo> image);
-    UserInfoWithStatus findUser(UUID userId);
-    List<UserInfoWithStatus> findAll();
-    List<UserDto> findAllWithUserDTO();
-    List<UserInfoWithStatus> findAllByChannelId(UUID channelId);
-    UserInfo updateUser(UUID userId, UserUpdateInfo updateInfo, Optional<BinaryContentCreateInfo> image);
-    void deleteUser(UUID userId);
+
+  UserInfo createUser(UserCreateInfo userInfo, Optional<BinaryContentCreateInfo> image);
+
+  UserInfoWithStatus findUser(UUID userId);
+
+  List<UserInfoWithStatus> findAll();
+
+  List<UserDto> findAllWithUserDTO();
+
+  List<UserInfoWithStatus> findAllByChannelId(UUID channelId);
+
+  UserInfo updateUser(UUID userId, UserUpdateInfo updateInfo,
+      Optional<BinaryContentCreateInfo> image);
+
+  void deleteUser(UUID userId);
 }

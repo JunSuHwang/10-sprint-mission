@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.UUID;
 
 public record MessageCreateInfo(
-        String content,
-        UUID senderId,
-        UUID channelId,
-        List<byte[]> attachments
-) {}
+    String content,
+    UUID senderId,
+    UUID channelId,
+    List<byte[]> attachments
+) {
+
+}

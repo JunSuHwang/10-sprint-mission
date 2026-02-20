@@ -4,23 +4,25 @@ import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentInfo;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 
 public class BinaryContentMapper {
-    private BinaryContentMapper(){}
 
-    public static BinaryContentInfo toBinaryContentInfo(BinaryContent binaryContent) {
-        return new BinaryContentInfo(
-                binaryContent.getId(),
-                binaryContent.getCreatedAt(),
-                binaryContent.getFileName(),
-                binaryContent.getContentType(),
-                binaryContent.getBytes()
-        );
-    }
+  private BinaryContentMapper() {
+  }
 
-    public static BinaryContent toBinaryContent(BinaryContentInfo binaryContentInfo) {
-        return new BinaryContent(
-                binaryContentInfo.fileName(),
-                binaryContentInfo.contentType(),
-                binaryContentInfo.content()
-        );
-    }
+  public static BinaryContentInfo toBinaryContentInfo(BinaryContent binaryContent) {
+    return new BinaryContentInfo(
+        binaryContent.getId(),
+        binaryContent.getCreatedAt(),
+        binaryContent.getFileName(),
+        binaryContent.getContentType(),
+        binaryContent.getBytes()
+    );
+  }
+
+  public static BinaryContent toBinaryContent(BinaryContentInfo binaryContentInfo) {
+    return new BinaryContent(
+        binaryContentInfo.fileName(),
+        binaryContentInfo.contentType(),
+        binaryContentInfo.content()
+    );
+  }
 }

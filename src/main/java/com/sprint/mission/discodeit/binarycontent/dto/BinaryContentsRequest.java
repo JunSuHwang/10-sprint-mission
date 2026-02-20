@@ -4,5 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record BinaryContentsRequest(
-        List<UUID> contentIds
-) {}
+    List<UUID> contentIds
+) {
+
+}
