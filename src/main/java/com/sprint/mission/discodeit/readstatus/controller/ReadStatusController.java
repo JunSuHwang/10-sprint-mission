@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/readstatus")
+@RequestMapping("/api/readstatus")
 public class ReadStatusController {
 
   private final ReadStatusService readStatusService;

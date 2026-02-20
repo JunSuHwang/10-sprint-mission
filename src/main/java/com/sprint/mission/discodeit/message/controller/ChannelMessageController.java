@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/channels/{channelId}/messages")
+@RequestMapping("/api/channels/{channelId}/messages")
 public class ChannelMessageController {
 
   private final MessageService messageService;

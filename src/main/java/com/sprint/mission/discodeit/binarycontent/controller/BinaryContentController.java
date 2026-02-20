@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.binarycontent.controller;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentInfo;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentsRequest;
+import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.service.BinaryContentService;
 import java.util.List;
 import java.util.UUID;
@@ -11,11 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/binarycontents")
+@RequestMapping("/api/binarycontents")
 public class BinaryContentController {
 
   private final BinaryContentService binaryContentService;
@@ -30,5 +32,10 @@ public class BinaryContentController {
       @RequestBody BinaryContentsRequest request
   ) {
     return ResponseEntity.ok(binaryContentService.findAllByIdIn(request));
+  }
+
+  @RequestMapping(value = "/find", method = RequestMethod.GET)
+  public ResponseEntity<BinaryContent> findBinaryContent(@RequestParam UUID binaryContentId) {
+    return ResponseEntity.ok(binaryContentService.findBinaryContentEntity(binaryContentId));
   }
 }
