@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.user.controller;
 import com.sprint.mission.discodeit.user.dto.UserInfo;
 import com.sprint.mission.discodeit.user.dto.UserLoginInfo;
 import com.sprint.mission.discodeit.user.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
+@Tag(name = "Auth", description = "인증 API")
 public class AuthController {
 
   private final AuthService authService;

@@ -7,6 +7,7 @@ import com.sprint.mission.discodeit.channel.dto.PrivateChannelInfo;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelCreateInfo;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelInfo;
 import com.sprint.mission.discodeit.channel.service.ChannelService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/channels")
+@Tag(name = "Channel", description = "Channel API")
 public class ChannelController {
 
   private final ChannelService channelService;

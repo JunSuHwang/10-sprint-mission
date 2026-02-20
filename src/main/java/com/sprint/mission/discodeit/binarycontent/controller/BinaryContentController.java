@@ -4,6 +4,7 @@ import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentInfo;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentsRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.service.BinaryContentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/binaryContents")
+@Tag(name = "BinaryContent", description = "첨부 파일 API")
 public class BinaryContentController {
 
   private final BinaryContentService binaryContentService;

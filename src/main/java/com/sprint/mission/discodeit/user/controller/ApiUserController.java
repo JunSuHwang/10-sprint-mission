@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.user.controller;
 
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/user")
+@Tag(name = "User", description = "User API")
 public class ApiUserController {
 
   private final UserService userService;

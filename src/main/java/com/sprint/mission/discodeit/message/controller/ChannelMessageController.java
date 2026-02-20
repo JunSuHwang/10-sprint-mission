@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.message.controller;
 
 import com.sprint.mission.discodeit.message.dto.MessageInfo;
 import com.sprint.mission.discodeit.message.service.MessageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/channels/{channelId}/messages")
+@Tag(name = "Message", description = "Message API")
 public class ChannelMessageController {
 
   private final MessageService messageService;
