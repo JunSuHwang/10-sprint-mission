@@ -25,8 +25,8 @@ public class JCFChannelRepository implements ChannelRepository {
   @Override
   public Optional<Channel> findByName(String channelName) {
     return data.stream()
-        .filter(c -> c.getChannelType() == ChannelType.PUBLIC
-            && c.getChannelName().equals(channelName))
+        .filter(c -> c.getType() == ChannelType.PUBLIC
+            && c.getName().equals(channelName))
         .findFirst();
   }
 

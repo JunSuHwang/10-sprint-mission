@@ -34,7 +34,7 @@ public class BasicMessageService implements MessageService {
   public MessageInfo createMessage(MessageCreateInfo createInfo) {
     List<UUID> attachmentIds = createInfo.attachments()
         .stream()
-        .map(bytes -> new BinaryContent("", "", bytes))
+        .map(bytes -> new BinaryContent("", (long) bytes.length, "", bytes))
         .peek(contentRepository::save)
         .map(BinaryContent::getId)
         .toList();
@@ -42,7 +42,7 @@ public class BasicMessageService implements MessageService {
     Message message = new Message(createInfo.content(), createInfo.senderId(),
         createInfo.channelId(), attachmentIds);
 
-    User sender = userRepository.findById(message.getSenderId())
+    User sender = userRepository.findById(message.getAuthorId())
         .orElseThrow(UserNotFoundException::new);
     Channel findChannel = channelRepository.findById(message.getChannelId())
         .orElseThrow(ChannelNotFoundException::new);
@@ -85,7 +85,7 @@ public class BasicMessageService implements MessageService {
         .orElseThrow(MessageNotFoundException::new);
 
     Optional.ofNullable(messageInfo.content())
-        .ifPresent(findMessage::updateContent);
+        .ifPresent(findMessage::update);
 
     messageRepository.save(findMessage);
     return MessageMapper.toMessageInfo(findMessage);
@@ -95,7 +95,7 @@ public class BasicMessageService implements MessageService {
   public void deleteMessage(UUID messageId) {
     Message findMessage = messageRepository.findById(messageId)
         .orElseThrow(MessageNotFoundException::new);
-    User findUser = userRepository.findById(findMessage.getSenderId())
+    User findUser = userRepository.findById(findMessage.getAuthorId())
         .orElseThrow(UserNotFoundException::new);
     Channel findChannel = channelRepository.findById(findMessage.getChannelId())
         .orElseThrow(ChannelNotFoundException::new);

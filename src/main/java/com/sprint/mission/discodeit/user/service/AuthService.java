@@ -29,7 +29,7 @@ public class AuthService {
     UserStatus status = userStatusRepository.findByUserId(findUser.getId())
         .orElseThrow(UserStatusNotFoundException::new);
     ;
-    status.updateLastOnlineAt();
+    status.update();
     userStatusRepository.save(status);
     return UserMapper.toUserInfo(findUser, status);
   }

@@ -17,12 +17,4 @@ public class BinaryContentMapper {
         binaryContent.getBytes()
     );
   }
-
-  public static BinaryContent toBinaryContent(BinaryContentInfo binaryContentInfo) {
-    return new BinaryContent(
-        binaryContentInfo.fileName(),
-        binaryContentInfo.contentType(),
-        binaryContentInfo.content()
-    );
-  }
 }

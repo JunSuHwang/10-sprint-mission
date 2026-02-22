@@ -11,18 +11,18 @@ public class UserStatus extends CommonEntity {
   private static final long serialVersionUID = 1L;
   private final UUID userId;
   private final int loginLimitSeconds = 60 * 5;
-  private Instant lastOnlineAt;
+  private Instant lastActiveAt;
 
   public UserStatus(UUID userId) {
     this.userId = userId;
-    lastOnlineAt = Instant.now();
+    lastActiveAt = Instant.now();
   }
 
-  public void updateLastOnlineAt() {
-    lastOnlineAt = Instant.now();
+  public void update() {
+    lastActiveAt = Instant.now();
   }
 
   public boolean isOnline() {
-    return lastOnlineAt.isAfter(Instant.now().minusSeconds(loginLimitSeconds));
+    return lastActiveAt.isAfter(Instant.now().minusSeconds(loginLimitSeconds));
   }
 }

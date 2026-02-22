@@ -74,7 +74,7 @@ public class FileMessageRepository implements MessageRepository {
   @Override
   public List<Message> findAllByUserId(UUID userId) {
     return findAll().stream()
-        .filter(m -> m.getSenderId().equals(userId))
+        .filter(m -> m.getAuthorId().equals(userId))
         .toList();
   }
 

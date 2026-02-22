@@ -50,7 +50,7 @@ public class FileChannelRepository implements ChannelRepository {
   public Optional<Channel> findByName(String channelName) {
     return findAll().stream()
         .filter(
-            c -> c.getChannelType() == ChannelType.PUBLIC && c.getChannelName().equals(channelName))
+            c -> c.getType() == ChannelType.PUBLIC && c.getName().equals(channelName))
         .findFirst();
   }
 

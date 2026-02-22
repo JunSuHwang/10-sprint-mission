@@ -16,7 +16,7 @@ public final class MessageMapper {
     return new MessageInfo(
         message.getId(),
         message.getContent(),
-        message.getSenderId(),
+        message.getAuthorId(),
         message.getChannelId(),
         message.getAttachmentIds()
     );

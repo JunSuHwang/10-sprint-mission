@@ -19,8 +19,10 @@ public class BinaryContentService {
   private final BinaryContentRepository contentRepository;
 
   public BinaryContentInfo createBinaryContent(BinaryContentCreateInfo contentInfo) {
-    BinaryContent content = new BinaryContent(contentInfo.fileName(), contentInfo.contentType(),
-        contentInfo.content());
+    byte[] bytes = contentInfo.content();
+    BinaryContent content = new BinaryContent(contentInfo.fileName(), (long) bytes.length,
+        contentInfo.contentType(),
+        bytes);
     contentRepository.save(content);
     return BinaryContentMapper.toBinaryContentInfo(content);
   }

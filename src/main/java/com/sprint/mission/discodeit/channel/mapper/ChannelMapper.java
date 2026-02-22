@@ -14,18 +14,18 @@ public final class ChannelMapper {
   }
 
   public static ChannelInfo toChannelInfo(Channel channel, Instant lastMessageTime) {
-    if (channel.getChannelType() == ChannelType.PRIVATE) {
+    if (channel.getType() == ChannelType.PRIVATE) {
       return new ChannelInfo(channel.getId(),
           null,
-          channel.getChannelType(),
+          channel.getType(),
           null,
           lastMessageTime,
           channel.getUserIds());
     } else {
       return new ChannelInfo(
           channel.getId(),
-          channel.getChannelName(),
-          channel.getChannelType(),
+          channel.getName(),
+          channel.getType(),
           channel.getDescription(),
           null,
           channel.getUserIds()
@@ -36,8 +36,8 @@ public final class ChannelMapper {
   public static PublicChannelInfo toPublicChannelInfo(Channel channel) {
     return new PublicChannelInfo(
         channel.getId(),
-        channel.getChannelName(),
-        channel.getChannelType(),
+        channel.getName(),
+        channel.getType(),
         channel.getDescription()
     );
   }
@@ -45,7 +45,7 @@ public final class ChannelMapper {
   public static PrivateChannelInfo toPrivateChannelInfo(Channel channel) {
     return new PrivateChannelInfo(
         channel.getId(),
-        channel.getChannelType()
+        channel.getType()
     );
   }
 

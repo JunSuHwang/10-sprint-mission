@@ -10,20 +10,20 @@ import lombok.Getter;
 public class Message extends CommonEntity {
 
   private static final long serialVersionUID = 1L;
-  private final UUID senderId;
+  private final UUID authorId;
   private final UUID channelId;
   private final List<UUID> attachmentIds;
   private String content;
 
-  public Message(String content, UUID sender, UUID channel, List<UUID> attachmentIds) {
+  public Message(String content, UUID authorId, UUID channel, List<UUID> attachmentIds) {
     this.content = content;
-    this.senderId = sender;
+    this.authorId = authorId;
     this.channelId = channel;
     this.attachmentIds = attachmentIds;
   }
 
-  public void updateContent(String content) {
-    this.content = content;
+  public void update(String newContent) {
+    this.content = newContent;
     this.updateAt = Instant.now();
   }
 

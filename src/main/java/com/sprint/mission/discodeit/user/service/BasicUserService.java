@@ -48,8 +48,9 @@ public class BasicUserService implements UserService {
     // profile image가 존재한다면 생성
     if (image.isPresent()) {
       BinaryContentCreateInfo createInfo = image.get();
-      BinaryContent profileImage = new BinaryContent(createInfo.fileName(),
-          createInfo.contentType(), createInfo.content());
+      byte[] bytes = createInfo.content();
+      BinaryContent profileImage = new BinaryContent(createInfo.fileName(), (long) bytes.length,
+          createInfo.contentType(), bytes);
       user.setProfileId(profileImage.getId());
       contentRepository.save(profileImage);
     }
@@ -125,8 +126,9 @@ public class BasicUserService implements UserService {
         contentRepository.deleteById(findUser.getProfileId());
       }
       BinaryContentCreateInfo createInfo = image.get();
-      BinaryContent profileImage = new BinaryContent(createInfo.fileName(),
-          createInfo.contentType(), createInfo.content());
+      byte[] bytes = createInfo.content();
+      BinaryContent profileImage = new BinaryContent(createInfo.fileName(), (long) bytes.length,
+          createInfo.contentType(), bytes);
       findUser.setProfileId(profileImage.getId());
       contentRepository.save(profileImage);
     }
@@ -134,7 +136,7 @@ public class BasicUserService implements UserService {
     // statusRepo.findByUserId로 찾기
     UserStatus status = userStatusRepository.findByUserId(findUser.getId())
         .map(findStatus -> {
-          findStatus.updateLastOnlineAt();
+          findStatus.update();
           return findStatus;
         })
         .orElseThrow(UserStatusNotFoundException::new);

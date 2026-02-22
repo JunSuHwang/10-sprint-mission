@@ -56,7 +56,7 @@ public class UserStatusService {
   public UserStatusInfo updateUserStatus(UserStatusUpdateInfo statusInfo) {
     UserStatus userStatus = userStatusRepository.findById(statusInfo.statusId())
         .orElseThrow(UserStatusNotFoundException::new);
-    userStatus.updateLastOnlineAt();
+    userStatus.update();
     userStatusRepository.save(userStatus);
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
@@ -64,7 +64,7 @@ public class UserStatusService {
   public UserStatusInfo updateUserStatusByUserId(UUID userId) {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
-    userStatus.updateLastOnlineAt();
+    userStatus.update();
     userStatusRepository.save(userStatus);
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }

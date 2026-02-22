@@ -73,8 +73,8 @@ public class BasicChannelService implements ChannelService {
   public List<ChannelInfo> findAllByUserId(UUID userId) {
     return channelRepository.findAll()
         .stream()
-        .filter(channel -> channel.getChannelType() == ChannelType.PUBLIC
-            || (channel.getChannelType() == ChannelType.PRIVATE && channel.getUserIds()
+        .filter(channel -> channel.getType() == ChannelType.PUBLIC
+            || (channel.getType() == ChannelType.PRIVATE && channel.getUserIds()
             .contains(userId)))
         .map(channel ->
             ChannelMapper.toChannelInfo(channel, getLastMessageTime(channel.getId()))
@@ -86,7 +86,7 @@ public class BasicChannelService implements ChannelService {
   public ChannelInfo updateChannel(UUID channelId, PublicChannelCreateInfo channelInfo) {
     Channel findChannel = channelRepository.findById(channelId)
         .orElseThrow(ChannelNotFoundException::new);
-    if (findChannel.getChannelType() == ChannelType.PRIVATE) {
+    if (findChannel.getType() == ChannelType.PRIVATE) {
       throw new ChannelUpdateNotAllowedException();
     }
     validateChannelExist(channelInfo.channelName());

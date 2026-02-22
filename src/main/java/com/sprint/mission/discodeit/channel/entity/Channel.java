@@ -14,13 +14,13 @@ public class Channel extends CommonEntity {
   private static final long serialVersionUID = 1L;
   private final List<UUID> messageIds = new ArrayList<>();
   private final List<UUID> userIds = new ArrayList<>();
-  private String channelName;
-  private ChannelType channelType;
+  private String name;
+  private ChannelType type;
   private String description;
 
-  public Channel(String channelName, ChannelType channelType, String description) {
-    this.channelName = channelName;
-    this.channelType = channelType;
+  public Channel(String name, ChannelType type, String description) {
+    this.name = name;
+    this.type = type;
     this.description = description;
   }
 
@@ -33,12 +33,12 @@ public class Channel extends CommonEntity {
   }
 
   public void updateChannelName(String channelName) {
-    this.channelName = channelName;
+    this.name = channelName;
     this.updateAt = Instant.now();
   }
 
   public void updateChannelType(ChannelType channelType) {
-    this.channelType = channelType;
+    this.type = channelType;
     this.updateAt = Instant.now();
   }
 

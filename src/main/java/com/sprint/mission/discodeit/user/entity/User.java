@@ -14,14 +14,14 @@ public class User extends CommonEntity {
   private static final long serialVersionUID = 1L;
   private final List<UUID> channelIds = new ArrayList<>();
   private final List<UUID> messageIds = new ArrayList<>();
-  private String userName;
+  private String username;
   private String password;
   private String email;
   @Setter
   private UUID profileId;
 
-  public User(String userName, String password, String email) {
-    this.userName = userName;
+  public User(String username, String password, String email) {
+    this.username = username;
     this.password = password;
     this.email = email;
   }
@@ -34,8 +34,8 @@ public class User extends CommonEntity {
     return List.copyOf(messageIds);
   }
 
-  public void updateUserName(String userName) {
-    this.userName = userName;
+  public void updateUserName(String username) {
+    this.username = username;
     this.updateAt = Instant.now();
   }
 

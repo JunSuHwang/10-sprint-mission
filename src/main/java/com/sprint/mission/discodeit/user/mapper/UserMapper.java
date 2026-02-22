@@ -15,7 +15,7 @@ public class UserMapper {
   public static UserInfo toUserInfo(User user, UserStatus userStatus) {
     return new UserInfo(
         user.getId(),
-        user.getUserName(),
+        user.getUsername(),
         user.getEmail(),
         user.getProfileId(),
         userStatus.getId()
@@ -25,7 +25,7 @@ public class UserMapper {
   public static UserInfoWithStatus toUserInfoWithStatus(User user, UserStatus userStatus) {
     return new UserInfoWithStatus(
         user.getId(),
-        user.getUserName(),
+        user.getUsername(),
         user.getEmail(),
         user.getProfileId(),
         userStatus.getId(),
@@ -38,7 +38,7 @@ public class UserMapper {
         user.getId(),
         user.getCreatedAt(),
         user.getUpdateAt(),
-        user.getUserName(),
+        user.getUsername(),
         user.getEmail(),
         user.getProfileId(),
         userStatus.isOnline()
