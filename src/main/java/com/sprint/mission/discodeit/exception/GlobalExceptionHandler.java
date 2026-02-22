@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.exception;
 
+import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentFileProcessingException;
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoundException;
 import com.sprint.mission.discodeit.channel.exception.AlreadyJoinedException;
 import com.sprint.mission.discodeit.channel.exception.ChannelDuplicationException;
@@ -105,6 +106,12 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handle(BinaryContentNotFoundException e) {
     ErrorResponse response = new ErrorResponse("BINARY_CONTENT_NOT_FOUND", e.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+  }
+
+  @ExceptionHandler(BinaryContentFileProcessingException.class)
+  public ResponseEntity<ErrorResponse> handle(BinaryContentFileProcessingException e) {
+    ErrorResponse response = new ErrorResponse("FILE_PROCESSING_ERROR", e.getMessage());
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)

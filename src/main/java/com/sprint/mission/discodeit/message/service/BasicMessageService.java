@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.message.service;
 
+import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.channel.entity.Channel;
@@ -32,15 +33,29 @@ public class BasicMessageService implements MessageService {
   private final BinaryContentRepository contentRepository;
 
   @Override
-  public MessageDto createMessage(MessageCreateRequest createInfo) {
+  public MessageDto createMessage(MessageCreateRequest createInfo,
+      List<BinaryContentCreateRequest> binaryContentCreateRequests) {
 
-    Message message = new Message(createInfo.content(), createInfo.authorId(),
-        createInfo.channelId(), new ArrayList<>());
-
-    User author = userRepository.findById(message.getAuthorId())
+    User author = userRepository.findById(createInfo.authorId())
         .orElseThrow(UserNotFoundException::new);
-    Channel findChannel = channelRepository.findById(message.getChannelId())
+    Channel findChannel = channelRepository.findById(createInfo.channelId())
         .orElseThrow(ChannelNotFoundException::new);
+
+    List<UUID> attachmentIds = binaryContentCreateRequests.stream()
+        .map(request -> {
+          BinaryContent binaryContent = new BinaryContent(
+              request.fileName(),
+              (long) request.content().length,
+              request.contentType(),
+              request.content()
+          );
+          contentRepository.save(binaryContent);
+          return binaryContent.getId();
+        })
+        .toList();
+
+    Message message = new Message(createInfo.content(), author.getId(), findChannel.getId(),
+        attachmentIds);
 
     author.addMessageId(message.getId());
     findChannel.addMessageId(message.getId());
