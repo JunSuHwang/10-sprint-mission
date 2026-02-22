@@ -1,8 +1,8 @@
 package com.sprint.mission.discodeit.message.controller;
 
-import com.sprint.mission.discodeit.message.dto.MessageCreateInfo;
-import com.sprint.mission.discodeit.message.dto.MessageInfo;
-import com.sprint.mission.discodeit.message.dto.MessageUpdateInfo;
+import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
+import com.sprint.mission.discodeit.message.dto.MessageDto;
+import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
 import com.sprint.mission.discodeit.message.service.MessageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -24,24 +24,24 @@ public class MessageController {
   private final MessageService messageService;
 
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-  public ResponseEntity<MessageInfo> sendMessage(@RequestBody MessageCreateInfo messageInfo) {
+  public ResponseEntity<MessageDto> sendMessage(@RequestBody MessageCreateRequest messageInfo) {
     return ResponseEntity.ok(messageService.createMessage(messageInfo));
   }
 
   @RequestMapping(value = "/{messageId}", method = RequestMethod.GET)
-  public ResponseEntity<MessageInfo> getMessage(@PathVariable UUID messageId) {
+  public ResponseEntity<MessageDto> getMessage(@PathVariable UUID messageId) {
     return ResponseEntity.ok(messageService.findMessage(messageId));
   }
 
   @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<MessageInfo>> getAllMessages() {
+  public ResponseEntity<List<MessageDto>> getAllMessages() {
     return ResponseEntity.ok(messageService.findAll());
   }
 
   @RequestMapping(value = "/{messageId}", method = RequestMethod.PATCH)
   public ResponseEntity<Void> updateMessage(
       @PathVariable UUID messageId,
-      @RequestBody MessageUpdateInfo messageInfo
+      @RequestBody MessageUpdateRequest messageInfo
   ) {
     messageService.updateMessage(messageId, messageInfo);
     return ResponseEntity.noContent().build();

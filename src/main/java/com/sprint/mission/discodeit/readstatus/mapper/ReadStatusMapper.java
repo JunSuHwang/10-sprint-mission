@@ -1,7 +1,7 @@
 package com.sprint.mission.discodeit.readstatus.mapper;
 
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusCreateInfo;
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusInfo;
+import com.sprint.mission.discodeit.readstatus.dto.ReadStatusCreateRequest;
+import com.sprint.mission.discodeit.readstatus.dto.ReadStatusDto;
 import com.sprint.mission.discodeit.readstatus.entity.ReadStatus;
 
 public class ReadStatusMapper {
@@ -9,8 +9,8 @@ public class ReadStatusMapper {
   private ReadStatusMapper() {
   }
 
-  public static ReadStatusInfo toReadStatusInfo(ReadStatus readStatus) {
-    return new ReadStatusInfo(
+  public static ReadStatusDto toReadStatusInfo(ReadStatus readStatus) {
+    return new ReadStatusDto(
         readStatus.getId(),
         readStatus.getUserId(),
         readStatus.getChannelId(),
@@ -18,17 +18,18 @@ public class ReadStatusMapper {
     );
   }
 
-  public static ReadStatusCreateInfo toReadStatusCreateInfo(ReadStatus readStatus) {
-    return new ReadStatusCreateInfo(
+  public static ReadStatusCreateRequest toReadStatusCreateInfo(ReadStatus readStatus) {
+    return new ReadStatusCreateRequest(
         readStatus.getUserId(),
-        readStatus.getChannelId()
+        readStatus.getChannelId(),
+        readStatus.getLastReadAt()
     );
   }
 
-  public static ReadStatus toReadStatus(ReadStatusCreateInfo readStatusCreateInfo) {
+  public static ReadStatus toReadStatus(ReadStatusCreateRequest readStatusCreateRequest) {
     return new ReadStatus(
-        readStatusCreateInfo.userId(),
-        readStatusCreateInfo.channelId()
+        readStatusCreateRequest.userId(),
+        readStatusCreateRequest.channelId()
     );
   }
 }

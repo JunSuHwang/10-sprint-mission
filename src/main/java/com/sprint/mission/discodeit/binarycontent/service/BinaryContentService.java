@@ -1,7 +1,7 @@
 package com.sprint.mission.discodeit.binarycontent.service;
 
-import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateInfo;
-import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentInfo;
+import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
+import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentDto;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentsRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoundException;
@@ -18,7 +18,7 @@ public class BinaryContentService {
 
   private final BinaryContentRepository contentRepository;
 
-  public BinaryContentInfo createBinaryContent(BinaryContentCreateInfo contentInfo) {
+  public BinaryContentDto createBinaryContent(BinaryContentCreateRequest contentInfo) {
     byte[] bytes = contentInfo.content();
     BinaryContent content = new BinaryContent(contentInfo.fileName(), (long) bytes.length,
         contentInfo.contentType(),
@@ -27,7 +27,7 @@ public class BinaryContentService {
     return BinaryContentMapper.toBinaryContentInfo(content);
   }
 
-  public BinaryContentInfo findBinaryContent(UUID contentId) {
+  public BinaryContentDto findBinaryContent(UUID contentId) {
     BinaryContent content = contentRepository.findById(contentId)
         .orElseThrow(BinaryContentNotFoundException::new);
     return BinaryContentMapper.toBinaryContentInfo(content);
@@ -38,14 +38,14 @@ public class BinaryContentService {
         .orElseThrow(BinaryContentNotFoundException::new);
   }
 
-  public List<BinaryContentInfo> findAll() {
+  public List<BinaryContentDto> findAll() {
     return contentRepository.findAll()
         .stream()
         .map(BinaryContentMapper::toBinaryContentInfo)
         .toList();
   }
 
-  public List<BinaryContentInfo> findAllByIdIn(BinaryContentsRequest request) {
+  public List<BinaryContentDto> findAllByIdIn(BinaryContentsRequest request) {
     return contentRepository.findAll()
         .stream()
         .filter(content -> request.contentIds().contains(content.getId()))

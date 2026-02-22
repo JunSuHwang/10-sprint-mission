@@ -5,13 +5,13 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-public record ChannelInfo(
-    UUID channelId,
-    String channelName,
-    ChannelType channelType,
+public record ChannelDto(
+    UUID id,
+    String name,
+    ChannelType type,
     String description,
-    Instant lastMessageTime,
-    List<UUID> userIds
+    Instant lastMessageAt,
+    List<UUID> participantIds
 ) {
 
 }

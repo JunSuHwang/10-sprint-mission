@@ -1,7 +1,7 @@
 package com.sprint.mission.discodeit.readstatus.controller;
 
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusCreateInfo;
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusInfo;
+import com.sprint.mission.discodeit.readstatus.dto.ReadStatusCreateRequest;
+import com.sprint.mission.discodeit.readstatus.dto.ReadStatusDto;
 import com.sprint.mission.discodeit.readstatus.dto.ReadStatusUpdateInfo;
 import com.sprint.mission.discodeit.readstatus.service.ReadStatusService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,8 +24,8 @@ public class ReadStatusController {
   private final ReadStatusService readStatusService;
 
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-  public ResponseEntity<ReadStatusInfo> createReadStatus(
-      @RequestBody ReadStatusCreateInfo statusInfo) {
+  public ResponseEntity<ReadStatusDto> createReadStatus(
+      @RequestBody ReadStatusCreateRequest statusInfo) {
     return ResponseEntity.ok(readStatusService.createReadStatus(statusInfo));
   }
 
@@ -42,17 +42,17 @@ public class ReadStatusController {
   }
 
   @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
-  public ResponseEntity<List<ReadStatusInfo>> getReadStatuses(@PathVariable UUID userId) {
+  public ResponseEntity<List<ReadStatusDto>> getReadStatuses(@PathVariable UUID userId) {
     return ResponseEntity.ok(readStatusService.findAllByUserId(userId));
   }
 
   @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<ReadStatusInfo>> getAllReadStatuses() {
+  public ResponseEntity<List<ReadStatusDto>> getAllReadStatuses() {
     return ResponseEntity.ok(readStatusService.findAll());
   }
 
   @RequestMapping(value = "/{statusId}", method = RequestMethod.GET)
-  public ResponseEntity<ReadStatusInfo> getReadStatus(@PathVariable UUID statusId) {
+  public ResponseEntity<ReadStatusDto> getReadStatus(@PathVariable UUID statusId) {
     return ResponseEntity.ok(readStatusService.find(statusId));
   }
 }

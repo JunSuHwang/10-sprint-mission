@@ -1,7 +1,7 @@
 package com.sprint.mission.discodeit.user.dto;
 
-public record UserLoginInfo(
-    String userName,
+public record LoginRequest(
+    String username,
     String password
 ) {
 

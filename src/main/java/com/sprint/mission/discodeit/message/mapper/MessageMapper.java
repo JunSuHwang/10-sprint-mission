@@ -1,8 +1,8 @@
 package com.sprint.mission.discodeit.message.mapper;
 
-import com.sprint.mission.discodeit.message.dto.MessageCreateInfo;
-import com.sprint.mission.discodeit.message.dto.MessageInfo;
-import com.sprint.mission.discodeit.message.dto.MessageUpdateInfo;
+import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
+import com.sprint.mission.discodeit.message.dto.MessageDto;
+import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
 import com.sprint.mission.discodeit.message.entity.Message;
 import java.util.List;
 import java.util.UUID;
@@ -12,8 +12,8 @@ public final class MessageMapper {
   private MessageMapper() {
   }
 
-  public static MessageInfo toMessageInfo(Message message) {
-    return new MessageInfo(
+  public static MessageDto toMessageInfo(Message message) {
+    return new MessageDto(
         message.getId(),
         message.getContent(),
         message.getAuthorId(),
@@ -22,24 +22,23 @@ public final class MessageMapper {
     );
   }
 
-  public static MessageCreateInfo toMessageCreateInfo(
+  public static MessageCreateRequest toMessageCreateInfo(
       String content,
-      UUID senderId,
+      UUID authorId,
       UUID channelId,
       List<byte[]> attachments
   ) {
-    return new MessageCreateInfo(
+    return new MessageCreateRequest(
         content,
-        senderId,
-        channelId,
-        attachments
+        authorId,
+        channelId
     );
   }
 
-  public static MessageUpdateInfo toMessageUpdateInfo(
+  public static MessageUpdateRequest toMessageUpdateInfo(
       String content
   ) {
-    return new MessageUpdateInfo(
+    return new MessageUpdateRequest(
         content
     );
   }

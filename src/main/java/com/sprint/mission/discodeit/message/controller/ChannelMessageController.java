@@ -1,6 +1,6 @@
 package com.sprint.mission.discodeit.message.controller;
 
-import com.sprint.mission.discodeit.message.dto.MessageInfo;
+import com.sprint.mission.discodeit.message.dto.MessageDto;
 import com.sprint.mission.discodeit.message.service.MessageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -21,7 +21,7 @@ public class ChannelMessageController {
   private final MessageService messageService;
 
   @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<MessageInfo>> getMessages(@PathVariable UUID channelId) {
+  public ResponseEntity<List<MessageDto>> getMessages(@PathVariable UUID channelId) {
     return ResponseEntity.ok(messageService.findAllByChannelId(channelId));
   }
 }

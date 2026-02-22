@@ -2,8 +2,8 @@ package com.sprint.mission.discodeit.userstatus.service;
 
 import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
-import com.sprint.mission.discodeit.userstatus.dto.UserStatusCreateInfo;
-import com.sprint.mission.discodeit.userstatus.dto.UserStatusInfo;
+import com.sprint.mission.discodeit.userstatus.dto.UserStatusCreateRequest;
+import com.sprint.mission.discodeit.userstatus.dto.UserStatusDto;
 import com.sprint.mission.discodeit.userstatus.dto.UserStatusUpdateInfo;
 import com.sprint.mission.discodeit.userstatus.entity.UserStatus;
 import com.sprint.mission.discodeit.userstatus.exception.UserStatusDuplicationException;
@@ -22,7 +22,7 @@ public class UserStatusService {
   private final UserStatusRepository userStatusRepository;
   private final UserRepository userRepository;
 
-  public UserStatusInfo createUserStatus(UserStatusCreateInfo statusInfo) {
+  public UserStatusDto createUserStatus(UserStatusCreateRequest statusInfo) {
     userRepository.findById(statusInfo.userId())
         .orElseThrow(UserNotFoundException::new);
     if (userStatusRepository.findByUserId(statusInfo.userId())
@@ -34,26 +34,26 @@ public class UserStatusService {
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
 
-  public UserStatusInfo findUserStatus(UUID statusId) {
+  public UserStatusDto findUserStatus(UUID statusId) {
     UserStatus userStatus = userStatusRepository.findById(statusId)
         .orElseThrow(UserStatusNotFoundException::new);
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
 
-  public UserStatusInfo findUserStatusByUserId(UUID userId) {
+  public UserStatusDto findUserStatusByUserId(UUID userId) {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
 
-  public List<UserStatusInfo> findAll() {
+  public List<UserStatusDto> findAll() {
     return userStatusRepository.findAll()
         .stream()
         .map(UserStatusMapper::toUserStatusInfo)
         .toList();
   }
 
-  public UserStatusInfo updateUserStatus(UserStatusUpdateInfo statusInfo) {
+  public UserStatusDto updateUserStatus(UserStatusUpdateInfo statusInfo) {
     UserStatus userStatus = userStatusRepository.findById(statusInfo.statusId())
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update();
@@ -61,7 +61,7 @@ public class UserStatusService {
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
 
-  public UserStatusInfo updateUserStatusByUserId(UUID userId) {
+  public UserStatusDto updateUserStatusByUserId(UUID userId) {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update();

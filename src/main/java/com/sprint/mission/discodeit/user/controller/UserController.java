@@ -1,14 +1,14 @@
 package com.sprint.mission.discodeit.user.controller;
 
 
-import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateInfo;
+import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoundException;
-import com.sprint.mission.discodeit.user.dto.UserCreateInfo;
+import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserInfo;
-import com.sprint.mission.discodeit.user.dto.UserInfoWithStatus;
+import com.sprint.mission.discodeit.user.dto.UserDtoWithStatus;
 import com.sprint.mission.discodeit.user.dto.UserUpdateInfo;
 import com.sprint.mission.discodeit.user.service.UserService;
-import com.sprint.mission.discodeit.userstatus.dto.UserStatusInfo;
+import com.sprint.mission.discodeit.userstatus.dto.UserStatusDto;
 import com.sprint.mission.discodeit.userstatus.service.UserStatusService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
@@ -35,18 +35,18 @@ public class UserController {
   private final UserStatusService userStatusService;
 
   @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-  public ResponseEntity<UserInfoWithStatus> getUser(@PathVariable UUID userId) {
+  public ResponseEntity<UserDtoWithStatus> getUser(@PathVariable UUID userId) {
     return ResponseEntity.ok(userService.findUser(userId));
   }
 
   @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<UserInfoWithStatus>> getAllUsers() {
+  public ResponseEntity<List<UserDtoWithStatus>> getAllUsers() {
     return ResponseEntity.ok(userService.findAll());
   }
 
   @RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<UserInfo> createUser(
-      @RequestPart UserCreateInfo createInfo,
+      @RequestPart UserCreateRequest createInfo,
       @RequestPart MultipartFile image
   ) {
     return ResponseEntity.ok(userService.createUser(createInfo, resolveProfileFile(image)));
@@ -70,21 +70,21 @@ public class UserController {
   }
 
   @RequestMapping(value = "/{userId}/userStatus", method = RequestMethod.PATCH)
-  public ResponseEntity<UserStatusInfo> updateUserStatusByUserId(@PathVariable UUID userId) {
+  public ResponseEntity<UserStatusDto> updateUserStatusByUserId(@PathVariable UUID userId) {
     return ResponseEntity.ok(userStatusService.updateUserStatusByUserId(userId));
   }
 
   @RequestMapping(value = "/{userId}/userStatus", method = RequestMethod.GET)
-  public ResponseEntity<UserStatusInfo> getUserStatus(@PathVariable UUID userId) {
+  public ResponseEntity<UserStatusDto> getUserStatus(@PathVariable UUID userId) {
     return ResponseEntity.ok(userStatusService.findUserStatusByUserId(userId));
   }
 
-  private Optional<BinaryContentCreateInfo> resolveProfileFile(MultipartFile profileFile) {
+  private Optional<BinaryContentCreateRequest> resolveProfileFile(MultipartFile profileFile) {
     if (profileFile.isEmpty()) {
       return Optional.empty();
     } else {
       try {
-        BinaryContentCreateInfo contentInfo = new BinaryContentCreateInfo(
+        BinaryContentCreateRequest contentInfo = new BinaryContentCreateRequest(
             profileFile.getOriginalFilename(),
             profileFile.getContentType(),
             profileFile.getBytes()

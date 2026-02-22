@@ -3,8 +3,8 @@ package com.sprint.mission.discodeit.readstatus.service;
 import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusCreateInfo;
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusInfo;
+import com.sprint.mission.discodeit.readstatus.dto.ReadStatusCreateRequest;
+import com.sprint.mission.discodeit.readstatus.dto.ReadStatusDto;
 import com.sprint.mission.discodeit.readstatus.dto.ReadStatusUpdateInfo;
 import com.sprint.mission.discodeit.readstatus.entity.ReadStatus;
 import com.sprint.mission.discodeit.readstatus.exception.ReadStatusDuplicationException;
@@ -27,7 +27,7 @@ public class ReadStatusService {
   private final UserRepository userRepository;
   private final ChannelRepository channelRepository;
 
-  public ReadStatusInfo createReadStatus(ReadStatusCreateInfo statusInfo) {
+  public ReadStatusDto createReadStatus(ReadStatusCreateRequest statusInfo) {
     User user = userRepository.findById(statusInfo.userId())
         .orElseThrow(UserNotFoundException::new);
     Channel channel = channelRepository.findById(statusInfo.channelId())
@@ -43,27 +43,27 @@ public class ReadStatusService {
     return ReadStatusMapper.toReadStatusInfo(readStatus);
   }
 
-  public ReadStatusInfo find(UUID statusId) {
+  public ReadStatusDto find(UUID statusId) {
     ReadStatus readStatus = readStatusRepository.findById(statusId)
         .orElseThrow(ReadStatusNotFoundException::new);
     return ReadStatusMapper.toReadStatusInfo(readStatus);
   }
 
-  public List<ReadStatusInfo> findAllByUserId(UUID userId) {
+  public List<ReadStatusDto> findAllByUserId(UUID userId) {
     return readStatusRepository.findAllByUserId(userId)
         .stream()
         .map(ReadStatusMapper::toReadStatusInfo)
         .toList();
   }
 
-  public List<ReadStatusInfo> findAll() {
+  public List<ReadStatusDto> findAll() {
     return readStatusRepository.findAll()
         .stream()
         .map(ReadStatusMapper::toReadStatusInfo)
         .toList();
   }
 
-  public ReadStatusInfo updateReadStatus(UUID statusId) {
+  public ReadStatusDto updateReadStatus(UUID statusId) {
     ReadStatus readStatus = readStatusRepository.findById(statusId)
         .orElseThrow(ReadStatusNotFoundException::new);
     readStatus.updateLastReadAt();
@@ -71,7 +71,7 @@ public class ReadStatusService {
     return ReadStatusMapper.toReadStatusInfo(readStatus);
   }
 
-  public ReadStatusInfo updateReadStatus(ReadStatusUpdateInfo updateInfo) {
+  public ReadStatusDto updateReadStatus(ReadStatusUpdateInfo updateInfo) {
     ReadStatus readStatus = readStatusRepository.findByUserIdAndChannelId(updateInfo.userId(),
             updateInfo.channelId())
         .orElseThrow();

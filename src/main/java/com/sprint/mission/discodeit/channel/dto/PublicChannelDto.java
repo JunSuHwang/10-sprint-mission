@@ -3,9 +3,11 @@ package com.sprint.mission.discodeit.channel.dto;
 import com.sprint.mission.discodeit.common.ChannelType;
 import java.util.UUID;
 
-public record PrivateChannelInfo(
+public record PublicChannelDto(
     UUID channelId,
-    ChannelType channelType
+    String channelName,
+    ChannelType channelType,
+    String description
 ) {
 
 }

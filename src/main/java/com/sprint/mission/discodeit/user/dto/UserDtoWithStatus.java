@@ -2,7 +2,7 @@ package com.sprint.mission.discodeit.user.dto;
 
 import java.util.UUID;
 
-public record UserInfoWithStatus(
+public record UserDtoWithStatus(
     UUID userId,
     String userName,
     String email,

@@ -1,26 +1,26 @@
 package com.sprint.mission.discodeit.channel.service;
 
-import com.sprint.mission.discodeit.channel.dto.ChannelInfo;
-import com.sprint.mission.discodeit.channel.dto.PrivateChannelCreateInfo;
-import com.sprint.mission.discodeit.channel.dto.PrivateChannelInfo;
-import com.sprint.mission.discodeit.channel.dto.PublicChannelCreateInfo;
-import com.sprint.mission.discodeit.channel.dto.PublicChannelInfo;
+import com.sprint.mission.discodeit.channel.dto.ChannelDto;
+import com.sprint.mission.discodeit.channel.dto.PrivateChannelCreateRequest;
+import com.sprint.mission.discodeit.channel.dto.PrivateChannelDto;
+import com.sprint.mission.discodeit.channel.dto.PublicChannelCreateRequest;
+import com.sprint.mission.discodeit.channel.dto.PublicChannelDto;
 import java.util.List;
 import java.util.UUID;
 
 public interface ChannelService {
 
-  PublicChannelInfo createPublicChannel(PublicChannelCreateInfo channelInfo);
+  PublicChannelDto createPublicChannel(PublicChannelCreateRequest channelInfo);
 
-  PrivateChannelInfo createPrivateChannel(PrivateChannelCreateInfo channelInfo);
+  PrivateChannelDto createPrivateChannel(PrivateChannelCreateRequest channelInfo);
 
-  ChannelInfo findChannel(UUID channelId);
+  ChannelDto findChannel(UUID channelId);
 
-  List<ChannelInfo> findAll();
+  List<ChannelDto> findAll();
 
-  List<ChannelInfo> findAllByUserId(UUID userId);
+  List<ChannelDto> findAllByUserId(UUID userId);
 
-  ChannelInfo updateChannel(UUID channelId, PublicChannelCreateInfo channelInfo);
+  ChannelDto updateChannel(UUID channelId, PublicChannelCreateRequest channelInfo);
 
   void deleteChannel(UUID channelId);
 

@@ -1,6 +1,6 @@
 package com.sprint.mission.discodeit.binarycontent.mapper;
 
-import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentInfo;
+import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentDto;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 
 public class BinaryContentMapper {
@@ -8,8 +8,8 @@ public class BinaryContentMapper {
   private BinaryContentMapper() {
   }
 
-  public static BinaryContentInfo toBinaryContentInfo(BinaryContent binaryContent) {
-    return new BinaryContentInfo(
+  public static BinaryContentDto toBinaryContentInfo(BinaryContent binaryContent) {
+    return new BinaryContentDto(
         binaryContent.getId(),
         binaryContent.getCreatedAt(),
         binaryContent.getFileName(),
