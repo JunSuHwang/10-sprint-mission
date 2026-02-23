@@ -2,7 +2,7 @@ package com.sprint.mission.discodeit.readstatus.controller;
 
 import com.sprint.mission.discodeit.readstatus.dto.ReadStatusCreateRequest;
 import com.sprint.mission.discodeit.readstatus.dto.ReadStatusDto;
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusUpdateInfo;
+import com.sprint.mission.discodeit.readstatus.dto.ReadStatusUpdateRequest;
 import com.sprint.mission.discodeit.readstatus.service.ReadStatusService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -36,8 +37,10 @@ public class ReadStatusController {
   }
 
   @RequestMapping(method = RequestMethod.PATCH)
-  public ResponseEntity<Void> updateReadStatus(ReadStatusUpdateInfo updateInfo) {
-    readStatusService.updateReadStatus(updateInfo);
+  public ResponseEntity<Void> updateReadStatus(
+      @RequestParam UUID readStatusId,
+      @RequestBody ReadStatusUpdateRequest request) {
+    readStatusService.updateReadStatus(readStatusId, request);
     return ResponseEntity.noContent().build();
   }
 

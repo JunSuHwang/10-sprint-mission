@@ -5,7 +5,7 @@ import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
 import com.sprint.mission.discodeit.readstatus.dto.ReadStatusCreateRequest;
 import com.sprint.mission.discodeit.readstatus.dto.ReadStatusDto;
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusUpdateInfo;
+import com.sprint.mission.discodeit.readstatus.dto.ReadStatusUpdateRequest;
 import com.sprint.mission.discodeit.readstatus.entity.ReadStatus;
 import com.sprint.mission.discodeit.readstatus.exception.ReadStatusDuplicationException;
 import com.sprint.mission.discodeit.readstatus.exception.ReadStatusNotFoundException;
@@ -71,11 +71,10 @@ public class ReadStatusService {
     return ReadStatusMapper.toReadStatusInfo(readStatus);
   }
 
-  public ReadStatusDto updateReadStatus(ReadStatusUpdateInfo updateInfo) {
-    ReadStatus readStatus = readStatusRepository.findByUserIdAndChannelId(updateInfo.userId(),
-            updateInfo.channelId())
-        .orElseThrow();
-    readStatus.updateLastReadAt();
+  public ReadStatusDto updateReadStatus(UUID readStatusId, ReadStatusUpdateRequest request) {
+    ReadStatus readStatus = readStatusRepository.findById(readStatusId)
+        .orElseThrow(ReadStatusNotFoundException::new);
+    readStatus.update(request.newLastReadAt());
     readStatusRepository.save(readStatus);
     return ReadStatusMapper.toReadStatusInfo(readStatus);
   }

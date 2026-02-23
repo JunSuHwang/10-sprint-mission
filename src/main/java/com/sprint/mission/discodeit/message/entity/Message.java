@@ -24,7 +24,7 @@ public class Message extends CommonEntity {
 
   public void update(String newContent) {
     this.content = newContent;
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public List<UUID> getAttachmentIds() {

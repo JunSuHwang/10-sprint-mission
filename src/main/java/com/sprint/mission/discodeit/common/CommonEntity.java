@@ -11,12 +11,12 @@ public abstract class CommonEntity implements Serializable {
   private static final long serialVersionUID = 1L;
   protected final UUID id;
   protected Instant createdAt;
-  protected Instant updateAt;
+  protected Instant updatedAt;
 
   public CommonEntity() {
     this.id = UUID.randomUUID();
     this.createdAt = Instant.now();
-    this.updateAt = this.createdAt;
+    this.updatedAt = this.createdAt;
   }
 
   @Override

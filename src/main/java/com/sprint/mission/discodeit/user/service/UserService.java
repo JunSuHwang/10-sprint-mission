@@ -5,7 +5,7 @@ import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.dto.UserInfo;
 import com.sprint.mission.discodeit.user.dto.UserDtoWithStatus;
-import com.sprint.mission.discodeit.user.dto.UserUpdateInfo;
+import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,7 +22,7 @@ public interface UserService {
 
   List<UserDtoWithStatus> findAllByChannelId(UUID channelId);
 
-  UserInfo updateUser(UUID userId, UserUpdateInfo updateInfo,
+  UserInfo updateUser(UUID userId, UserUpdateRequest updateInfo,
       Optional<BinaryContentCreateRequest> image);
 
   void deleteUser(UUID userId);

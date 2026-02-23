@@ -36,37 +36,37 @@ public class User extends CommonEntity {
 
   public void updateUserName(String username) {
     this.username = username;
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void updatePassword(String password) {
     this.password = password;
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void updateEmail(String email) {
     this.email = email;
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void addChannelId(UUID channelId) {
     channelIds.add(channelId);
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void removeChannelId(UUID channelId) {
     channelIds.remove(channelId);
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void addMessageId(UUID messageId) {
     messageIds.add(messageId);
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void removeMessageId(UUID messageId) {
     messageIds.remove(messageId);
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public boolean isProfileImageUploaded() {

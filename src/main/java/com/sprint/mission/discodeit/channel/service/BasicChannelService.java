@@ -5,6 +5,7 @@ import com.sprint.mission.discodeit.channel.dto.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.channel.dto.PrivateChannelDto;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelDto;
+import com.sprint.mission.discodeit.channel.dto.PublicChannelUpdateRequest;
 import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.exception.ChannelDuplicationException;
 import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
@@ -83,17 +84,17 @@ public class BasicChannelService implements ChannelService {
   }
 
   @Override
-  public ChannelDto updateChannel(UUID channelId, PublicChannelCreateRequest channelInfo) {
+  public ChannelDto updateChannel(UUID channelId, PublicChannelUpdateRequest channelInfo) {
     Channel findChannel = channelRepository.findById(channelId)
         .orElseThrow(ChannelNotFoundException::new);
     if (findChannel.getType() == ChannelType.PRIVATE) {
       throw new ChannelUpdateNotAllowedException();
     }
-    validateChannelExist(channelInfo.name());
+    validateChannelExist(channelInfo.newName());
 
-    Optional.ofNullable(channelInfo.name())
+    Optional.ofNullable(channelInfo.newName())
         .ifPresent(findChannel::updateChannelName);
-    Optional.ofNullable(channelInfo.description())
+    Optional.ofNullable(channelInfo.newDescription())
         .ifPresent(findChannel::updateDescription);
 
     channelRepository.save(findChannel);
@@ -164,9 +165,9 @@ public class BasicChannelService implements ChannelService {
     } else {
       return messages
           .stream()
-          .max(Comparator.comparing(Message::getUpdateAt))
+          .max(Comparator.comparing(Message::getUpdatedAt))
           .orElseThrow(() -> new IllegalStateException("메세지가 존재하지 않습니다."))
-          .getUpdateAt();
+          .getUpdatedAt();
     }
   }
 }

@@ -6,7 +6,7 @@ import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoun
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserInfo;
 import com.sprint.mission.discodeit.user.dto.UserDtoWithStatus;
-import com.sprint.mission.discodeit.user.dto.UserUpdateInfo;
+import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.service.UserService;
 import com.sprint.mission.discodeit.userstatus.dto.UserStatusDto;
 import com.sprint.mission.discodeit.userstatus.service.UserStatusService;
@@ -61,11 +61,11 @@ public class UserController {
   @RequestMapping(value = "/{userId}", method = RequestMethod.PATCH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Void> updateUser(
       @PathVariable UUID userId,
-      @RequestPart UserUpdateInfo updateInfo,
+      @RequestPart UserUpdateRequest request,
       @RequestPart MultipartFile image
 
   ) {
-    userService.updateUser(userId, updateInfo, resolveProfileFile(image));
+    userService.updateUser(userId, request, resolveProfileFile(image));
     return ResponseEntity.noContent().build();
   }
 

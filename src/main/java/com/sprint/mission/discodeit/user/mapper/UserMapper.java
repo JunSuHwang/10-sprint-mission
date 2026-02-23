@@ -37,7 +37,7 @@ public class UserMapper {
     return new UserDto(
         user.getId(),
         user.getCreatedAt(),
-        user.getUpdateAt(),
+        user.getUpdatedAt(),
         user.getUsername(),
         user.getEmail(),
         user.getProfileId(),

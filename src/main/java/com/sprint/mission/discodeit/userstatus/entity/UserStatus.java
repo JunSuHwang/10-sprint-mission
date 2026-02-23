@@ -22,6 +22,10 @@ public class UserStatus extends CommonEntity {
     lastActiveAt = Instant.now();
   }
 
+  public void update(Instant newLastActiveAt) {
+    lastActiveAt = newLastActiveAt;
+  }
+
   public boolean isOnline() {
     return lastActiveAt.isAfter(Instant.now().minusSeconds(loginLimitSeconds));
   }

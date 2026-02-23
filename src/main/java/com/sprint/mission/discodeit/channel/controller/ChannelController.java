@@ -6,6 +6,7 @@ import com.sprint.mission.discodeit.channel.dto.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.channel.dto.PrivateChannelDto;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelDto;
+import com.sprint.mission.discodeit.channel.dto.PublicChannelUpdateRequest;
 import com.sprint.mission.discodeit.channel.service.ChannelService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -54,7 +55,7 @@ public class ChannelController {
   @RequestMapping(value = "/{channelId}", method = RequestMethod.PATCH, consumes = "application/json")
   public ResponseEntity<Void> updateChannel(
       @PathVariable UUID channelId,
-      @RequestBody PublicChannelCreateRequest channelInfo
+      @RequestBody PublicChannelUpdateRequest channelInfo
   ) {
     channelService.updateChannel(channelId, channelInfo);
     return ResponseEntity.noContent().build();

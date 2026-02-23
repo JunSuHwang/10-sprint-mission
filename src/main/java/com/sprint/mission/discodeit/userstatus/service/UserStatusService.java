@@ -4,7 +4,7 @@ import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
 import com.sprint.mission.discodeit.userstatus.dto.UserStatusCreateRequest;
 import com.sprint.mission.discodeit.userstatus.dto.UserStatusDto;
-import com.sprint.mission.discodeit.userstatus.dto.UserStatusUpdateInfo;
+import com.sprint.mission.discodeit.userstatus.dto.UserStatusUpdateRequest;
 import com.sprint.mission.discodeit.userstatus.entity.UserStatus;
 import com.sprint.mission.discodeit.userstatus.exception.UserStatusDuplicationException;
 import com.sprint.mission.discodeit.userstatus.exception.UserStatusNotFoundException;
@@ -53,8 +53,8 @@ public class UserStatusService {
         .toList();
   }
 
-  public UserStatusDto updateUserStatus(UserStatusUpdateInfo statusInfo) {
-    UserStatus userStatus = userStatusRepository.findById(statusInfo.statusId())
+  public UserStatusDto update(UUID userStatusId) {
+    UserStatus userStatus = userStatusRepository.findById(userStatusId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update();
     userStatusRepository.save(userStatus);
@@ -65,6 +65,14 @@ public class UserStatusService {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update();
+    userStatusRepository.save(userStatus);
+    return UserStatusMapper.toUserStatusInfo(userStatus);
+  }
+
+  public UserStatusDto update(UUID userStatusId, UserStatusUpdateRequest request) {
+    UserStatus userStatus = userStatusRepository.findById(userStatusId)
+        .orElseThrow(UserStatusNotFoundException::new);
+    userStatus.update(request.newLastActiveAt());
     userStatusRepository.save(userStatus);
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }

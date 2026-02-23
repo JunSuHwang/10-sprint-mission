@@ -8,7 +8,7 @@ import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.dto.UserInfo;
 import com.sprint.mission.discodeit.user.dto.UserDtoWithStatus;
-import com.sprint.mission.discodeit.user.dto.UserUpdateInfo;
+import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.EmailDuplicationException;
 import com.sprint.mission.discodeit.user.exception.UserDuplicationException;
@@ -108,17 +108,17 @@ public class BasicUserService implements UserService {
   }
 
   @Override
-  public UserInfo updateUser(UUID userId, UserUpdateInfo updateInfo,
+  public UserInfo updateUser(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> image) {
-    validateUserExist(updateInfo.newUsername());
-    validateEmailExist(updateInfo.newEmail());
+    validateUserExist(request.newUsername());
+    validateEmailExist(request.newEmail());
     User findUser = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
-    Optional.ofNullable(updateInfo.newUsername())
+    Optional.ofNullable(request.newUsername())
         .ifPresent(findUser::updateUserName);
-    Optional.ofNullable(updateInfo.newPassword())
+    Optional.ofNullable(request.newPassword())
         .ifPresent(findUser::updatePassword);
-    Optional.ofNullable(updateInfo.newEmail())
+    Optional.ofNullable(request.newEmail())
         .ifPresent(findUser::updateEmail);
 
     // profileId가 존재하면 업데이트

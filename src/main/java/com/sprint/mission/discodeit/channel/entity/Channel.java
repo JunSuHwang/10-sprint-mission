@@ -34,36 +34,36 @@ public class Channel extends CommonEntity {
 
   public void updateChannelName(String channelName) {
     this.name = channelName;
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void updateChannelType(ChannelType channelType) {
     this.type = channelType;
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void updateDescription(String description) {
     this.description = description;
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void addMessageId(UUID messageId) {
     messageIds.add(messageId);
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void removeMessageId(UUID messageId) {
     messageIds.remove(messageId);
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void addUserId(UUID userId) {
     userIds.add(userId);
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 
   public void removeUserId(UUID userId) {
     userIds.remove(userId);
-    this.updateAt = Instant.now();
+    this.updatedAt = Instant.now();
   }
 }

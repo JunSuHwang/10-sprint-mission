@@ -19,6 +19,18 @@ public class ReadStatus extends CommonEntity {
     this.lastReadAt = Instant.now();
   }
 
+  public void update(Instant newLastReadAt) {
+    boolean anyValueUpdated = false;
+    if (newLastReadAt != null && !newLastReadAt.equals(this.lastReadAt)) {
+      this.lastReadAt = newLastReadAt;
+      anyValueUpdated = true;
+    }
+
+    if (anyValueUpdated) {
+      this.updatedAt = Instant.now();
+    }
+  }
+
   public void updateLastReadAt() {
     lastReadAt = Instant.now();
   }
