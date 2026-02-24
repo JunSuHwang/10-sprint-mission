@@ -1,7 +1,7 @@
 package com.sprint.mission.discodeit.user.controller;
 
 import com.sprint.mission.discodeit.user.dto.LoginRequest;
-import com.sprint.mission.discodeit.user.dto.UserInfo;
+import com.sprint.mission.discodeit.user.dto.UserResultDto;
 import com.sprint.mission.discodeit.user.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,7 +31,7 @@ public class AuthController {
       @ApiResponse(responseCode = "200", description = "로그인 성공",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              schema = @Schema(implementation = UserInfo.class)
+              schema = @Schema(implementation = UserResultDto.class)
           )
       ),
       @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
@@ -48,7 +48,7 @@ public class AuthController {
       )
   })
   @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = "application/json")
-  public ResponseEntity<UserInfo> login(@RequestBody LoginRequest loginInfo) {
+  public ResponseEntity<UserResultDto> login(@RequestBody LoginRequest loginInfo) {
     return ResponseEntity.ok(authService.login(loginInfo));
   }
 }

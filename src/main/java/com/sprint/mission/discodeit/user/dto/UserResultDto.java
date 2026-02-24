@@ -1,13 +1,15 @@
 package com.sprint.mission.discodeit.user.dto;
 
+import java.time.Instant;
 import java.util.UUID;
 
-public record UserInfo(
+public record UserResultDto(
     UUID id,
+    Instant createdAt,
+    Instant updatedAt,
     String username,
     String email,
-    UUID profileId,
-    UUID statusId
+    UUID profileId
 ) {
 
 }

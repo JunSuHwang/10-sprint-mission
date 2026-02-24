@@ -2,10 +2,9 @@ package com.sprint.mission.discodeit.channel.service;
 
 import com.sprint.mission.discodeit.channel.dto.ChannelDto;
 import com.sprint.mission.discodeit.channel.dto.PrivateChannelCreateRequest;
-import com.sprint.mission.discodeit.channel.dto.PrivateChannelDto;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelCreateRequest;
-import com.sprint.mission.discodeit.channel.dto.PublicChannelDto;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelUpdateRequest;
+import com.sprint.mission.discodeit.channel.dto.ChannelResultDto;
 import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.exception.ChannelDuplicationException;
 import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
@@ -37,19 +36,19 @@ public class BasicChannelService implements ChannelService {
   private final MessageRepository messageRepository;
   private final ReadStatusRepository readStatusRepository;
 
-  public PublicChannelDto createPublicChannel(PublicChannelCreateRequest channelInfo) {
+  public ChannelResultDto createPublicChannel(PublicChannelCreateRequest channelInfo) {
     validateChannelExist(channelInfo.name());
     Channel channel = new Channel(channelInfo.name(), ChannelType.PUBLIC,
         channelInfo.description());
     channelRepository.save(channel);
-    return ChannelMapper.toPublicChannelInfo(channel);
+    return ChannelMapper.toChannelResultDto(channel);
   }
 
-  public PrivateChannelDto createPrivateChannel(PrivateChannelCreateRequest channelInfo) {
+  public ChannelResultDto createPrivateChannel(PrivateChannelCreateRequest channelInfo) {
     Channel channel = new Channel(null, ChannelType.PRIVATE, null);
     channelRepository.save(channel);
     channelInfo.participantIds().forEach(userId -> joinChannel(channel.getId(), userId));
-    return ChannelMapper.toPrivateChannelInfo(channel);
+    return ChannelMapper.toChannelResultDto(channel);
   }
 
   @Override
@@ -57,7 +56,7 @@ public class BasicChannelService implements ChannelService {
     Channel channel = channelRepository.findById(channelId)
         .orElseThrow(ChannelNotFoundException::new);
 
-    return ChannelMapper.toChannelInfo(channel, getLastMessageTime(channelId));
+    return ChannelMapper.toChannelDto(channel, getLastMessageTime(channelId));
   }
 
   @Override
@@ -65,7 +64,7 @@ public class BasicChannelService implements ChannelService {
     return channelRepository.findAll()
         .stream()
         .map(channel ->
-            ChannelMapper.toChannelInfo(channel, getLastMessageTime(channel.getId()))
+            ChannelMapper.toChannelDto(channel, getLastMessageTime(channel.getId()))
         )
         .toList();
   }
@@ -78,13 +77,14 @@ public class BasicChannelService implements ChannelService {
             || (channel.getType() == ChannelType.PRIVATE && channel.getUserIds()
             .contains(userId)))
         .map(channel ->
-            ChannelMapper.toChannelInfo(channel, getLastMessageTime(channel.getId()))
+            ChannelMapper.toChannelDto(channel, getLastMessageTime(channel.getId()))
         )
         .toList();
   }
 
   @Override
-  public ChannelDto updateChannel(UUID channelId, PublicChannelUpdateRequest channelInfo) {
+  public ChannelResultDto updateChannel(UUID channelId,
+      PublicChannelUpdateRequest channelInfo) {
     Channel findChannel = channelRepository.findById(channelId)
         .orElseThrow(ChannelNotFoundException::new);
     if (findChannel.getType() == ChannelType.PRIVATE) {
@@ -99,7 +99,7 @@ public class BasicChannelService implements ChannelService {
 
     channelRepository.save(findChannel);
 
-    return ChannelMapper.toChannelInfo(findChannel, getLastMessageTime(findChannel.getId()));
+    return ChannelMapper.toChannelResultDto(findChannel);
   }
 
   @Override

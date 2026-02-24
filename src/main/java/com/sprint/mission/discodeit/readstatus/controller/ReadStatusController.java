@@ -68,7 +68,7 @@ public class ReadStatusController {
       @ApiResponse(responseCode = "200", description = "Message 읽음 상태가 성공적으로 수정됨",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              array = @ArraySchema(schema = @Schema(implementation = Void.class))
+              schema = @Schema(implementation = ReadStatusDto.class)
           )
       ),
       @ApiResponse(responseCode = "404", description = "Message 읽음 상태를 찾을 수 없음",
@@ -79,11 +79,10 @@ public class ReadStatusController {
       )
   })
   @RequestMapping(value = "/{readStatusId}", method = RequestMethod.PATCH, consumes = "application/json")
-  public ResponseEntity<Void> update_1(
+  public ResponseEntity<ReadStatusDto> update_1(
       @Parameter(description = "수정할 읽음 상태 ID") @PathVariable UUID readStatusId,
       @RequestBody ReadStatusUpdateRequest request) {
-    readStatusService.updateReadStatus(readStatusId, request);
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(readStatusService.updateReadStatus(readStatusId, request));
   }
 
   @Operation(summary = "User의 Message 읽음 상태 목록 조회")

@@ -6,8 +6,7 @@ import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentReposi
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
-import com.sprint.mission.discodeit.user.dto.UserDtoWithStatus;
-import com.sprint.mission.discodeit.user.dto.UserInfo;
+import com.sprint.mission.discodeit.user.dto.UserResultDto;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.EmailDuplicationException;
@@ -34,7 +33,7 @@ public class BasicUserService implements UserService {
   private final UserStatusRepository userStatusRepository;
 
   @Override
-  public UserInfo createUser(UserCreateRequest userInfo,
+  public UserResultDto createUser(UserCreateRequest userInfo,
       Optional<BinaryContentCreateRequest> image) {
     // 유저 이름 & 이메일 검증
     validateUserExist(userInfo.username());
@@ -59,26 +58,24 @@ public class BasicUserService implements UserService {
     // Repo 저장
     userStatusRepository.save(status);
     userRepository.save(user);
-    return UserMapper.toUserInfo(user, status);
+    return UserMapper.toUserResultDto(user);
   }
 
   @Override
-  public UserDtoWithStatus findUser(UUID userId) {
+  public UserResultDto findUser(UUID userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
-    UserStatus status = userStatusRepository.findByUserId(user.getId())
-        .orElseThrow(UserStatusNotFoundException::new);
-    return UserMapper.toUserInfoWithStatus(user, status);
+    return UserMapper.toUserResultDto(user);
   }
 
   @Override
-  public List<UserDtoWithStatus> findAll() {
+  public List<UserDto> findAll() {
     return userRepository.findAll()
         .stream()
         .map(user -> {
           UserStatus status = userStatusRepository.findByUserId(user.getId())
               .orElseThrow(UserStatusNotFoundException::new);
-          return UserMapper.toUserInfoWithStatus(user, status);
+          return UserMapper.toUserDto(user, status);
         })
         .toList();
   }
@@ -95,20 +92,16 @@ public class BasicUserService implements UserService {
   }
 
   @Override
-  public List<UserDtoWithStatus> findAllByChannelId(UUID channelId) {
+  public List<UserResultDto> findAllByChannelId(UUID channelId) {
     return userRepository.findAll()
         .stream()
         .filter(user -> user.getChannelIds().contains(channelId))
-        .map(user -> {
-          UserStatus status = userStatusRepository.findByUserId(user.getId())
-              .orElseThrow(UserStatusNotFoundException::new);
-          return UserMapper.toUserInfoWithStatus(user, status);
-        })
+        .map(UserMapper::toUserResultDto)
         .toList();
   }
 
   @Override
-  public UserInfo updateUser(UUID userId, UserUpdateRequest request,
+  public UserResultDto updateUser(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> image) {
     validateUserExist(request.newUsername());
     validateEmailExist(request.newEmail());
@@ -145,7 +138,7 @@ public class BasicUserService implements UserService {
     userStatusRepository.save(status);
 
     userRepository.save(findUser);
-    return UserMapper.toUserInfo(findUser, status);
+    return UserMapper.toUserResultDto(findUser);
   }
 
   @Override

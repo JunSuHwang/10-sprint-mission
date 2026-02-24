@@ -101,7 +101,7 @@ public class MessageController {
           responseCode = "200", description = "Message가 성공적으로 수정됨",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              schema = @Schema(implementation = Void.class)
+              schema = @Schema(implementation = MessageDto.class)
           )
       ),
       @ApiResponse(
@@ -113,12 +113,11 @@ public class MessageController {
       )
   })
   @RequestMapping(value = "/{messageId}", method = RequestMethod.PATCH)
-  public ResponseEntity<Void> update_2(
+  public ResponseEntity<MessageDto> update_2(
       @Parameter(description = "수정할 Message ID") @PathVariable UUID messageId,
       @RequestBody MessageUpdateRequest messageInfo
   ) {
-    messageService.updateMessage(messageId, messageInfo);
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(messageService.updateMessage(messageId, messageInfo));
   }
 
   @Operation(summary = "Message 삭제")

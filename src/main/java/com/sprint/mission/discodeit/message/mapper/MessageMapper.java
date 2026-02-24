@@ -15,6 +15,8 @@ public final class MessageMapper {
   public static MessageDto toMessageInfo(Message message) {
     return new MessageDto(
         message.getId(),
+        message.getCreatedAt(),
+        message.getUpdatedAt(),
         message.getContent(),
         message.getAuthorId(),
         message.getChannelId(),

@@ -12,6 +12,8 @@ public class ReadStatusMapper {
   public static ReadStatusDto toReadStatusInfo(ReadStatus readStatus) {
     return new ReadStatusDto(
         readStatus.getId(),
+        readStatus.getCreatedAt(),
+        readStatus.getUpdatedAt(),
         readStatus.getUserId(),
         readStatus.getChannelId(),
         readStatus.getLastReadAt()

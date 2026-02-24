@@ -69,8 +69,9 @@ public class UserStatusService {
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
 
-  public UserStatusDto update(UUID userStatusId, UserStatusUpdateRequest request) {
-    UserStatus userStatus = userStatusRepository.findById(userStatusId)
+  public UserStatusDto update(UUID userId, UserStatusUpdateRequest request) {
+
+    UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update(request.newLastActiveAt());
     userStatusRepository.save(userStatus);

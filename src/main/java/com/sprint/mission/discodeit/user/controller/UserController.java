@@ -4,11 +4,12 @@ package com.sprint.mission.discodeit.user.controller;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoundException;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
-import com.sprint.mission.discodeit.user.dto.UserDtoWithStatus;
-import com.sprint.mission.discodeit.user.dto.UserInfo;
+import com.sprint.mission.discodeit.user.dto.UserDto;
+import com.sprint.mission.discodeit.user.dto.UserResultDto;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.service.UserService;
 import com.sprint.mission.discodeit.userstatus.dto.UserStatusDto;
+import com.sprint.mission.discodeit.userstatus.dto.UserStatusUpdateRequest;
 import com.sprint.mission.discodeit.userstatus.service.UserStatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -45,7 +46,7 @@ public class UserController {
   private final UserStatusService userStatusService;
 
   @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-  public ResponseEntity<UserDtoWithStatus> getUser(@PathVariable UUID userId) {
+  public ResponseEntity<UserResultDto> getUser(@PathVariable UUID userId) {
     return ResponseEntity.ok(userService.findUser(userId));
   }
 
@@ -54,17 +55,17 @@ public class UserController {
       @ApiResponse(responseCode = "200", description = "User 목록 조회 성공",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              array = @ArraySchema(schema = @Schema(implementation = UserDtoWithStatus.class))
+              array = @ArraySchema(schema = @Schema(implementation = UserDto.class))
           )
       )
   })
   @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<UserDtoWithStatus>> findAll() {
+  public ResponseEntity<List<UserDto>> findAll() {
     return ResponseEntity.ok(userService.findAll());
   }
 
   @Operation(summary = "User 등록",
-      requestBody = @RequestBody(
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           content = @Content(
               encoding = @Encoding(name = "userCreateRequest", contentType = MediaType.APPLICATION_JSON_VALUE)
           )
@@ -74,7 +75,7 @@ public class UserController {
       @ApiResponse(responseCode = "201", description = "User가 성공적으로 생성됨",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              schema = @Schema(implementation = UserInfo.class)
+              schema = @Schema(implementation = UserResultDto.class)
           )
       ),
       @ApiResponse(responseCode = "400", description = "같은 email 또는 username를 사용하는 User가 이미 존재함",
@@ -85,7 +86,7 @@ public class UserController {
       )
   })
   @RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<UserInfo> create(
+  public ResponseEntity<UserResultDto> create(
       @Parameter() @RequestPart UserCreateRequest userCreateRequest,
       @Parameter(description = "User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
   ) {
@@ -109,7 +110,7 @@ public class UserController {
   }
 
   @Operation(summary = "User 정보 수정",
-      requestBody = @RequestBody(
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           content = @Content(
               encoding = @Encoding(name = "userUpdateRequest", contentType = MediaType.APPLICATION_JSON_VALUE)
           )
@@ -131,19 +132,19 @@ public class UserController {
       @ApiResponse(responseCode = "200", description = "User 정보가 성공적으로 수정됨",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              schema = @Schema(implementation = Void.class)
+              schema = @Schema(implementation = UserResultDto.class)
           )
       )
   })
   @RequestMapping(value = "/{userId}", method = RequestMethod.PATCH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Void> update(
+  public ResponseEntity<UserResultDto> update(
       @Parameter(description = "수정할 User ID") @PathVariable UUID userId,
       @RequestPart UserUpdateRequest userUpdateRequest,
       @Parameter(description = "수정할 User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
 
   ) {
-    userService.updateUser(userId, userUpdateRequest, resolveProfileFile(profile));
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(
+        userService.updateUser(userId, userUpdateRequest, resolveProfileFile(profile)));
   }
 
   @Operation(summary = "User 온라인 상태 업데이트")
@@ -163,9 +164,10 @@ public class UserController {
   })
   @RequestMapping(value = "/{userId}/userStatus", method = RequestMethod.PATCH)
   public ResponseEntity<UserStatusDto> updateUserStatusByUserId(
-      @Parameter(description = "상태를 변경할 User ID") @PathVariable UUID userId
+      @Parameter(description = "상태를 변경할 User ID") @PathVariable UUID userId,
+      @RequestBody UserStatusUpdateRequest request
   ) {
-    return ResponseEntity.ok(userStatusService.updateUserStatusByUserId(userId));
+    return ResponseEntity.ok(userStatusService.update(userId, request));
   }
 
   @RequestMapping(value = "/{userId}/userStatus", method = RequestMethod.GET)
