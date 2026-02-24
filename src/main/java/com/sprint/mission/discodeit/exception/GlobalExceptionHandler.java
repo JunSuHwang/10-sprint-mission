@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(EmailDuplicationException.class)
   public ResponseEntity<ErrorResponse> handle(EmailDuplicationException e) {
     ErrorResponse response = new ErrorResponse("EMAIL_DUPLICATION_ERROR", e.getMessage());
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(UserNotFoundException.class)
@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(UserDuplicationException.class)
   public ResponseEntity<ErrorResponse> handle(UserDuplicationException e) {
     ErrorResponse response = new ErrorResponse("USER_DUPLICATION_ERROR", e.getMessage());
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(UserStatusNotFoundException.class)
@@ -51,13 +51,13 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(UserStatusDuplicationException.class)
   public ResponseEntity<ErrorResponse> handle(UserStatusDuplicationException e) {
     ErrorResponse response = new ErrorResponse("USER_STATUS_DUPLICATION_ERROR", e.getMessage());
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(AuthenticationFailedException.class)
   public ResponseEntity<ErrorResponse> handle(AuthenticationFailedException e) {
     ErrorResponse response = new ErrorResponse("AUTHENTICATION_FAILED", e.getMessage());
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(ChannelNotFoundException.class)
@@ -69,19 +69,19 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(ChannelDuplicationException.class)
   public ResponseEntity<ErrorResponse> handle(ChannelDuplicationException e) {
     ErrorResponse response = new ErrorResponse("CHANNEL_DUPLICATION_ERROR", e.getMessage());
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(ChannelUpdateNotAllowedException.class)
   public ResponseEntity<ErrorResponse> handle(ChannelUpdateNotAllowedException e) {
     ErrorResponse response = new ErrorResponse("CHANNEL_UPDATE_NOT_ALLOWED", e.getMessage());
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(AlreadyJoinedException.class)
   public ResponseEntity<ErrorResponse> handle(AlreadyJoinedException e) {
     ErrorResponse response = new ErrorResponse("ALREADY_JOINED", e.getMessage());
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(MessageNotFoundException.class)
@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(ReadStatusDuplicationException.class)
   public ResponseEntity<ErrorResponse> handle(ReadStatusDuplicationException e) {
     ErrorResponse response = new ErrorResponse("READ_STATUS_DUPLICATION_ERROR", e.getMessage());
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(BinaryContentNotFoundException.class)

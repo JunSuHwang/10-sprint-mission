@@ -90,8 +90,9 @@ public class UserController {
       @Parameter() @RequestPart UserCreateRequest userCreateRequest,
       @Parameter(description = "User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
   ) {
-    return ResponseEntity.ok(
-        userService.createUser(userCreateRequest, resolveProfileFile(profile)));
+    return ResponseEntity.status(201).body(
+        userService.createUser(userCreateRequest, resolveProfileFile(profile))
+    );
   }
 
   @Operation(summary = "User 삭제")

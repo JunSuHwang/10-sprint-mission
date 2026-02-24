@@ -49,7 +49,7 @@ public class ChannelController {
   public ResponseEntity<ChannelResultDto> create_3(
       @RequestBody PublicChannelCreateRequest channelInfo
   ) {
-    return ResponseEntity.ok(channelService.createPublicChannel(channelInfo));
+    return ResponseEntity.status(201).body(channelService.createPublicChannel(channelInfo));
   }
 
   @Operation(summary = "Private Channel 생성")
@@ -66,7 +66,7 @@ public class ChannelController {
   public ResponseEntity<ChannelResultDto> create_4(
       @RequestBody PrivateChannelCreateRequest channelInfo
   ) {
-    return ResponseEntity.ok(channelService.createPrivateChannel(channelInfo));
+    return ResponseEntity.status(201).body(channelService.createPrivateChannel(channelInfo));
   }
 
   @RequestMapping(value = "/{channelId}", method = RequestMethod.GET)

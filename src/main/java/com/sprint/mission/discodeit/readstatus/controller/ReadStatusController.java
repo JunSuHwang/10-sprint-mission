@@ -54,7 +54,7 @@ public class ReadStatusController {
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
   public ResponseEntity<ReadStatusDto> create_1(
       @RequestBody ReadStatusCreateRequest statusInfo) {
-    return ResponseEntity.ok(readStatusService.createReadStatus(statusInfo));
+    return ResponseEntity.status(201).body(readStatusService.createReadStatus(statusInfo));
   }
 
   @RequestMapping(value = "/{statusId}/updated-at", method = RequestMethod.PATCH)

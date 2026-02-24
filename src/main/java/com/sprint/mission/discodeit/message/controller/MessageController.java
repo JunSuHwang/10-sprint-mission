@@ -81,8 +81,9 @@ public class MessageController {
             })
             .toList())
         .orElse(new ArrayList<>());
-    return ResponseEntity.ok(
-        messageService.createMessage(messageCreateRequest, attachmentRequests));
+    return ResponseEntity.status(201).body(
+        messageService.createMessage(messageCreateRequest, attachmentRequests)
+    );
   }
 
   @RequestMapping(value = "/{messageId}", method = RequestMethod.GET)
