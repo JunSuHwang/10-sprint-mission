@@ -12,7 +12,7 @@ public final class MessageMapper {
   private MessageMapper() {
   }
 
-  public static MessageDto toMessageInfo(Message message) {
+  public static MessageDto toMessageDto(Message message) {
     return new MessageDto(
         message.getId(),
         message.getCreatedAt(),
@@ -24,7 +24,7 @@ public final class MessageMapper {
     );
   }
 
-  public static MessageCreateRequest toMessageCreateInfo(
+  public static MessageCreateRequest toMessageCreateRequest(
       String content,
       UUID authorId,
       UUID channelId,
@@ -37,7 +37,7 @@ public final class MessageMapper {
     );
   }
 
-  public static MessageUpdateRequest toMessageUpdateInfo(
+  public static MessageUpdateRequest toMessageUpdateRequest(
       String content
   ) {
     return new MessageUpdateRequest(

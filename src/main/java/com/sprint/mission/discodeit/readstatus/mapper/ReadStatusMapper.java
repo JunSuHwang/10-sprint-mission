@@ -9,7 +9,7 @@ public class ReadStatusMapper {
   private ReadStatusMapper() {
   }
 
-  public static ReadStatusDto toReadStatusInfo(ReadStatus readStatus) {
+  public static ReadStatusDto toReadStatusDto(ReadStatus readStatus) {
     return new ReadStatusDto(
         readStatus.getId(),
         readStatus.getCreatedAt(),
@@ -20,7 +20,7 @@ public class ReadStatusMapper {
     );
   }
 
-  public static ReadStatusCreateRequest toReadStatusCreateInfo(ReadStatus readStatus) {
+  public static ReadStatusCreateRequest toReadStatusCreateRequest(ReadStatus readStatus) {
     return new ReadStatusCreateRequest(
         readStatus.getUserId(),
         readStatus.getChannelId(),

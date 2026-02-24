@@ -8,7 +8,7 @@ public class BinaryContentMapper {
   private BinaryContentMapper() {
   }
 
-  public static BinaryContentDto toBinaryContentInfo(BinaryContent binaryContent) {
+  public static BinaryContentDto toBinaryContentDto(BinaryContent binaryContent) {
     return new BinaryContentDto(
         binaryContent.getId(),
         binaryContent.getCreatedAt(),

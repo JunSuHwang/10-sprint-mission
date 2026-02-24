@@ -62,7 +62,7 @@ public class BasicMessageService implements MessageService {
     userRepository.save(author);
     channelRepository.save(findChannel);
     messageRepository.save(message);
-    return MessageMapper.toMessageInfo(message);
+    return MessageMapper.toMessageDto(message);
   }
 
   @Override
@@ -70,7 +70,7 @@ public class BasicMessageService implements MessageService {
     Message message = messageRepository.findById(messageId)
         .orElseThrow(MessageNotFoundException::new);
 
-    return MessageMapper.toMessageInfo(message);
+    return MessageMapper.toMessageDto(message);
   }
 
   @Override
@@ -97,7 +97,7 @@ public class BasicMessageService implements MessageService {
         .ifPresent(findMessage::update);
 
     messageRepository.save(findMessage);
-    return MessageMapper.toMessageInfo(findMessage);
+    return MessageMapper.toMessageDto(findMessage);
   }
 
   @Override
@@ -122,7 +122,7 @@ public class BasicMessageService implements MessageService {
 
   private List<MessageDto> toMessageInfoList(List<Message> messages) {
     return messages.stream()
-        .map(MessageMapper::toMessageInfo)
+        .map(MessageMapper::toMessageDto)
         .toList();
   }
 }

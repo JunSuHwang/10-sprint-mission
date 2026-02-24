@@ -55,7 +55,7 @@ public final class ChannelMapper {
     }
   }
 
-  public static PrivateChannelCreateRequest toPrivateChannelCreateInfo(Channel channel) {
+  public static PrivateChannelCreateRequest toPrivateChannelCreateRequest(Channel channel) {
     return new PrivateChannelCreateRequest(channel.getUserIds());
   }
 
@@ -67,7 +67,7 @@ public final class ChannelMapper {
     );
   }
 
-  public static Channel toChannel(PrivateChannelCreateRequest channelInfo) {
+  public static Channel toChannel(PrivateChannelCreateRequest request) {
     return new Channel(
         null,
         ChannelType.PRIVATE,

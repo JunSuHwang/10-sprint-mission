@@ -40,26 +40,26 @@ public class ReadStatusService {
 
     ReadStatus readStatus = new ReadStatus(channel.getId(), user.getId());
     readStatusRepository.save(readStatus);
-    return ReadStatusMapper.toReadStatusInfo(readStatus);
+    return ReadStatusMapper.toReadStatusDto(readStatus);
   }
 
   public ReadStatusDto find(UUID statusId) {
     ReadStatus readStatus = readStatusRepository.findById(statusId)
         .orElseThrow(ReadStatusNotFoundException::new);
-    return ReadStatusMapper.toReadStatusInfo(readStatus);
+    return ReadStatusMapper.toReadStatusDto(readStatus);
   }
 
   public List<ReadStatusDto> findAllByUserId(UUID userId) {
     return readStatusRepository.findAllByUserId(userId)
         .stream()
-        .map(ReadStatusMapper::toReadStatusInfo)
+        .map(ReadStatusMapper::toReadStatusDto)
         .toList();
   }
 
   public List<ReadStatusDto> findAll() {
     return readStatusRepository.findAll()
         .stream()
-        .map(ReadStatusMapper::toReadStatusInfo)
+        .map(ReadStatusMapper::toReadStatusDto)
         .toList();
   }
 
@@ -68,7 +68,7 @@ public class ReadStatusService {
         .orElseThrow(ReadStatusNotFoundException::new);
     readStatus.updateLastReadAt();
     readStatusRepository.save(readStatus);
-    return ReadStatusMapper.toReadStatusInfo(readStatus);
+    return ReadStatusMapper.toReadStatusDto(readStatus);
   }
 
   public ReadStatusDto updateReadStatus(UUID readStatusId, ReadStatusUpdateRequest request) {
@@ -76,7 +76,7 @@ public class ReadStatusService {
         .orElseThrow(ReadStatusNotFoundException::new);
     readStatus.update(request.newLastReadAt());
     readStatusRepository.save(readStatus);
-    return ReadStatusMapper.toReadStatusInfo(readStatus);
+    return ReadStatusMapper.toReadStatusDto(readStatus);
   }
 
   public void deleteReadStatus(UUID statusId) {

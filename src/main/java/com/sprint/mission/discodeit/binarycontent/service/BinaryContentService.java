@@ -24,13 +24,13 @@ public class BinaryContentService {
         contentInfo.contentType(),
         bytes);
     contentRepository.save(content);
-    return BinaryContentMapper.toBinaryContentInfo(content);
+    return BinaryContentMapper.toBinaryContentDto(content);
   }
 
   public BinaryContentDto findBinaryContent(UUID contentId) {
     BinaryContent content = contentRepository.findById(contentId)
         .orElseThrow(BinaryContentNotFoundException::new);
-    return BinaryContentMapper.toBinaryContentInfo(content);
+    return BinaryContentMapper.toBinaryContentDto(content);
   }
 
   public BinaryContent findBinaryContentEntity(UUID contentId) {
@@ -41,7 +41,7 @@ public class BinaryContentService {
   public List<BinaryContentDto> findAll() {
     return contentRepository.findAll()
         .stream()
-        .map(BinaryContentMapper::toBinaryContentInfo)
+        .map(BinaryContentMapper::toBinaryContentDto)
         .toList();
   }
 
@@ -49,7 +49,7 @@ public class BinaryContentService {
     return contentRepository.findAll()
         .stream()
         .filter(content -> request.ids().contains(content.getId()))
-        .map(BinaryContentMapper::toBinaryContentInfo)
+        .map(BinaryContentMapper::toBinaryContentDto)
         .toList();
   }
 
