@@ -6,8 +6,8 @@ import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentReposi
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
-import com.sprint.mission.discodeit.user.dto.UserInfo;
 import com.sprint.mission.discodeit.user.dto.UserDtoWithStatus;
+import com.sprint.mission.discodeit.user.dto.UserInfo;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.EmailDuplicationException;
@@ -49,7 +49,7 @@ public class BasicUserService implements UserService {
     // profile image가 존재한다면 생성
     if (image.isPresent()) {
       BinaryContentCreateRequest createInfo = image.get();
-      byte[] bytes = createInfo.content();
+      byte[] bytes = createInfo.bytes();
       BinaryContent profileImage = new BinaryContent(createInfo.fileName(), (long) bytes.length,
           createInfo.contentType(), bytes);
       user.setProfileId(profileImage.getId());
@@ -127,7 +127,7 @@ public class BasicUserService implements UserService {
         contentRepository.deleteById(findUser.getProfileId());
       }
       BinaryContentCreateRequest createInfo = image.get();
-      byte[] bytes = createInfo.content();
+      byte[] bytes = createInfo.bytes();
       BinaryContent profileImage = new BinaryContent(createInfo.fileName(), (long) bytes.length,
           createInfo.contentType(), bytes);
       findUser.setProfileId(profileImage.getId());

@@ -4,11 +4,11 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record BinaryContentDto(
-    UUID contentId,
+    UUID id,
     Instant createdAt,
     String fileName,
     String contentType,
-    byte[] content
+    byte[] bytes
 ) {
 
 }

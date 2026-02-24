@@ -7,7 +7,6 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
-  default-produces-media-type: application/json
 
 discodeit:
   repository:

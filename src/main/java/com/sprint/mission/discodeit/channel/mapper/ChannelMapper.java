@@ -63,7 +63,7 @@ public final class ChannelMapper {
 
   public static Channel toChannel(PublicChannelDto channelInfo) {
     return new Channel(
-        channelInfo.channelName(),
+        channelInfo.name(),
         ChannelType.PUBLIC,
         channelInfo.description()
     );

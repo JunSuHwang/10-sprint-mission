@@ -19,7 +19,7 @@ public class BinaryContentService {
   private final BinaryContentRepository contentRepository;
 
   public BinaryContentDto createBinaryContent(BinaryContentCreateRequest contentInfo) {
-    byte[] bytes = contentInfo.content();
+    byte[] bytes = contentInfo.bytes();
     BinaryContent content = new BinaryContent(contentInfo.fileName(), (long) bytes.length,
         contentInfo.contentType(),
         bytes);
@@ -48,7 +48,7 @@ public class BinaryContentService {
   public List<BinaryContentDto> findAllByIdIn(BinaryContentsRequest request) {
     return contentRepository.findAll()
         .stream()
-        .filter(content -> request.contentIds().contains(content.getId()))
+        .filter(content -> request.ids().contains(content.getId()))
         .map(BinaryContentMapper::toBinaryContentInfo)
         .toList();
   }

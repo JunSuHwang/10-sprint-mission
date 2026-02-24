@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 public record MessageDto(
-    UUID messageId,
+    UUID id,
     String content,
-    UUID senderId,
+    UUID authorId,
     UUID channelId,
     List<UUID> attachmentIds
 ) {

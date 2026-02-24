@@ -2,15 +2,22 @@ package com.sprint.mission.discodeit.binarycontent.controller;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentDto;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentsRequest;
-import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.service.BinaryContentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,20 +31,48 @@ public class BinaryContentController {
 
   private final BinaryContentService binaryContentService;
 
-  @RequestMapping(value = "/{contentId}", method = RequestMethod.GET)
-  public ResponseEntity<BinaryContentDto> getBinaryContent(@PathVariable UUID contentId) {
-    return ResponseEntity.ok(binaryContentService.findBinaryContent(contentId));
-  }
-
-  @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<BinaryContentDto>> getBinaryContents(
-      @RequestBody BinaryContentsRequest request
+  @Operation(summary = "첨부 파일 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "첨부 파일 조회 성공",
+          content = @Content(
+              mediaType = MediaType.ALL_VALUE,
+              schema = @Schema(implementation = BinaryContentDto.class)
+          )
+      ),
+      @ApiResponse(
+          responseCode = "404", description = "첨부 파일을 찾을 수 없음",
+          content = @Content(
+              mediaType = MediaType.ALL_VALUE,
+              examples = @ExampleObject("BinaryContent with id {binaryContentId} not found")
+          )
+      )
+  })
+  @RequestMapping(value = "/{binaryContentId}", method = RequestMethod.GET)
+  public ResponseEntity<BinaryContentDto> find(
+      @Parameter(description = "조회할 첨부 파일 ID") @PathVariable UUID binaryContentId
   ) {
-    return ResponseEntity.ok(binaryContentService.findAllByIdIn(request));
+    return ResponseEntity.ok(binaryContentService.findBinaryContent(binaryContentId));
   }
 
-  @RequestMapping(value = "/find", method = RequestMethod.GET)
-  public ResponseEntity<BinaryContent> findBinaryContent(@RequestParam UUID binaryContentId) {
-    return ResponseEntity.ok(binaryContentService.findBinaryContentEntity(binaryContentId));
+  @Operation(summary = "여러 첨부 파일 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "첨부 파일 목록 조회 성공",
+          content = @Content(
+              mediaType = MediaType.ALL_VALUE,
+              array = @ArraySchema(schema = @Schema(implementation = BinaryContentDto.class))
+          )
+      )
+  })
+  @RequestMapping(method = RequestMethod.GET)
+  public ResponseEntity<List<BinaryContentDto>> findAllByIdIn(
+      @Parameter(description = "조회할 첨부 파일 ID 목록",
+          array = @ArraySchema(schema = @Schema(implementation = UUID.class))
+      )
+      @RequestParam List<UUID> binaryContentIds
+  ) {
+    BinaryContentsRequest request = new BinaryContentsRequest(binaryContentIds);
+    return ResponseEntity.ok(binaryContentService.findAllByIdIn(request));
   }
 }

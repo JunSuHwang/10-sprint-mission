@@ -5,8 +5,8 @@ import java.util.UUID;
 
 public record PublicChannelDto(
     UUID channelId,
-    String channelName,
-    ChannelType channelType,
+    String name,
+    ChannelType type,
     String description
 ) {
 

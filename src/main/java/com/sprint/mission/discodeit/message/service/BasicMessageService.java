@@ -44,9 +44,9 @@ public class BasicMessageService implements MessageService {
         .map(request -> {
           BinaryContent binaryContent = new BinaryContent(
               request.fileName(),
-              (long) request.content().length,
+              (long) request.bytes().length,
               request.contentType(),
-              request.content()
+              request.bytes()
           );
           contentRepository.save(binaryContent);
           return binaryContent.getId();
