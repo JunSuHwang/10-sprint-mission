@@ -177,7 +177,7 @@ public class UserController {
   }
 
   private Optional<BinaryContentCreateRequest> resolveProfileFile(MultipartFile profileFile) {
-    if (profileFile.isEmpty()) {
+    if (profileFile == null || profileFile.isEmpty()) {
       return Optional.empty();
     } else {
       try {
