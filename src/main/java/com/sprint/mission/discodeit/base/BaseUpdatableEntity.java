@@ -2,15 +2,13 @@ package com.sprint.mission.discodeit.base;
 
 import java.time.Instant;
 import lombok.Getter;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
 public abstract class BaseUpdatableEntity extends BaseEntity {
 
+  @LastModifiedDate
   protected Instant updatedAt;
-
-  public BaseUpdatableEntity() {
-    this.updatedAt = this.createdAt;
-  }
 
   @Override
   public boolean equals(Object obj) {
