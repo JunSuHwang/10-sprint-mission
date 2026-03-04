@@ -24,10 +24,13 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,7 +66,7 @@ public class MessageController {
           )
       )
   })
-  @RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MessageDto> create_2(
       @RequestPart MessageCreateRequest messageCreateRequest,
       @Parameter(description = "Message 첨부 파일들") @RequestPart(required = false) List<MultipartFile> attachments) {
@@ -87,12 +90,12 @@ public class MessageController {
     );
   }
 
-  @RequestMapping(value = "/{messageId}", method = RequestMethod.GET)
+  @GetMapping(value = "/{messageId}")
   public ResponseEntity<MessageDto> getMessage(@PathVariable UUID messageId) {
     return ResponseEntity.ok(messageService.findMessage(messageId));
   }
 
-  @RequestMapping(value = "/all", method = RequestMethod.GET)
+  @GetMapping(value = "/all")
   public ResponseEntity<List<MessageDto>> getAllMessages() {
     return ResponseEntity.ok(messageService.findAll());
   }
@@ -114,7 +117,7 @@ public class MessageController {
           )
       )
   })
-  @RequestMapping(value = "/{messageId}", method = RequestMethod.PATCH)
+  @PatchMapping(value = "/{messageId}")
   public ResponseEntity<MessageDto> update_2(
       @Parameter(description = "수정할 Message ID") @PathVariable UUID messageId,
       @RequestBody MessageUpdateRequest messageInfo
@@ -133,7 +136,7 @@ public class MessageController {
           )
       )
   })
-  @RequestMapping(value = "/{messageId}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{messageId}")
   public ResponseEntity<Void> delete_1(
       @Parameter(description = "삭제할 Message ID") @PathVariable UUID messageId
   ) {

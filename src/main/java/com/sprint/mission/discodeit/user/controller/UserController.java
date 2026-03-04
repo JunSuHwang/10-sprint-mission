@@ -28,10 +28,13 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,7 +48,7 @@ public class UserController {
   private final UserService userService;
   private final UserStatusService userStatusService;
 
-  @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+  @GetMapping(value = "/{userId}")
   public ResponseEntity<UserResultDto> getUser(@PathVariable UUID userId) {
     return ResponseEntity.ok(userService.findUser(userId));
   }
@@ -59,7 +62,7 @@ public class UserController {
           )
       )
   })
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public ResponseEntity<List<UserDto>> findAll() {
     return ResponseEntity.ok(userService.findAll());
   }
@@ -85,7 +88,7 @@ public class UserController {
           )
       )
   })
-  @RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<UserResultDto> create(
       @Parameter() @RequestPart UserCreateRequest userCreateRequest,
       @Parameter(description = "User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
@@ -102,7 +105,7 @@ public class UserController {
           content = @Content(examples = @ExampleObject("User with id {id} not found"))
       )
   })
-  @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{userId}")
   public ResponseEntity<Void> delete(
       @Parameter(description = "삭제할 User ID") @PathVariable UUID userId
   ) {
@@ -137,7 +140,7 @@ public class UserController {
           )
       )
   })
-  @RequestMapping(value = "/{userId}", method = RequestMethod.PATCH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PatchMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<UserResultDto> update(
       @Parameter(description = "수정할 User ID") @PathVariable UUID userId,
       @RequestPart UserUpdateRequest userUpdateRequest,
@@ -163,7 +166,7 @@ public class UserController {
           )
       )
   })
-  @RequestMapping(value = "/{userId}/userStatus", method = RequestMethod.PATCH)
+  @PatchMapping(value = "/{userId}/userStatus")
   public ResponseEntity<UserStatusDto> updateUserStatusByUserId(
       @Parameter(description = "상태를 변경할 User ID") @PathVariable UUID userId,
       @RequestBody UserStatusUpdateRequest request
@@ -171,7 +174,7 @@ public class UserController {
     return ResponseEntity.ok(userStatusService.update(userId, request));
   }
 
-  @RequestMapping(value = "/{userId}/userStatus", method = RequestMethod.GET)
+  @GetMapping(value = "/{userId}/userStatus")
   public ResponseEntity<UserStatusDto> getUserStatus(@PathVariable UUID userId) {
     return ResponseEntity.ok(userStatusService.findUserStatusByUserId(userId));
   }

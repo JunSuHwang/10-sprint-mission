@@ -20,10 +20,13 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,7 +48,7 @@ public class ChannelController {
           )
       )
   })
-  @RequestMapping(value = "/public", method = RequestMethod.POST, consumes = "application/json")
+  @PostMapping(value = "/public", consumes = "application/json")
   public ResponseEntity<ChannelResultDto> create_3(
       @RequestBody PublicChannelCreateRequest channelInfo
   ) {
@@ -62,14 +65,14 @@ public class ChannelController {
           )
       )
   })
-  @RequestMapping(value = "/private", method = RequestMethod.POST, consumes = "application/json")
+  @PostMapping(value = "/private", consumes = "application/json")
   public ResponseEntity<ChannelResultDto> create_4(
       @RequestBody PrivateChannelCreateRequest channelInfo
   ) {
     return ResponseEntity.status(201).body(channelService.createPrivateChannel(channelInfo));
   }
 
-  @RequestMapping(value = "/{channelId}", method = RequestMethod.GET)
+  @GetMapping(value = "/{channelId}")
   public ResponseEntity<ChannelDto> getChannel(@PathVariable UUID channelId) {
     return ResponseEntity.ok(channelService.findChannel(channelId));
   }
@@ -84,7 +87,7 @@ public class ChannelController {
           )
       )
   })
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public ResponseEntity<List<ChannelDto>> findAll_1(
       @Parameter(description = "조회할 User ID") @RequestParam UUID userId
   ) {
@@ -115,7 +118,7 @@ public class ChannelController {
           )
       )
   })
-  @RequestMapping(value = "/{channelId}", method = RequestMethod.PATCH, consumes = "application/json")
+  @PatchMapping(value = "/{channelId}", consumes = "application/json")
   public ResponseEntity<ChannelResultDto> update_3(
       @Parameter(description = "수정할 Channel ID") @PathVariable UUID channelId,
       @RequestBody PublicChannelUpdateRequest channelInfo
@@ -134,7 +137,7 @@ public class ChannelController {
       ),
       @ApiResponse(responseCode = "204", description = "Channel이 성공적으로 삭제됨")
   })
-  @RequestMapping(value = "/{channelId}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{channelId}")
   public ResponseEntity<Void> delete_2(
       @Parameter(description = "삭제할 Channel ID") @PathVariable UUID channelId
   ) {

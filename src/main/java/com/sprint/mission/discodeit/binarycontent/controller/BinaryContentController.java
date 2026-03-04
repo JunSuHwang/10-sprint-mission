@@ -17,9 +17,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,7 +48,7 @@ public class BinaryContentController {
           )
       )
   })
-  @RequestMapping(value = "/{binaryContentId}", method = RequestMethod.GET)
+  @GetMapping(value = "/{binaryContentId}")
   public ResponseEntity<BinaryContentDto> find(
       @Parameter(description = "조회할 첨부 파일 ID") @PathVariable UUID binaryContentId
   ) {
@@ -65,7 +65,7 @@ public class BinaryContentController {
           )
       )
   })
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public ResponseEntity<List<BinaryContentDto>> findAllByIdIn(
       @Parameter(description = "조회할 첨부 파일 ID 목록",
           array = @ArraySchema(schema = @Schema(implementation = UUID.class))
