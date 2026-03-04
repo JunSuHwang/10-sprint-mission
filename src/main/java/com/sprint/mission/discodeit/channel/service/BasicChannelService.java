@@ -90,7 +90,8 @@ public class BasicChannelService implements ChannelService {
     if (findChannel.getType() == ChannelType.PRIVATE) {
       throw new ChannelUpdateNotAllowedException();
     }
-    validateChannelExist(channelInfo.newName());
+    Optional.ofNullable(channelInfo.newName())
+        .ifPresent(this::validateChannelExist);
 
     Optional.ofNullable(channelInfo.newName())
         .ifPresent(findChannel::updateChannelName);

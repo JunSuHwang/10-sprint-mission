@@ -103,8 +103,10 @@ public class BasicUserService implements UserService {
   @Override
   public UserResultDto updateUser(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> image) {
-    validateUserExist(request.newUsername());
-    validateEmailExist(request.newEmail());
+    Optional.ofNullable(request.newUsername())
+        .ifPresent(this::validateUserExist);
+    Optional.ofNullable(request.newEmail())
+        .ifPresent(this::validateEmailExist);
     User findUser = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
     Optional.ofNullable(request.newUsername())
