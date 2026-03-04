@@ -11,11 +11,11 @@ CREATE TABLE users
 CREATE TABLE channels
 (
     id          UUID PRIMARY KEY,
-    created_at  timestamptz NOT NULL,
+    created_at  timestamptz                                       NOT NULL,
     updated_at  timestamptz,
     name        varchar(100),
     description varchar(500),
-    type        varchar(10) check (type in ('PUBLIC', 'PRIVATE'))
+    type        varchar(10) check (type in ('PUBLIC', 'PRIVATE')) NOT NULL
 );
 CREATE TABLE messages
 (
