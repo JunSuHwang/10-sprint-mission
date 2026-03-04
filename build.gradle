@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.sprint.mission'
 version = '0.0.1-SNAPSHOT'
-description = 'Sprint Mission 3'
+description = 'Sprint Mission 6'
 
 java {
     toolchain {
@@ -27,6 +27,8 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.postgresql:postgresql:42.7.3'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
