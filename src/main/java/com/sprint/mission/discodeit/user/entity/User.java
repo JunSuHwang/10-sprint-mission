@@ -1,36 +1,45 @@
 package com.sprint.mission.discodeit.user.entity;
 
 import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
+import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
+import com.sprint.mission.discodeit.userstatus.entity.UserStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
+@NoArgsConstructor
+@Entity
+@Table(name = "users")
 public class User extends BaseUpdatableEntity {
 
-  private final List<UUID> channelIds = new ArrayList<>();
-  private final List<UUID> messageIds = new ArrayList<>();
+  @Column(unique = true, nullable = false, length = 50)
   private String username;
+
+  @Column(nullable = false, length = 60)
   private String password;
+
+  @Column(unique = true, nullable = false, length = 100)
   private String email;
+
+  @OneToOne
+  @JoinColumn(name = "profile_id", unique = true)
+  private BinaryContent profile;
+
   @Setter
-  private UUID profileId;
+  @OneToOne(mappedBy = "user")
+  private UserStatus userStatus;
 
   public User(String username, String password, String email) {
     this.username = username;
     this.password = password;
     this.email = email;
-  }
-
-  public List<UUID> getChannelIds() {
-    return List.copyOf(channelIds);
-  }
-
-  public List<UUID> getMessageIds() {
-    return List.copyOf(messageIds);
   }
 
   public void updateUserName(String username) {
@@ -48,27 +57,7 @@ public class User extends BaseUpdatableEntity {
     this.updatedAt = Instant.now();
   }
 
-  public void addChannelId(UUID channelId) {
-    channelIds.add(channelId);
-    this.updatedAt = Instant.now();
-  }
-
-  public void removeChannelId(UUID channelId) {
-    channelIds.remove(channelId);
-    this.updatedAt = Instant.now();
-  }
-
-  public void addMessageId(UUID messageId) {
-    messageIds.add(messageId);
-    this.updatedAt = Instant.now();
-  }
-
-  public void removeMessageId(UUID messageId) {
-    messageIds.remove(messageId);
-    this.updatedAt = Instant.now();
-  }
-
   public boolean isProfileImageUploaded() {
-    return profileId != null;
+    return profile != null;
   }
 }

@@ -1,24 +1,51 @@
 package com.sprint.mission.discodeit.message.entity;
 
 import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
+import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
+import com.sprint.mission.discodeit.channel.entity.Channel;
+import com.sprint.mission.discodeit.user.entity.User;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "messages")
 public class Message extends BaseUpdatableEntity {
 
-  private final UUID authorId;
-  private final UUID channelId;
-  private final List<UUID> attachmentIds;
+  @Lob
   private String content;
 
-  public Message(String content, UUID authorId, UUID channel, List<UUID> attachmentIds) {
+  @ManyToOne
+  @JoinColumn(name = "channel_id", nullable = false)
+  private Channel channel;
+
+  @ManyToOne
+  @JoinColumn(name = "author_id")
+  private User author;
+
+  @OneToMany
+  @JoinTable(name = "message_attachments",
+      joinColumns = @JoinColumn(name = "message_id"),
+      inverseJoinColumns = @JoinColumn(name = "attachment_id")
+  )
+  private List<BinaryContent> attachments;
+
+  public Message(String content, Channel channel, User author, List<BinaryContent> attachments) {
     this.content = content;
-    this.authorId = authorId;
-    this.channelId = channel;
-    this.attachmentIds = attachmentIds;
+    this.channel = channel;
+    this.author = author;
+    this.attachments = attachments;
   }
 
   public void update(String newContent) {
@@ -26,15 +53,15 @@ public class Message extends BaseUpdatableEntity {
     this.updatedAt = Instant.now();
   }
 
-  public List<UUID> getAttachmentIds() {
-    return List.copyOf(attachmentIds);
+  public List<BinaryContent> getAttachmentIds() {
+    return List.copyOf(attachments);
   }
 
-  public void addAttachmentId(UUID attachmentId) {
-    attachmentIds.add(attachmentId);
+  public void addAttachmentId(BinaryContent attachment) {
+    attachments.add(attachment);
   }
 
-  public void removeAttachmentId(UUID attachmentId) {
-    attachmentIds.remove(attachmentId);
+  public void removeAttachmentId(BinaryContent attachment) {
+    attachments.remove(attachment);
   }
 }

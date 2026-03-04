@@ -1,17 +1,34 @@
 package com.sprint.mission.discodeit.binarycontent.entity;
 
 import com.sprint.mission.discodeit.base.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Arrays;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "binary_contents")
 public class BinaryContent extends BaseEntity implements Serializable {
 
-  private final String fileName;
-  private final Long size;
-  private final String contentType;
-  private final byte[] bytes;
+  @Column(nullable = false)
+  private String fileName;
+
+  @Column(nullable = false)
+  private Long size;
+
+  @Column(nullable = false, length = 100)
+  private String contentType;
+
+  @Lob
+  @Column(nullable = false)
+  private byte[] bytes;
 
   public BinaryContent(String fileName, Long size, String contentType, byte[] bytes) {
     this.fileName = fileName;
@@ -22,24 +39,5 @@ public class BinaryContent extends BaseEntity implements Serializable {
 
   public byte[] getBytes() {
     return Arrays.copyOf(bytes, bytes.length);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    return id.equals(((BinaryContent) obj).id);
-  }
-
-  @Override
-  public int hashCode() {
-    return id.hashCode();
   }
 }

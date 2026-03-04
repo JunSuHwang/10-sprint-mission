@@ -1,33 +1,36 @@
 package com.sprint.mission.discodeit.channel.entity;
 
 import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "channels")
 public class Channel extends BaseUpdatableEntity {
 
-  private final List<UUID> messageIds = new ArrayList<>();
-  private final List<UUID> userIds = new ArrayList<>();
-  private String name;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private ChannelType type;
+
+  @Column(length = 100)
+  private String name;
+
+  @Column(length = 500)
   private String description;
 
   public Channel(String name, ChannelType type, String description) {
     this.name = name;
     this.type = type;
     this.description = description;
-  }
-
-  public List<UUID> getMessageIds() {
-    return List.copyOf(messageIds);
-  }
-
-  public List<UUID> getUserIds() {
-    return List.copyOf(userIds);
   }
 
   public void updateChannelName(String channelName) {
@@ -42,26 +45,6 @@ public class Channel extends BaseUpdatableEntity {
 
   public void updateDescription(String description) {
     this.description = description;
-    this.updatedAt = Instant.now();
-  }
-
-  public void addMessageId(UUID messageId) {
-    messageIds.add(messageId);
-    this.updatedAt = Instant.now();
-  }
-
-  public void removeMessageId(UUID messageId) {
-    messageIds.remove(messageId);
-    this.updatedAt = Instant.now();
-  }
-
-  public void addUserId(UUID userId) {
-    userIds.add(userId);
-    this.updatedAt = Instant.now();
-  }
-
-  public void removeUserId(UUID userId) {
-    userIds.remove(userId);
     this.updatedAt = Instant.now();
   }
 }
