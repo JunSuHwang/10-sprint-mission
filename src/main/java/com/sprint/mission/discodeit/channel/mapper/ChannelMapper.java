@@ -4,7 +4,7 @@ import com.sprint.mission.discodeit.channel.dto.ChannelDto;
 import com.sprint.mission.discodeit.channel.dto.ChannelResultDto;
 import com.sprint.mission.discodeit.channel.dto.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.channel.entity.Channel;
-import com.sprint.mission.discodeit.common.ChannelType;
+import com.sprint.mission.discodeit.channel.entity.ChannelType;
 import java.time.Instant;
 
 public final class ChannelMapper {

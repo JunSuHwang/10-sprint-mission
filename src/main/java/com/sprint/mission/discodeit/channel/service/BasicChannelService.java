@@ -11,7 +11,7 @@ import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
 import com.sprint.mission.discodeit.channel.exception.ChannelUpdateNotAllowedException;
 import com.sprint.mission.discodeit.channel.mapper.ChannelMapper;
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
-import com.sprint.mission.discodeit.common.ChannelType;
+import com.sprint.mission.discodeit.channel.entity.ChannelType;
 import com.sprint.mission.discodeit.message.entity.Message;
 import com.sprint.mission.discodeit.message.repository.MessageRepository;
 import com.sprint.mission.discodeit.readstatus.entity.ReadStatus;

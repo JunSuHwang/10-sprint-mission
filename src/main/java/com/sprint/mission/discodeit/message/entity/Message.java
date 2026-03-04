@@ -1,15 +1,14 @@
 package com.sprint.mission.discodeit.message.entity;
 
-import com.sprint.mission.discodeit.common.CommonEntity;
+import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 
 @Getter
-public class Message extends CommonEntity {
+public class Message extends BaseUpdatableEntity {
 
-  private static final long serialVersionUID = 1L;
   private final UUID authorId;
   private final UUID channelId;
   private final List<UUID> attachmentIds;

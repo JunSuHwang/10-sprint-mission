@@ -1,22 +1,18 @@
-package com.sprint.mission.discodeit.common;
+package com.sprint.mission.discodeit.base;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 
 @Getter
-public abstract class CommonEntity implements Serializable {
+public abstract class BaseEntity {
 
-  private static final long serialVersionUID = 1L;
   protected final UUID id;
   protected Instant createdAt;
-  protected Instant updatedAt;
 
-  public CommonEntity() {
+  public BaseEntity() {
     this.id = UUID.randomUUID();
     this.createdAt = Instant.now();
-    this.updatedAt = this.createdAt;
   }
 
   @Override
@@ -30,7 +26,7 @@ public abstract class CommonEntity implements Serializable {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    return id.equals(((CommonEntity) obj).id);
+    return id.equals(((BaseEntity) obj).id);
   }
 
   @Override

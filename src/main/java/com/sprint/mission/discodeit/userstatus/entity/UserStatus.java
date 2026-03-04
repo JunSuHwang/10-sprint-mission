@@ -1,14 +1,13 @@
 package com.sprint.mission.discodeit.userstatus.entity;
 
-import com.sprint.mission.discodeit.common.CommonEntity;
+import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 
 @Getter
-public class UserStatus extends CommonEntity {
+public class UserStatus extends BaseUpdatableEntity {
 
-  private static final long serialVersionUID = 1L;
   private final UUID userId;
   private final int loginLimitSeconds = 60 * 5;
   private Instant lastActiveAt;

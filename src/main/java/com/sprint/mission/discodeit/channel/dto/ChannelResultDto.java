@@ -1,6 +1,6 @@
 package com.sprint.mission.discodeit.channel.dto;
 
-import com.sprint.mission.discodeit.common.ChannelType;
+import com.sprint.mission.discodeit.channel.entity.ChannelType;
 import java.time.Instant;
 import java.util.UUID;
 

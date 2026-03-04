@@ -1,7 +1,6 @@
 package com.sprint.mission.discodeit.channel.entity;
 
-import com.sprint.mission.discodeit.common.ChannelType;
-import com.sprint.mission.discodeit.common.CommonEntity;
+import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +8,8 @@ import java.util.UUID;
 import lombok.Getter;
 
 @Getter
-public class Channel extends CommonEntity {
+public class Channel extends BaseUpdatableEntity {
 
-  private static final long serialVersionUID = 1L;
   private final List<UUID> messageIds = new ArrayList<>();
   private final List<UUID> userIds = new ArrayList<>();
   private String name;

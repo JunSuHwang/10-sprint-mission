@@ -1,7 +1,7 @@
 package com.sprint.mission.discodeit.channel.repository;
 
 import com.sprint.mission.discodeit.channel.entity.Channel;
-import com.sprint.mission.discodeit.common.ChannelType;
+import com.sprint.mission.discodeit.channel.entity.ChannelType;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
