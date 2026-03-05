@@ -4,6 +4,7 @@ import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -26,7 +27,7 @@ public class Message extends BaseUpdatableEntity {
   @Lob
   private String content;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "channel_id", nullable = false)
   private Channel channel;
 
@@ -34,7 +35,7 @@ public class Message extends BaseUpdatableEntity {
   @JoinColumn(name = "author_id")
   private User author;
 
-  @OneToMany
+  @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
   @JoinTable(name = "message_attachments",
       joinColumns = @JoinColumn(name = "message_id"),
       inverseJoinColumns = @JoinColumn(name = "attachment_id")

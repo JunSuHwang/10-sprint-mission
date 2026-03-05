@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.user.entity;
 import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.userstatus.entity.UserStatus;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -28,12 +29,12 @@ public class User extends BaseUpdatableEntity {
   @Column(unique = true, nullable = false, length = 100)
   private String email;
 
-  @OneToOne
+  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
   @JoinColumn(name = "profile_id", unique = true)
   private BinaryContent profile;
 
   @Setter
-  @OneToOne(mappedBy = "user")
+  @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
   private UserStatus userStatus;
 
   public User(String username, String password, String email) {

@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.userstatus.entity;
 
 import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
 import com.sprint.mission.discodeit.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -15,7 +16,7 @@ import lombok.Getter;
 @Table(name = "user_statuses")
 public class UserStatus extends BaseUpdatableEntity {
 
-  @OneToOne
+  @OneToOne(optional = false)
   @JoinColumn(name = "user_id")
   private User user;
 

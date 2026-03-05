@@ -19,11 +19,11 @@ import lombok.NoArgsConstructor;
 @Table(name = "read_statuses")
 public class ReadStatus extends BaseUpdatableEntity {
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "channel_id", nullable = false)
   private Channel channel;
 
