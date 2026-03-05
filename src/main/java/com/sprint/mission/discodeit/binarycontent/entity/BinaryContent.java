@@ -5,7 +5,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-import java.io.Serializable;
 import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "binary_contents")
-public class BinaryContent extends BaseEntity implements Serializable {
+public class BinaryContent extends BaseEntity {
 
   @Column(nullable = false)
   private String fileName;
