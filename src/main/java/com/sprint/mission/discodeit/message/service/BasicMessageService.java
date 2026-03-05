@@ -40,7 +40,7 @@ public class BasicMessageService implements MessageService {
     Channel findChannel = channelRepository.findById(createInfo.channelId())
         .orElseThrow(ChannelNotFoundException::new);
 
-    List<UUID> attachmentIds = binaryContentCreateRequests.stream()
+    List<BinaryContent> attachments = binaryContentCreateRequests.stream()
         .map(request -> {
           BinaryContent binaryContent = new BinaryContent(
               request.fileName(),
@@ -49,20 +49,16 @@ public class BasicMessageService implements MessageService {
               request.bytes()
           );
           contentRepository.save(binaryContent);
-          return binaryContent.getId();
+          return binaryContent;
         })
         .toList();
 
-    Message message = new Message(createInfo.content(), author.getId(), findChannel.getId(),
-        attachmentIds);
-
-    author.addMessageId(message.getId());
-    findChannel.addMessageId(message.getId());
+    Message message = new Message(createInfo.content(), findChannel, author, attachments);
 
     userRepository.save(author);
     channelRepository.save(findChannel);
     messageRepository.save(message);
-    return MessageMapper.toMessageDto(message);
+    return MessageMapper.toMessageDto(message, getAttachmentIds(message));
   }
 
   @Override
@@ -70,22 +66,22 @@ public class BasicMessageService implements MessageService {
     Message message = messageRepository.findById(messageId)
         .orElseThrow(MessageNotFoundException::new);
 
-    return MessageMapper.toMessageDto(message);
+    return MessageMapper.toMessageDto(message, getAttachmentIds(message));
   }
 
   @Override
   public List<MessageDto> findAll() {
-    return toMessageInfoList(messageRepository.findAll());
+    return toMessageDtoList(messageRepository.findAll());
   }
 
   @Override
   public List<MessageDto> findAllByUserId(UUID userId) {
-    return toMessageInfoList(messageRepository.findAllByUserId(userId));
+    return toMessageDtoList(messageRepository.findAllByAuthorId(userId));
   }
 
   @Override
   public List<MessageDto> findAllByChannelId(UUID channelId) {
-    return toMessageInfoList(messageRepository.findAllByChannelId(channelId));
+    return toMessageDtoList(messageRepository.findAllByChannelId(channelId));
   }
 
   @Override
@@ -97,32 +93,24 @@ public class BasicMessageService implements MessageService {
         .ifPresent(findMessage::update);
 
     messageRepository.save(findMessage);
-    return MessageMapper.toMessageDto(findMessage);
+    return MessageMapper.toMessageDto(findMessage, getAttachmentIds(findMessage));
   }
 
   @Override
   public void deleteMessage(UUID messageId) {
-    Message findMessage = messageRepository.findById(messageId)
-        .orElseThrow(MessageNotFoundException::new);
-    User findUser = userRepository.findById(findMessage.getAuthorId())
-        .orElseThrow(UserNotFoundException::new);
-    Channel findChannel = channelRepository.findById(findMessage.getChannelId())
-        .orElseThrow(ChannelNotFoundException::new);
-
-    findMessage.getAttachmentIds()
-        .forEach(contentRepository::deleteById);
-
-    findUser.removeMessageId(messageId);
-    findChannel.removeMessageId(messageId);
-
-    userRepository.save(findUser);
-    channelRepository.save(findChannel);
     messageRepository.deleteById(messageId);
   }
 
-  private List<MessageDto> toMessageInfoList(List<Message> messages) {
+  private List<MessageDto> toMessageDtoList(List<Message> messages) {
     return messages.stream()
-        .map(MessageMapper::toMessageDto)
+        .map(m -> MessageMapper.toMessageDto(m, getAttachmentIds(m)))
+        .toList();
+  }
+
+  private List<UUID> getAttachmentIds(Message message) {
+    return message.getAttachments()
+        .stream()
+        .map(BinaryContent::getId)
         .toList();
   }
 }

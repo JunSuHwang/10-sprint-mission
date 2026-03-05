@@ -12,15 +12,15 @@ public final class MessageMapper {
   private MessageMapper() {
   }
 
-  public static MessageDto toMessageDto(Message message) {
+  public static MessageDto toMessageDto(Message message, List<UUID> attachmentIds) {
     return new MessageDto(
         message.getId(),
         message.getCreatedAt(),
         message.getUpdatedAt(),
         message.getContent(),
-        message.getAuthorId(),
-        message.getChannelId(),
-        message.getAttachmentIds()
+        message.getAuthor() != null ? message.getAuthor().getId() : null,
+        message.getChannel().getId(),
+        attachmentIds
     );
   }
 

@@ -2,12 +2,12 @@ package com.sprint.mission.discodeit.userstatus.entity;
 
 import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
 import com.sprint.mission.discodeit.user.entity.User;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.time.Instant;
 import lombok.Getter;
 
@@ -23,6 +23,7 @@ public class UserStatus extends BaseUpdatableEntity {
   @Column(nullable = false)
   private Instant lastActiveAt;
 
+  @Transient
   private final int loginLimitSeconds = 60 * 5;
 
   public UserStatus() {

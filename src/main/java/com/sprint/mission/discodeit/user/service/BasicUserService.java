@@ -4,6 +4,7 @@ import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
+import com.sprint.mission.discodeit.readstatus.repository.ReadStatusRepository;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.dto.UserResultDto;
@@ -29,34 +30,30 @@ public class BasicUserService implements UserService {
 
   private final UserRepository userRepository;
   private final ChannelRepository channelRepository;
+  private final ReadStatusRepository readStatusRepository;
   private final BinaryContentRepository contentRepository;
   private final UserStatusRepository userStatusRepository;
 
   @Override
   public UserResultDto createUser(UserCreateRequest userInfo,
       Optional<BinaryContentCreateRequest> image) {
-    // 유저 이름 & 이메일 검증
+
     validateUserExist(userInfo.username());
     validateEmailExist(userInfo.email());
 
-    // 유저 생성 -> mapper로 대체 가능
     User user = new User(userInfo.username(), userInfo.password(), userInfo.email());
 
-    // status 생성
-    UserStatus status = new UserStatus(user.getId());
+    UserStatus status = new UserStatus();
+    status.setUser(user);
 
-    // profile image가 존재한다면 생성
     if (image.isPresent()) {
       BinaryContentCreateRequest createInfo = image.get();
       byte[] bytes = createInfo.bytes();
       BinaryContent profileImage = new BinaryContent(createInfo.fileName(), (long) bytes.length,
           createInfo.contentType(), bytes);
-      user.setProfileId(profileImage.getId());
-      contentRepository.save(profileImage);
+      user.setProfile(profileImage);
     }
 
-    // Repo 저장
-    userStatusRepository.save(status);
     userRepository.save(user);
     return UserMapper.toUserResultDto(user);
   }
@@ -95,7 +92,7 @@ public class BasicUserService implements UserService {
   public List<UserResultDto> findAllByChannelId(UUID channelId) {
     return userRepository.findAll()
         .stream()
-        .filter(user -> user.getChannelIds().contains(channelId))
+        .filter(user -> readStatusRepository.existsByUserIdAndChannelId(user.getId(), channelId))
         .map(UserMapper::toUserResultDto)
         .toList();
   }
@@ -116,28 +113,23 @@ public class BasicUserService implements UserService {
     Optional.ofNullable(request.newEmail())
         .ifPresent(findUser::updateEmail);
 
-    // profileId가 존재하면 업데이트
     if (image.isPresent()) {
       if (findUser.isProfileImageUploaded()) {
-        contentRepository.deleteById(findUser.getProfileId());
+        contentRepository.deleteById(findUser.getProfile().getId());
       }
       BinaryContentCreateRequest createInfo = image.get();
       byte[] bytes = createInfo.bytes();
       BinaryContent profileImage = new BinaryContent(createInfo.fileName(), (long) bytes.length,
           createInfo.contentType(), bytes);
-      findUser.setProfileId(profileImage.getId());
-      contentRepository.save(profileImage);
+      findUser.setProfile(profileImage);
     }
 
-    // statusRepo.findByUserId로 찾기
     UserStatus status = userStatusRepository.findByUserId(findUser.getId())
         .map(findStatus -> {
           findStatus.update();
           return findStatus;
         })
         .orElseThrow(UserStatusNotFoundException::new);
-    // status 업데이트 & save
-    userStatusRepository.save(status);
 
     userRepository.save(findUser);
     return UserMapper.toUserResultDto(findUser);
@@ -145,27 +137,19 @@ public class BasicUserService implements UserService {
 
   @Override
   public void deleteUser(UUID userId) {
-    User user = userRepository.findById(userId)
+    userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
-    channelRepository.findAllByUserId(userId).forEach(channel -> {
-      channel.removeUserId(userId);
-      channelRepository.save(channel);
-    });
-    if (user.isProfileImageUploaded()) {
-      contentRepository.deleteById(user.getProfileId());
-    }
-    userStatusRepository.deleteByUserId(userId);
     userRepository.deleteById(userId);
   }
 
-  private void validateUserExist(String userName) {
-    if (userRepository.findByName(userName).isPresent()) {
+  private void validateUserExist(String username) {
+    if (userRepository.existsUserByUsername(username)) {
       throw new UserDuplicationException();
     }
   }
 
   private void validateEmailExist(String email) {
-    if (userRepository.findByEmail(email).isPresent()) {
+    if (userRepository.existsByEmail(email)) {
       throw new EmailDuplicationException();
     }
   }

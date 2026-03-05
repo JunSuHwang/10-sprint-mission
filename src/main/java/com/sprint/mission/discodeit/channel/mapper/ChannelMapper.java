@@ -6,13 +6,16 @@ import com.sprint.mission.discodeit.channel.dto.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.entity.ChannelType;
 import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 
 public final class ChannelMapper {
 
   private ChannelMapper() {
   }
 
-  public static ChannelDto toChannelDto(Channel channel, Instant lastMessageTime) {
+  public static ChannelDto toChannelDto(Channel channel, Instant lastMessageTime,
+      List<UUID> participantIds) {
     if (channel.getType() == ChannelType.PRIVATE) {
       return new ChannelDto(
           channel.getId(),
@@ -20,7 +23,7 @@ public final class ChannelMapper {
           channel.getType(),
           null,
           lastMessageTime,
-          channel.getUserIds());
+          null);
     } else {
       return new ChannelDto(
           channel.getId(),
@@ -28,7 +31,7 @@ public final class ChannelMapper {
           channel.getType(),
           channel.getDescription(),
           null,
-          channel.getUserIds()
+          participantIds
       );
     }
   }
@@ -53,10 +56,6 @@ public final class ChannelMapper {
           channel.getDescription()
       );
     }
-  }
-
-  public static PrivateChannelCreateRequest toPrivateChannelCreateRequest(Channel channel) {
-    return new PrivateChannelCreateRequest(channel.getUserIds());
   }
 
   public static Channel toChannel(ChannelDto channelDto) {

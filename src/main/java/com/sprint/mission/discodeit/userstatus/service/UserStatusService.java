@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.userstatus.service;
 
+import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
 import com.sprint.mission.discodeit.userstatus.dto.UserStatusCreateRequest;
@@ -23,13 +24,15 @@ public class UserStatusService {
   private final UserRepository userRepository;
 
   public UserStatusDto createUserStatus(UserStatusCreateRequest statusInfo) {
-    userRepository.findById(statusInfo.userId())
+    User findUser = userRepository.findById(statusInfo.userId())
         .orElseThrow(UserNotFoundException::new);
-    if (userStatusRepository.findByUserId(statusInfo.userId())
-        .isPresent()) {
+    if (userStatusRepository.existsByUserId(statusInfo.userId())) {
       throw new UserStatusDuplicationException();
     }
-    UserStatus userStatus = new UserStatus(statusInfo.userId());
+
+    UserStatus userStatus = new UserStatus();
+    userStatus.setUser(findUser);
+
     userStatusRepository.save(userStatus);
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }

@@ -33,12 +33,11 @@ public class ReadStatusService {
     Channel channel = channelRepository.findById(statusInfo.channelId())
         .orElseThrow(ChannelNotFoundException::new);
 
-    if (readStatusRepository.findByUserIdAndChannelId(user.getId(), channel.getId())
-        .isPresent()) {
+    if (readStatusRepository.existsByUserIdAndChannelId(user.getId(), channel.getId())) {
       throw new ReadStatusDuplicationException();
     }
 
-    ReadStatus readStatus = new ReadStatus(user.getId(), channel.getId());
+    ReadStatus readStatus = new ReadStatus(user, channel);
     readStatusRepository.save(readStatus);
     return ReadStatusMapper.toReadStatusDto(readStatus);
   }
@@ -63,8 +62,8 @@ public class ReadStatusService {
         .toList();
   }
 
-  public ReadStatusDto updateReadStatus(UUID statusId) {
-    ReadStatus readStatus = readStatusRepository.findById(statusId)
+  public ReadStatusDto updateReadStatus(UUID readStatusId) {
+    ReadStatus readStatus = readStatusRepository.findById(readStatusId)
         .orElseThrow(ReadStatusNotFoundException::new);
     readStatus.updateLastReadAt();
     readStatusRepository.save(readStatus);

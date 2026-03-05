@@ -13,7 +13,7 @@ public class UserStatusMapper {
         userStatus.getId(),
         userStatus.getCreatedAt(),
         userStatus.getUpdatedAt(),
-        userStatus.getUserId(),
+        userStatus.getUser().getId(),
         userStatus.getLastActiveAt(),
         userStatus.isOnline()
     );

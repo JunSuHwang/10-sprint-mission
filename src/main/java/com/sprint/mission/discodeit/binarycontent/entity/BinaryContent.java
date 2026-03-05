@@ -3,7 +3,6 @@ package com.sprint.mission.discodeit.binarycontent.entity;
 import com.sprint.mission.discodeit.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.util.Arrays;
 import lombok.AccessLevel;
@@ -25,8 +24,7 @@ public class BinaryContent extends BaseEntity {
   @Column(nullable = false, length = 100)
   private String contentType;
 
-  @Lob
-  @Column(nullable = false)
+  @Column(nullable = false, columnDefinition = "bytea")
   private byte[] bytes;
 
   public BinaryContent(String fileName, Long size, String contentType, byte[] bytes) {

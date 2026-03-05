@@ -17,7 +17,7 @@ public class AuthService {
   private final UserRepository userRepository;
 
   public UserResultDto login(LoginRequest loginRequest) {
-    User findUser = userRepository.findByName(loginRequest.username())
+    User findUser = userRepository.findByUsername(loginRequest.username())
         .orElseThrow(UserNotFoundException::new);
     if (!findUser.getPassword().equals(loginRequest.password())) {
       throw new AuthenticationFailedException();

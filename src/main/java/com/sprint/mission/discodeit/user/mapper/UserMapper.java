@@ -18,7 +18,7 @@ public class UserMapper {
         user.getUpdatedAt(),
         user.getUsername(),
         user.getEmail(),
-        user.getProfileId(),
+        user.getProfile().getId(),
         userStatus.isOnline()
     );
   }
@@ -30,7 +30,7 @@ public class UserMapper {
         user.getUpdatedAt(),
         user.getUsername(),
         user.getEmail(),
-        user.getProfileId()
+        user.getProfile() != null ? user.getProfile().getId() : null
     );
   }
 
