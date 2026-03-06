@@ -27,10 +27,10 @@ public class UserStatusService {
   private final UserStatusMapper userStatusMapper;
 
   @Transactional
-  public UserStatusDto createUserStatus(UserStatusCreateRequest statusInfo) {
-    User findUser = userRepository.findById(statusInfo.userId())
+  public UserStatusDto createUserStatus(UserStatusCreateRequest request) {
+    User findUser = userRepository.findById(request.userId())
         .orElseThrow(UserNotFoundException::new);
-    if (userStatusRepository.existsByUserId(statusInfo.userId())) {
+    if (userStatusRepository.existsByUserId(request.userId())) {
       throw new UserStatusDuplicationException();
     }
 
@@ -41,8 +41,8 @@ public class UserStatusService {
     return userStatusMapper.toDto(userStatus);
   }
 
-  public UserStatusDto findUserStatus(UUID statusId) {
-    UserStatus userStatus = userStatusRepository.findById(statusId)
+  public UserStatusDto findUserStatus(UUID userStatusId) {
+    UserStatus userStatus = userStatusRepository.findById(userStatusId)
         .orElseThrow(UserStatusNotFoundException::new);
     return userStatusMapper.toDto(userStatus);
   }
@@ -86,7 +86,7 @@ public class UserStatusService {
   }
 
   @Transactional
-  void deleteUserStatus(UUID statusId) {
-    userStatusRepository.deleteById(statusId);
+  void deleteUserStatus(UUID userStatusId) {
+    userStatusRepository.deleteById(userStatusId);
   }
 }

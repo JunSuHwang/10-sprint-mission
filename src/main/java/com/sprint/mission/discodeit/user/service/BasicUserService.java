@@ -42,7 +42,6 @@ public class BasicUserService implements UserService {
     validateEmailExist(request.email());
 
     User user = new User(request.username(), request.password(), request.email());
-    // User user = userMapper.toEntity(request)
 
     UserStatus status = new UserStatus();
     status.setUser(user);

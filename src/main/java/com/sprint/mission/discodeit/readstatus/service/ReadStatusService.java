@@ -31,10 +31,10 @@ public class ReadStatusService {
   private final ReadStatusMapper readStatusMapper;
 
   @Transactional
-  public ReadStatusDto createReadStatus(ReadStatusCreateRequest statusInfo) {
-    User user = userRepository.findById(statusInfo.userId())
+  public ReadStatusDto createReadStatus(ReadStatusCreateRequest request) {
+    User user = userRepository.findById(request.userId())
         .orElseThrow(UserNotFoundException::new);
-    Channel channel = channelRepository.findById(statusInfo.channelId())
+    Channel channel = channelRepository.findById(request.channelId())
         .orElseThrow(ChannelNotFoundException::new);
 
     if (readStatusRepository.existsByUserIdAndChannelId(user.getId(), channel.getId())) {
@@ -46,8 +46,8 @@ public class ReadStatusService {
     return readStatusMapper.toDto(readStatus);
   }
 
-  public ReadStatusDto find(UUID statusId) {
-    ReadStatus readStatus = readStatusRepository.findById(statusId)
+  public ReadStatusDto find(UUID reaStatusId) {
+    ReadStatus readStatus = readStatusRepository.findById(reaStatusId)
         .orElseThrow(ReadStatusNotFoundException::new);
     return readStatusMapper.toDto(readStatus);
   }
@@ -83,7 +83,7 @@ public class ReadStatusService {
   }
 
   @Transactional
-  public void deleteReadStatus(UUID statusId) {
-    readStatusRepository.deleteById(statusId);
+  public void deleteReadStatus(UUID reaStatusId) {
+    readStatusRepository.deleteById(reaStatusId);
   }
 }

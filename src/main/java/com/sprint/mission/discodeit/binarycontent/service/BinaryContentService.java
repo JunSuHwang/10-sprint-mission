@@ -22,10 +22,10 @@ public class BinaryContentService {
   private final BinaryContentMapper binaryContentMapper;
 
   @Transactional
-  public BinaryContentDto createBinaryContent(BinaryContentCreateRequest contentInfo) {
-    byte[] bytes = contentInfo.bytes();
-    BinaryContent content = new BinaryContent(contentInfo.fileName(), (long) bytes.length,
-        contentInfo.contentType(),
+  public BinaryContentDto createBinaryContent(BinaryContentCreateRequest request) {
+    byte[] bytes = request.bytes();
+    BinaryContent content = new BinaryContent(request.fileName(), (long) bytes.length,
+        request.contentType(),
         bytes);
     contentRepository.save(content);
     return binaryContentMapper.toDto(content);

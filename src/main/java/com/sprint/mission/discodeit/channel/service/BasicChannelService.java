@@ -42,20 +42,20 @@ public class BasicChannelService implements ChannelService {
   private final ChannelMapper channelMapper;
 
   @Transactional
-  public ChannelDto createPublicChannel(PublicChannelCreateRequest channelInfo) {
-    validateChannelExist(channelInfo.name());
-    Channel channel = new Channel(channelInfo.name(), ChannelType.PUBLIC,
-        channelInfo.description());
+  public ChannelDto createPublicChannel(PublicChannelCreateRequest request) {
+    validateChannelExist(request.name());
+    Channel channel = new Channel(request.name(), ChannelType.PUBLIC,
+        request.description());
     channelRepository.save(channel);
     return channelMapper.toDto(channel,
         getLastMessageAt(channel.getId()), getParticipants(channel.getId()));
   }
 
   @Transactional
-  public ChannelDto createPrivateChannel(PrivateChannelCreateRequest channelInfo) {
+  public ChannelDto createPrivateChannel(PrivateChannelCreateRequest request) {
     Channel channel = new Channel(null, ChannelType.PRIVATE, null);
     channelRepository.save(channel);
-    channelInfo.participantIds().forEach(userId -> joinChannel(channel.getId(), userId));
+    request.participantIds().forEach(userId -> joinChannel(channel.getId(), userId));
     return channelMapper.toDto(channel,
         getLastMessageAt(channel.getId()), getParticipants(channel.getId()));
   }
@@ -91,18 +91,18 @@ public class BasicChannelService implements ChannelService {
   @Transactional
   @Override
   public ChannelDto updateChannel(UUID channelId,
-      PublicChannelUpdateRequest channelInfo) {
+      PublicChannelUpdateRequest request) {
     Channel findChannel = channelRepository.findById(channelId)
         .orElseThrow(ChannelNotFoundException::new);
     if (findChannel.getType() == ChannelType.PRIVATE) {
       throw new ChannelUpdateNotAllowedException();
     }
-    Optional.ofNullable(channelInfo.newName())
+    Optional.ofNullable(request.newName())
         .ifPresent(this::validateChannelExist);
 
-    Optional.ofNullable(channelInfo.newName())
+    Optional.ofNullable(request.newName())
         .ifPresent(findChannel::updateChannelName);
-    Optional.ofNullable(channelInfo.newDescription())
+    Optional.ofNullable(request.newDescription())
         .ifPresent(findChannel::updateDescription);
 
     return channelMapper.toDto(findChannel,

@@ -36,28 +36,28 @@ public class BasicMessageService implements MessageService {
 
   @Transactional
   @Override
-  public MessageDto createMessage(MessageCreateRequest createInfo,
+  public MessageDto createMessage(MessageCreateRequest request,
       List<BinaryContentCreateRequest> binaryContentCreateRequests) {
 
-    User author = userRepository.findById(createInfo.authorId())
+    User author = userRepository.findById(request.authorId())
         .orElseThrow(UserNotFoundException::new);
-    Channel findChannel = channelRepository.findById(createInfo.channelId())
+    Channel findChannel = channelRepository.findById(request.channelId())
         .orElseThrow(ChannelNotFoundException::new);
 
     List<BinaryContent> attachments = binaryContentCreateRequests.stream()
-        .map(request -> {
+        .map(contentRequest -> {
           BinaryContent binaryContent = new BinaryContent(
-              request.fileName(),
-              (long) request.bytes().length,
-              request.contentType(),
-              request.bytes()
+              contentRequest.fileName(),
+              (long) contentRequest.bytes().length,
+              contentRequest.contentType(),
+              contentRequest.bytes()
           );
           contentRepository.save(binaryContent);
           return binaryContent;
         })
         .toList();
 
-    Message message = new Message(createInfo.content(), findChannel, author, attachments);
+    Message message = new Message(request.content(), findChannel, author, attachments);
     messageRepository.save(message);
     return messageMapper.toDto(message);
   }
@@ -87,11 +87,11 @@ public class BasicMessageService implements MessageService {
 
   @Transactional
   @Override
-  public MessageDto updateMessage(UUID messageId, MessageUpdateRequest messageInfo) {
+  public MessageDto updateMessage(UUID messageId, MessageUpdateRequest request) {
     Message findMessage = messageRepository.findById(messageId)
         .orElseThrow(MessageNotFoundException::new);
 
-    Optional.ofNullable(messageInfo.newContent())
+    Optional.ofNullable(request.newContent())
         .ifPresent(findMessage::update);
 
     return messageMapper.toDto(findMessage);
