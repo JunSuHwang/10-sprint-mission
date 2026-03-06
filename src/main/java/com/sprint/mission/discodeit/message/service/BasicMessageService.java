@@ -32,6 +32,7 @@ public class BasicMessageService implements MessageService {
   private final UserRepository userRepository;
   private final ChannelRepository channelRepository;
   private final BinaryContentRepository contentRepository;
+  private final MessageMapper messageMapper;
 
   @Transactional
   @Override
@@ -58,7 +59,7 @@ public class BasicMessageService implements MessageService {
 
     Message message = new Message(createInfo.content(), findChannel, author, attachments);
     messageRepository.save(message);
-    return MessageMapper.toMessageDto(message, getAttachmentIds(message));
+    return messageMapper.toDto(message);
   }
 
   @Override
@@ -66,7 +67,7 @@ public class BasicMessageService implements MessageService {
     Message message = messageRepository.findById(messageId)
         .orElseThrow(MessageNotFoundException::new);
 
-    return MessageMapper.toMessageDto(message, getAttachmentIds(message));
+    return messageMapper.toDto(message);
   }
 
   @Override
@@ -93,7 +94,7 @@ public class BasicMessageService implements MessageService {
     Optional.ofNullable(messageInfo.newContent())
         .ifPresent(findMessage::update);
 
-    return MessageMapper.toMessageDto(findMessage, getAttachmentIds(findMessage));
+    return messageMapper.toDto(findMessage);
   }
 
   @Transactional
@@ -104,14 +105,7 @@ public class BasicMessageService implements MessageService {
 
   private List<MessageDto> toMessageDtoList(List<Message> messages) {
     return messages.stream()
-        .map(m -> MessageMapper.toMessageDto(m, getAttachmentIds(m)))
-        .toList();
-  }
-
-  private List<UUID> getAttachmentIds(Message message) {
-    return message.getAttachments()
-        .stream()
-        .map(BinaryContent::getId)
+        .map(messageMapper::toDto)
         .toList();
   }
 }

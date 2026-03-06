@@ -5,7 +5,6 @@ import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoundException;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
-import com.sprint.mission.discodeit.user.dto.UserResultDto;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.service.UserService;
 import com.sprint.mission.discodeit.userstatus.dto.UserStatusDto;
@@ -49,7 +48,7 @@ public class UserController {
   private final UserStatusService userStatusService;
 
   @GetMapping(value = "/{userId}")
-  public ResponseEntity<UserResultDto> getUser(@PathVariable UUID userId) {
+  public ResponseEntity<UserDto> getUser(@PathVariable UUID userId) {
     return ResponseEntity.ok(userService.findUser(userId));
   }
 
@@ -78,7 +77,7 @@ public class UserController {
       @ApiResponse(responseCode = "201", description = "User가 성공적으로 생성됨",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              schema = @Schema(implementation = UserResultDto.class)
+              schema = @Schema(implementation = UserDto.class)
           )
       ),
       @ApiResponse(responseCode = "400", description = "같은 email 또는 username를 사용하는 User가 이미 존재함",
@@ -89,7 +88,7 @@ public class UserController {
       )
   })
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<UserResultDto> create(
+  public ResponseEntity<UserDto> create(
       @Parameter() @RequestPart UserCreateRequest userCreateRequest,
       @Parameter(description = "User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
   ) {
@@ -136,12 +135,12 @@ public class UserController {
       @ApiResponse(responseCode = "200", description = "User 정보가 성공적으로 수정됨",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              schema = @Schema(implementation = UserResultDto.class)
+              schema = @Schema(implementation = UserDto.class)
           )
       )
   })
   @PatchMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<UserResultDto> update(
+  public ResponseEntity<UserDto> update(
       @Parameter(description = "수정할 User ID") @PathVariable UUID userId,
       @RequestPart UserUpdateRequest userUpdateRequest,
       @Parameter(description = "수정할 User 프로필 이미지") @RequestPart(required = false) MultipartFile profile

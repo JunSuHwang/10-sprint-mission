@@ -28,6 +28,7 @@ public class ReadStatusService {
   private final ReadStatusRepository readStatusRepository;
   private final UserRepository userRepository;
   private final ChannelRepository channelRepository;
+  private final ReadStatusMapper readStatusMapper;
 
   @Transactional
   public ReadStatusDto createReadStatus(ReadStatusCreateRequest statusInfo) {
@@ -42,26 +43,26 @@ public class ReadStatusService {
 
     ReadStatus readStatus = new ReadStatus(user, channel);
     readStatusRepository.save(readStatus);
-    return ReadStatusMapper.toReadStatusDto(readStatus);
+    return readStatusMapper.toDto(readStatus);
   }
 
   public ReadStatusDto find(UUID statusId) {
     ReadStatus readStatus = readStatusRepository.findById(statusId)
         .orElseThrow(ReadStatusNotFoundException::new);
-    return ReadStatusMapper.toReadStatusDto(readStatus);
+    return readStatusMapper.toDto(readStatus);
   }
 
   public List<ReadStatusDto> findAllByUserId(UUID userId) {
     return readStatusRepository.findAllByUserId(userId)
         .stream()
-        .map(ReadStatusMapper::toReadStatusDto)
+        .map(readStatusMapper::toDto)
         .toList();
   }
 
   public List<ReadStatusDto> findAll() {
     return readStatusRepository.findAll()
         .stream()
-        .map(ReadStatusMapper::toReadStatusDto)
+        .map(readStatusMapper::toDto)
         .toList();
   }
 
@@ -70,7 +71,7 @@ public class ReadStatusService {
     ReadStatus readStatus = readStatusRepository.findById(readStatusId)
         .orElseThrow(ReadStatusNotFoundException::new);
     readStatus.updateLastReadAt();
-    return ReadStatusMapper.toReadStatusDto(readStatus);
+    return readStatusMapper.toDto(readStatus);
   }
 
   @Transactional
@@ -78,7 +79,7 @@ public class ReadStatusService {
     ReadStatus readStatus = readStatusRepository.findById(readStatusId)
         .orElseThrow(ReadStatusNotFoundException::new);
     readStatus.update(request.newLastReadAt());
-    return ReadStatusMapper.toReadStatusDto(readStatus);
+    return readStatusMapper.toDto(readStatus);
   }
 
   @Transactional

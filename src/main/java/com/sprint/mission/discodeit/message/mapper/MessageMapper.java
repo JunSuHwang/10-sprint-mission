@@ -1,47 +1,14 @@
 package com.sprint.mission.discodeit.message.mapper;
 
-import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
 import com.sprint.mission.discodeit.message.dto.MessageDto;
-import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
 import com.sprint.mission.discodeit.message.entity.Message;
-import java.util.List;
-import java.util.UUID;
+import com.sprint.mission.discodeit.user.mapper.UserMapper;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-public final class MessageMapper {
+@Mapper(componentModel = "spring", uses = UserMapper.class)
+public interface MessageMapper {
 
-  private MessageMapper() {
-  }
-
-  public static MessageDto toMessageDto(Message message, List<UUID> attachmentIds) {
-    return new MessageDto(
-        message.getId(),
-        message.getCreatedAt(),
-        message.getUpdatedAt(),
-        message.getContent(),
-        message.getAuthor() != null ? message.getAuthor().getId() : null,
-        message.getChannel().getId(),
-        attachmentIds
-    );
-  }
-
-  public static MessageCreateRequest toMessageCreateRequest(
-      String content,
-      UUID authorId,
-      UUID channelId,
-      List<byte[]> attachments
-  ) {
-    return new MessageCreateRequest(
-        content,
-        authorId,
-        channelId
-    );
-  }
-
-  public static MessageUpdateRequest toMessageUpdateRequest(
-      String content
-  ) {
-    return new MessageUpdateRequest(
-        content
-    );
-  }
+  @Mapping(target = "channelId", source = "channel.id")
+  MessageDto toDto(Message message);
 }

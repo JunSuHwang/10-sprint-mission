@@ -16,15 +16,13 @@ import lombok.Getter;
 @Table(name = "user_statuses")
 public class UserStatus extends BaseUpdatableEntity {
 
+  @Transient
+  private final int loginLimitSeconds = 60 * 5;
   @OneToOne(optional = false)
   @JoinColumn(name = "user_id")
   private User user;
-
   @Column(nullable = false)
   private Instant lastActiveAt;
-
-  @Transient
-  private final int loginLimitSeconds = 60 * 5;
 
   public UserStatus() {
     lastActiveAt = Instant.now();

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BinaryContentService {
 
   private final BinaryContentRepository contentRepository;
+  private final BinaryContentMapper binaryContentMapper;
 
   @Transactional
   public BinaryContentDto createBinaryContent(BinaryContentCreateRequest contentInfo) {
@@ -27,13 +28,13 @@ public class BinaryContentService {
         contentInfo.contentType(),
         bytes);
     contentRepository.save(content);
-    return BinaryContentMapper.toBinaryContentDto(content);
+    return binaryContentMapper.toDto(content);
   }
 
   public BinaryContentDto findBinaryContent(UUID contentId) {
     BinaryContent content = contentRepository.findById(contentId)
         .orElseThrow(BinaryContentNotFoundException::new);
-    return BinaryContentMapper.toBinaryContentDto(content);
+    return binaryContentMapper.toDto(content);
   }
 
   public BinaryContent findBinaryContentEntity(UUID contentId) {
@@ -44,15 +45,15 @@ public class BinaryContentService {
   public List<BinaryContentDto> findAll() {
     return contentRepository.findAll()
         .stream()
-        .map(BinaryContentMapper::toBinaryContentDto)
+        .map(binaryContentMapper::toDto)
         .toList();
   }
-  
+
   public List<BinaryContentDto> findAllByIdIn(BinaryContentsRequest request) {
     return contentRepository.findAll()
         .stream()
         .filter(content -> request.ids().contains(content.getId()))
-        .map(BinaryContentMapper::toBinaryContentDto)
+        .map(binaryContentMapper::toDto)
         .toList();
   }
 

@@ -1,7 +1,6 @@
 package com.sprint.mission.discodeit.channel.controller;
 
 import com.sprint.mission.discodeit.channel.dto.ChannelDto;
-import com.sprint.mission.discodeit.channel.dto.ChannelResultDto;
 import com.sprint.mission.discodeit.channel.dto.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.channel.dto.PublicChannelUpdateRequest;
@@ -44,12 +43,12 @@ public class ChannelController {
           responseCode = "201", description = "Public Channel이 성공적으로 생성됨",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              schema = @Schema(implementation = ChannelResultDto.class)
+              schema = @Schema(implementation = ChannelDto.class)
           )
       )
   })
   @PostMapping(value = "/public", consumes = "application/json")
-  public ResponseEntity<ChannelResultDto> create_3(
+  public ResponseEntity<ChannelDto> create_3(
       @RequestBody PublicChannelCreateRequest channelInfo
   ) {
     return ResponseEntity.status(201).body(channelService.createPublicChannel(channelInfo));
@@ -61,12 +60,12 @@ public class ChannelController {
           responseCode = "201", description = "Private Channel이 성공적으로 생성됨",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              schema = @Schema(implementation = ChannelResultDto.class)
+              schema = @Schema(implementation = ChannelDto.class)
           )
       )
   })
   @PostMapping(value = "/private", consumes = "application/json")
-  public ResponseEntity<ChannelResultDto> create_4(
+  public ResponseEntity<ChannelDto> create_4(
       @RequestBody PrivateChannelCreateRequest channelInfo
   ) {
     return ResponseEntity.status(201).body(channelService.createPrivateChannel(channelInfo));
@@ -114,12 +113,12 @@ public class ChannelController {
           responseCode = "200", description = "Channel 정보가 성공적으로 수정됨",
           content = @Content(
               mediaType = MediaType.ALL_VALUE,
-              schema = @Schema(implementation = ChannelResultDto.class)
+              schema = @Schema(implementation = ChannelDto.class)
           )
       )
   })
   @PatchMapping(value = "/{channelId}", consumes = "application/json")
-  public ResponseEntity<ChannelResultDto> update_3(
+  public ResponseEntity<ChannelDto> update_3(
       @Parameter(description = "수정할 Channel ID") @PathVariable UUID channelId,
       @RequestBody PublicChannelUpdateRequest channelInfo
   ) {

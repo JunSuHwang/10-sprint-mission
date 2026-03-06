@@ -24,6 +24,7 @@ public class UserStatusService {
 
   private final UserStatusRepository userStatusRepository;
   private final UserRepository userRepository;
+  private final UserStatusMapper userStatusMapper;
 
   @Transactional
   public UserStatusDto createUserStatus(UserStatusCreateRequest statusInfo) {
@@ -37,25 +38,25 @@ public class UserStatusService {
     userStatus.setUser(findUser);
 
     userStatusRepository.save(userStatus);
-    return UserStatusMapper.toUserStatusInfo(userStatus);
+    return userStatusMapper.toDto(userStatus);
   }
 
   public UserStatusDto findUserStatus(UUID statusId) {
     UserStatus userStatus = userStatusRepository.findById(statusId)
         .orElseThrow(UserStatusNotFoundException::new);
-    return UserStatusMapper.toUserStatusInfo(userStatus);
+    return userStatusMapper.toDto(userStatus);
   }
 
   public UserStatusDto findUserStatusByUserId(UUID userId) {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
-    return UserStatusMapper.toUserStatusInfo(userStatus);
+    return userStatusMapper.toDto(userStatus);
   }
 
   public List<UserStatusDto> findAll() {
     return userStatusRepository.findAll()
         .stream()
-        .map(UserStatusMapper::toUserStatusInfo)
+        .map(userStatusMapper::toDto)
         .toList();
   }
 
@@ -64,7 +65,7 @@ public class UserStatusService {
     UserStatus userStatus = userStatusRepository.findById(userStatusId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update();
-    return UserStatusMapper.toUserStatusInfo(userStatus);
+    return userStatusMapper.toDto(userStatus);
   }
 
   @Transactional
@@ -72,7 +73,7 @@ public class UserStatusService {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update();
-    return UserStatusMapper.toUserStatusInfo(userStatus);
+    return userStatusMapper.toDto(userStatus);
   }
 
   @Transactional
@@ -81,7 +82,7 @@ public class UserStatusService {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update(request.newLastActiveAt());
-    return UserStatusMapper.toUserStatusInfo(userStatus);
+    return userStatusMapper.toDto(userStatus);
   }
 
   @Transactional

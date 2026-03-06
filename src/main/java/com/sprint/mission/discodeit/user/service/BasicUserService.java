@@ -6,7 +6,6 @@ import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentReposi
 import com.sprint.mission.discodeit.readstatus.repository.ReadStatusRepository;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
-import com.sprint.mission.discodeit.user.dto.UserResultDto;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.EmailDuplicationException;
@@ -15,7 +14,6 @@ import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.mapper.UserMapper;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
 import com.sprint.mission.discodeit.userstatus.entity.UserStatus;
-import com.sprint.mission.discodeit.userstatus.exception.UserStatusNotFoundException;
 import com.sprint.mission.discodeit.userstatus.repository.UserStatusRepository;
 import java.util.List;
 import java.util.Optional;
@@ -33,16 +31,18 @@ public class BasicUserService implements UserService {
   private final ReadStatusRepository readStatusRepository;
   private final BinaryContentRepository contentRepository;
   private final UserStatusRepository userStatusRepository;
+  private final UserMapper userMapper;
 
   @Transactional
   @Override
-  public UserResultDto createUser(UserCreateRequest userInfo,
+  public UserDto createUser(UserCreateRequest request,
       Optional<BinaryContentCreateRequest> image) {
 
-    validateUserExist(userInfo.username());
-    validateEmailExist(userInfo.email());
+    validateUserExist(request.username());
+    validateEmailExist(request.email());
 
-    User user = new User(userInfo.username(), userInfo.password(), userInfo.email());
+    User user = new User(request.username(), request.password(), request.email());
+    // User user = userMapper.toEntity(request)
 
     UserStatus status = new UserStatus();
     status.setUser(user);
@@ -56,51 +56,43 @@ public class BasicUserService implements UserService {
     }
 
     userRepository.save(user);
-    return UserMapper.toUserResultDto(user);
+    return userMapper.toDto(user);
   }
 
   @Override
-  public UserResultDto findUser(UUID userId) {
+  public UserDto findUser(UUID userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
-    return UserMapper.toUserResultDto(user);
+    return userMapper.toDto(user);
   }
 
   @Override
   public List<UserDto> findAll() {
     return userRepository.findAll()
         .stream()
-        .map(user -> {
-          UserStatus status = userStatusRepository.findByUserId(user.getId())
-              .orElseThrow(UserStatusNotFoundException::new);
-          return UserMapper.toUserDto(user, status);
-        })
+        .map(userMapper::toDto)
         .toList();
   }
 
   public List<UserDto> findAllWithUserDTO() {
     return userRepository.findAll()
         .stream()
-        .map(user -> {
-          UserStatus status = userStatusRepository.findByUserId(user.getId())
-              .orElseThrow(UserStatusNotFoundException::new);
-          return UserMapper.toUserDto(user, status);
-        })
+        .map(userMapper::toDto)
         .toList();
   }
 
   @Override
-  public List<UserResultDto> findAllByChannelId(UUID channelId) {
+  public List<UserDto> findAllByChannelId(UUID channelId) {
     return userRepository.findAll()
         .stream()
         .filter(user -> readStatusRepository.existsByUserIdAndChannelId(user.getId(), channelId))
-        .map(UserMapper::toUserResultDto)
+        .map(userMapper::toDto)
         .toList();
   }
 
   @Transactional
   @Override
-  public UserResultDto updateUser(UUID userId, UserUpdateRequest request,
+  public UserDto updateUser(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> image) {
     Optional.ofNullable(request.newUsername())
         .ifPresent(this::validateUserExist);
@@ -129,7 +121,7 @@ public class BasicUserService implements UserService {
     userStatusRepository.findByUserId(findUser.getId())
         .ifPresent(UserStatus::update);
 
-    return UserMapper.toUserResultDto(findUser);
+    return userMapper.toDto(findUser);
   }
 
   @Transactional
