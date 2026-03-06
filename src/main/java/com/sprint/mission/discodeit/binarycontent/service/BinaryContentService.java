@@ -11,13 +11,16 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class BinaryContentService {
 
   private final BinaryContentRepository contentRepository;
 
+  @Transactional
   public BinaryContentDto createBinaryContent(BinaryContentCreateRequest contentInfo) {
     byte[] bytes = contentInfo.bytes();
     BinaryContent content = new BinaryContent(contentInfo.fileName(), (long) bytes.length,
@@ -44,7 +47,7 @@ public class BinaryContentService {
         .map(BinaryContentMapper::toBinaryContentDto)
         .toList();
   }
-
+  
   public List<BinaryContentDto> findAllByIdIn(BinaryContentsRequest request) {
     return contentRepository.findAll()
         .stream()
@@ -53,6 +56,7 @@ public class BinaryContentService {
         .toList();
   }
 
+  @Transactional
   public void deleteBinaryContent(UUID contentId) {
     contentRepository.deleteById(contentId);
   }

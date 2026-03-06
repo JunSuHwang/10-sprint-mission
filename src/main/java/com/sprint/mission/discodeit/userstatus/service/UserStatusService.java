@@ -15,14 +15,17 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class UserStatusService {
 
   private final UserStatusRepository userStatusRepository;
   private final UserRepository userRepository;
 
+  @Transactional
   public UserStatusDto createUserStatus(UserStatusCreateRequest statusInfo) {
     User findUser = userRepository.findById(statusInfo.userId())
         .orElseThrow(UserNotFoundException::new);
@@ -56,31 +59,32 @@ public class UserStatusService {
         .toList();
   }
 
+  @Transactional
   public UserStatusDto update(UUID userStatusId) {
     UserStatus userStatus = userStatusRepository.findById(userStatusId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update();
-    userStatusRepository.save(userStatus);
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
 
+  @Transactional
   public UserStatusDto updateUserStatusByUserId(UUID userId) {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update();
-    userStatusRepository.save(userStatus);
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
 
+  @Transactional
   public UserStatusDto update(UUID userId, UserStatusUpdateRequest request) {
 
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(UserStatusNotFoundException::new);
     userStatus.update(request.newLastActiveAt());
-    userStatusRepository.save(userStatus);
     return UserStatusMapper.toUserStatusInfo(userStatus);
   }
 
+  @Transactional
   void deleteUserStatus(UUID statusId) {
     userStatusRepository.deleteById(statusId);
   }

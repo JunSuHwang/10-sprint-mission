@@ -3,7 +3,6 @@ package com.sprint.mission.discodeit.user.service;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
-import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
 import com.sprint.mission.discodeit.readstatus.repository.ReadStatusRepository;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
@@ -23,17 +22,19 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class BasicUserService implements UserService {
 
   private final UserRepository userRepository;
-  private final ChannelRepository channelRepository;
   private final ReadStatusRepository readStatusRepository;
   private final BinaryContentRepository contentRepository;
   private final UserStatusRepository userStatusRepository;
 
+  @Transactional
   @Override
   public UserResultDto createUser(UserCreateRequest userInfo,
       Optional<BinaryContentCreateRequest> image) {
@@ -97,6 +98,7 @@ public class BasicUserService implements UserService {
         .toList();
   }
 
+  @Transactional
   @Override
   public UserResultDto updateUser(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> image) {
@@ -124,17 +126,13 @@ public class BasicUserService implements UserService {
       findUser.setProfile(profileImage);
     }
 
-    UserStatus status = userStatusRepository.findByUserId(findUser.getId())
-        .map(findStatus -> {
-          findStatus.update();
-          return findStatus;
-        })
-        .orElseThrow(UserStatusNotFoundException::new);
+    userStatusRepository.findByUserId(findUser.getId())
+        .ifPresent(UserStatus::update);
 
-    userRepository.save(findUser);
     return UserMapper.toUserResultDto(findUser);
   }
 
+  @Transactional
   @Override
   public void deleteUser(UUID userId) {
     userRepository.findById(userId)

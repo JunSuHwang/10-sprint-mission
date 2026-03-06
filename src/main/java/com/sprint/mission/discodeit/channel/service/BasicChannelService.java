@@ -26,9 +26,11 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class BasicChannelService implements ChannelService {
 
   private final ChannelRepository channelRepository;
@@ -36,6 +38,7 @@ public class BasicChannelService implements ChannelService {
   private final MessageRepository messageRepository;
   private final ReadStatusRepository readStatusRepository;
 
+  @Transactional
   public ChannelResultDto createPublicChannel(PublicChannelCreateRequest channelInfo) {
     validateChannelExist(channelInfo.name());
     Channel channel = new Channel(channelInfo.name(), ChannelType.PUBLIC,
@@ -44,6 +47,7 @@ public class BasicChannelService implements ChannelService {
     return ChannelMapper.toChannelResultDto(channel);
   }
 
+  @Transactional
   public ChannelResultDto createPrivateChannel(PrivateChannelCreateRequest channelInfo) {
     Channel channel = new Channel(null, ChannelType.PRIVATE, null);
     channelRepository.save(channel);
@@ -83,6 +87,7 @@ public class BasicChannelService implements ChannelService {
         .toList();
   }
 
+  @Transactional
   @Override
   public ChannelResultDto updateChannel(UUID channelId,
       PublicChannelUpdateRequest channelInfo) {
@@ -99,11 +104,10 @@ public class BasicChannelService implements ChannelService {
     Optional.ofNullable(channelInfo.newDescription())
         .ifPresent(findChannel::updateDescription);
 
-    channelRepository.save(findChannel);
-
     return ChannelMapper.toChannelResultDto(findChannel);
   }
 
+  @Transactional
   @Override
   public void deleteChannel(UUID channelId) {
     channelRepository.findById(channelId)
@@ -111,6 +115,7 @@ public class BasicChannelService implements ChannelService {
     channelRepository.deleteById(channelId);
   }
 
+  @Transactional
   @Override
   public void joinChannel(UUID channelId, UUID userId) {
     Channel channel = channelRepository.findById(channelId)
@@ -121,6 +126,7 @@ public class BasicChannelService implements ChannelService {
     readStatusRepository.save(new ReadStatus(user, channel));
   }
 
+  @Transactional
   @Override
   public void leaveChannel(UUID channelId, UUID userId) {
     channelRepository.findById(channelId)

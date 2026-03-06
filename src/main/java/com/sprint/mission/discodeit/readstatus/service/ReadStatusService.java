@@ -18,15 +18,18 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class ReadStatusService {
 
   private final ReadStatusRepository readStatusRepository;
   private final UserRepository userRepository;
   private final ChannelRepository channelRepository;
 
+  @Transactional
   public ReadStatusDto createReadStatus(ReadStatusCreateRequest statusInfo) {
     User user = userRepository.findById(statusInfo.userId())
         .orElseThrow(UserNotFoundException::new);
@@ -62,22 +65,23 @@ public class ReadStatusService {
         .toList();
   }
 
+  @Transactional
   public ReadStatusDto updateReadStatus(UUID readStatusId) {
     ReadStatus readStatus = readStatusRepository.findById(readStatusId)
         .orElseThrow(ReadStatusNotFoundException::new);
     readStatus.updateLastReadAt();
-    readStatusRepository.save(readStatus);
     return ReadStatusMapper.toReadStatusDto(readStatus);
   }
 
+  @Transactional
   public ReadStatusDto updateReadStatus(UUID readStatusId, ReadStatusUpdateRequest request) {
     ReadStatus readStatus = readStatusRepository.findById(readStatusId)
         .orElseThrow(ReadStatusNotFoundException::new);
     readStatus.update(request.newLastReadAt());
-    readStatusRepository.save(readStatus);
     return ReadStatusMapper.toReadStatusDto(readStatus);
   }
 
+  @Transactional
   public void deleteReadStatus(UUID statusId) {
     readStatusRepository.deleteById(statusId);
   }

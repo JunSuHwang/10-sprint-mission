@@ -21,9 +21,11 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class BasicMessageService implements MessageService {
 
   private final MessageRepository messageRepository;
@@ -31,6 +33,7 @@ public class BasicMessageService implements MessageService {
   private final ChannelRepository channelRepository;
   private final BinaryContentRepository contentRepository;
 
+  @Transactional
   @Override
   public MessageDto createMessage(MessageCreateRequest createInfo,
       List<BinaryContentCreateRequest> binaryContentCreateRequests) {
@@ -54,9 +57,6 @@ public class BasicMessageService implements MessageService {
         .toList();
 
     Message message = new Message(createInfo.content(), findChannel, author, attachments);
-
-    userRepository.save(author);
-    channelRepository.save(findChannel);
     messageRepository.save(message);
     return MessageMapper.toMessageDto(message, getAttachmentIds(message));
   }
@@ -84,6 +84,7 @@ public class BasicMessageService implements MessageService {
     return toMessageDtoList(messageRepository.findAllByChannelId(channelId));
   }
 
+  @Transactional
   @Override
   public MessageDto updateMessage(UUID messageId, MessageUpdateRequest messageInfo) {
     Message findMessage = messageRepository.findById(messageId)
@@ -92,10 +93,10 @@ public class BasicMessageService implements MessageService {
     Optional.ofNullable(messageInfo.newContent())
         .ifPresent(findMessage::update);
 
-    messageRepository.save(findMessage);
     return MessageMapper.toMessageDto(findMessage, getAttachmentIds(findMessage));
   }
 
+  @Transactional
   @Override
   public void deleteMessage(UUID messageId) {
     messageRepository.deleteById(messageId);
