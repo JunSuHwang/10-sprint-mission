@@ -53,7 +53,7 @@ CREATE TABLE binary_contents
 (
     id           UUID PRIMARY KEY,
     created_at   timestamptz  NOT NULL,
-    filename     varchar(255) NOT NULL,
+    file_name    varchar(255) NOT NULL,
     size         bigint       NOT NULL,
     content_type varchar(100) NOT NULL,
     bytes        bytea        NOT NULL
@@ -62,6 +62,7 @@ CREATE TABLE message_attachments
 (
     message_id    UUID NOT NULL,
     attachment_id UUID NOT NULL,
+    UNIQUE (message_id, attachment_id),
     FOREIGN KEY (message_id) REFERENCES messages (id) ON DELETE CASCADE,
     FOREIGN KEY (attachment_id) REFERENCES binary_contents (id) ON DELETE CASCADE
 );
