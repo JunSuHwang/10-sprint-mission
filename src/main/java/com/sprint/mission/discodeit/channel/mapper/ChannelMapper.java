@@ -31,7 +31,7 @@ public abstract class ChannelMapper {
   public abstract ChannelDto toDto(Channel channel);
 
   protected Instant getLastMessageAt(UUID channelId) {
-    return messageRepository.findFirstByChannel_IdOrderByCreatedAtAsc(channelId)
+    return messageRepository.findFirstByChannel_IdOrderByCreatedAtDesc(channelId)
         .map(BaseEntity::getCreatedAt)
         .orElse(null);
   }
