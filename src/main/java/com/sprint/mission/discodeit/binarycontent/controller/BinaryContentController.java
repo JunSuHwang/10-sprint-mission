@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.binarycontent.controller;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentDto;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentsRequest;
 import com.sprint.mission.discodeit.binarycontent.service.BinaryContentService;
+import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BinaryContentController {
 
   private final BinaryContentService binaryContentService;
+  private final BinaryContentStorage storage;
 
   @Operation(summary = "첨부 파일 조회")
   @ApiResponses(value = {
@@ -74,5 +76,23 @@ public class BinaryContentController {
   ) {
     BinaryContentsRequest request = new BinaryContentsRequest(binaryContentIds);
     return ResponseEntity.ok(binaryContentService.findAllByIdIn(request));
+  }
+
+  @Operation(summary = "파일 다운로드")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "파일 다운로드 성공",
+          content = @Content(
+              mediaType = MediaType.ALL_VALUE,
+              schema = @Schema(type = "string", format = "binary")
+          )
+      )
+  })
+  @GetMapping("/{binaryContentId}/download")
+  public ResponseEntity<?> download(
+      @Parameter(description = "다운로드할 파일 ID", required = true) @PathVariable UUID binaryContentId
+  ) {
+    BinaryContentDto binaryContent = binaryContentService.findBinaryContent(binaryContentId);
+    return storage.download(binaryContent);
   }
 }
