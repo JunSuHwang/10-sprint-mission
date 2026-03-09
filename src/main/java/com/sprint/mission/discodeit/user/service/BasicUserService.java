@@ -53,6 +53,7 @@ public class BasicUserService implements UserService {
     if (image.isPresent()) {
       BinaryContent profileImage = binaryContentMapper.toEntity(image.get());
       user.setProfile(profileImage);
+      contentRepository.save(profileImage);
       storage.put(profileImage.getId(), image.get().bytes());
     }
     userRepository.save(user);
@@ -109,6 +110,7 @@ public class BasicUserService implements UserService {
       }
       BinaryContent profileImage = binaryContentMapper.toEntity(image.get());
       findUser.setProfile(profileImage);
+      contentRepository.save(profileImage);
       storage.put(profileImage.getId(), image.get().bytes());
     }
 

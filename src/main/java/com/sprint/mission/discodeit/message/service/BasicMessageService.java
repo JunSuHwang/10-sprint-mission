@@ -51,6 +51,7 @@ public class BasicMessageService implements MessageService {
     List<BinaryContent> attachments = binaryContentCreateRequests.stream()
         .map(contentRequest -> {
           BinaryContent binaryContent = binaryContentMapper.toEntity(contentRequest);
+          contentRepository.save(binaryContent);
           storage.put(binaryContent.getId(), contentRequest.bytes());
           return binaryContent;
         })
