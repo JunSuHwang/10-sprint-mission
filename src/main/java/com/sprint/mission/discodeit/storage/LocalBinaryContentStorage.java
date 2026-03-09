@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -63,8 +63,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
   public ResponseEntity<Resource> download(BinaryContentDto binaryContentDto) {
     Path path = resolvePath(binaryContentDto.id());
     try {
-      byte[] bytes = Files.readAllBytes(path);
-      Resource resource = new ByteArrayResource(bytes);
+      Resource resource = new InputStreamResource(Files.newInputStream(path));
       return ResponseEntity
           .status(200)
           .contentType(MediaType.valueOf(binaryContentDto.contentType()))
