@@ -6,12 +6,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
-import java.time.Instant;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "channels")
@@ -31,20 +32,5 @@ public class Channel extends BaseUpdatableEntity {
     this.name = name;
     this.type = type;
     this.description = description;
-  }
-
-  public void updateChannelName(String channelName) {
-    this.name = channelName;
-    this.updatedAt = Instant.now();
-  }
-
-  public void updateChannelType(ChannelType channelType) {
-    this.type = channelType;
-    this.updatedAt = Instant.now();
-  }
-
-  public void updateDescription(String description) {
-    this.description = description;
-    this.updatedAt = Instant.now();
   }
 }

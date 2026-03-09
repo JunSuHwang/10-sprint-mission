@@ -19,3 +19,9 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+
+discodeit:
+  storage:
+    type: local
+  local:
+    root-path: "./data"

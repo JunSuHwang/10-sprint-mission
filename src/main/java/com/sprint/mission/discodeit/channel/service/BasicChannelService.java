@@ -18,7 +18,6 @@ import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,15 +36,14 @@ public class BasicChannelService implements ChannelService {
   @Transactional
   public ChannelDto createPublicChannel(PublicChannelCreateRequest request) {
     validateChannelExist(request.name());
-    Channel channel = new Channel(request.name(), ChannelType.PUBLIC,
-        request.description());
+    Channel channel = channelMapper.toEntity(request);
     channelRepository.save(channel);
     return channelMapper.toDto(channel);
   }
 
   @Transactional
   public ChannelDto createPrivateChannel(PrivateChannelCreateRequest request) {
-    Channel channel = new Channel(null, ChannelType.PRIVATE, null);
+    Channel channel = channelMapper.toEntity(request);
     channelRepository.save(channel);
     request.participantIds().forEach(userId -> joinChannel(channel.getId(), userId));
     return channelMapper.toDto(channel);
@@ -85,13 +83,7 @@ public class BasicChannelService implements ChannelService {
     if (findChannel.getType() == ChannelType.PRIVATE) {
       throw new ChannelUpdateNotAllowedException();
     }
-    Optional.ofNullable(request.newName())
-        .ifPresent(this::validateChannelExist);
-
-    Optional.ofNullable(request.newName())
-        .ifPresent(findChannel::updateChannelName);
-    Optional.ofNullable(request.newDescription())
-        .ifPresent(findChannel::updateDescription);
+    channelMapper.update(request, findChannel);
 
     return channelMapper.toDto(findChannel);
   }

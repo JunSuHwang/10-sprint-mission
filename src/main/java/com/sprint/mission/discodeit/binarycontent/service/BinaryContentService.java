@@ -7,6 +7,7 @@ import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoundException;
 import com.sprint.mission.discodeit.binarycontent.mapper.BinaryContentMapper;
 import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
+import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,13 @@ public class BinaryContentService {
 
   private final BinaryContentRepository contentRepository;
   private final BinaryContentMapper binaryContentMapper;
+  private final BinaryContentStorage storage;
 
   @Transactional
   public BinaryContentDto createBinaryContent(BinaryContentCreateRequest request) {
-    byte[] bytes = request.bytes();
-    BinaryContent content = new BinaryContent(request.fileName(), (long) bytes.length,
-        request.contentType(),
-        bytes);
+    BinaryContent content = binaryContentMapper.toEntity(request);
     contentRepository.save(content);
+    storage.put(content.getId(), request.bytes());
     return binaryContentMapper.toDto(content);
   }
 
@@ -35,11 +35,6 @@ public class BinaryContentService {
     BinaryContent content = contentRepository.findById(contentId)
         .orElseThrow(BinaryContentNotFoundException::new);
     return binaryContentMapper.toDto(content);
-  }
-
-  public BinaryContent findBinaryContentEntity(UUID contentId) {
-    return contentRepository.findById(contentId)
-        .orElseThrow(BinaryContentNotFoundException::new);
   }
 
   public List<BinaryContentDto> findAll() {

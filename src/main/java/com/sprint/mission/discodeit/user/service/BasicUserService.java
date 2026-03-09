@@ -2,8 +2,10 @@ package com.sprint.mission.discodeit.user.service;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
+import com.sprint.mission.discodeit.binarycontent.mapper.BinaryContentMapper;
 import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.readstatus.repository.ReadStatusRepository;
+import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
@@ -31,7 +33,9 @@ public class BasicUserService implements UserService {
   private final ReadStatusRepository readStatusRepository;
   private final BinaryContentRepository contentRepository;
   private final UserStatusRepository userStatusRepository;
+  private final BinaryContentStorage storage;
   private final UserMapper userMapper;
+  private final BinaryContentMapper binaryContentMapper;
 
   @Transactional
   @Override
@@ -41,19 +45,17 @@ public class BasicUserService implements UserService {
     validateUserExist(request.username());
     validateEmailExist(request.email());
 
-    User user = new User(request.username(), request.password(), request.email());
+    User user = userMapper.toEntity(request);
 
     UserStatus status = new UserStatus();
     status.setUser(user);
 
     if (image.isPresent()) {
-      BinaryContentCreateRequest createInfo = image.get();
-      byte[] bytes = createInfo.bytes();
-      BinaryContent profileImage = new BinaryContent(createInfo.fileName(), (long) bytes.length,
-          createInfo.contentType(), bytes);
+      BinaryContent profileImage = binaryContentMapper.toEntity(image.get());
       user.setProfile(profileImage);
+      contentRepository.save(profileImage);
+      storage.put(profileImage.getId(), image.get().bytes());
     }
-
     userRepository.save(user);
     return userMapper.toDto(user);
   }
@@ -97,24 +99,19 @@ public class BasicUserService implements UserService {
         .ifPresent(this::validateUserExist);
     Optional.ofNullable(request.newEmail())
         .ifPresent(this::validateEmailExist);
+
     User findUser = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
-    Optional.ofNullable(request.newUsername())
-        .ifPresent(findUser::updateUserName);
-    Optional.ofNullable(request.newPassword())
-        .ifPresent(findUser::updatePassword);
-    Optional.ofNullable(request.newEmail())
-        .ifPresent(findUser::updateEmail);
+    userMapper.update(request, findUser);
 
     if (image.isPresent()) {
       if (findUser.isProfileImageUploaded()) {
         contentRepository.deleteById(findUser.getProfile().getId());
       }
-      BinaryContentCreateRequest createInfo = image.get();
-      byte[] bytes = createInfo.bytes();
-      BinaryContent profileImage = new BinaryContent(createInfo.fileName(), (long) bytes.length,
-          createInfo.contentType(), bytes);
+      BinaryContent profileImage = binaryContentMapper.toEntity(image.get());
       findUser.setProfile(profileImage);
+      contentRepository.save(profileImage);
+      storage.put(profileImage.getId(), image.get().bytes());
     }
 
     userStatusRepository.findByUserId(findUser.getId())

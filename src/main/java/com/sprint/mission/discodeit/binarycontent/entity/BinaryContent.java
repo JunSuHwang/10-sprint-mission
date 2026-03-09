@@ -24,17 +24,9 @@ public class BinaryContent extends BaseEntity {
   @Column(nullable = false, length = 100)
   private String contentType;
 
-  @Column(nullable = false, columnDefinition = "bytea")
-  private byte[] bytes;
-
   public BinaryContent(String fileName, Long size, String contentType, byte[] bytes) {
     this.fileName = fileName;
     this.size = size;
     this.contentType = contentType;
-    this.bytes = bytes;
-  }
-
-  public byte[] getBytes() {
-    return Arrays.copyOf(bytes, bytes.length);
   }
 }
