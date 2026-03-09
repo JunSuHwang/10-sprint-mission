@@ -9,6 +9,7 @@ import com.sprint.mission.discodeit.channel.exception.ChannelUpdateNotAllowedExc
 import com.sprint.mission.discodeit.message.exception.MessageNotFoundException;
 import com.sprint.mission.discodeit.readstatus.exception.ReadStatusDuplicationException;
 import com.sprint.mission.discodeit.readstatus.exception.ReadStatusNotFoundException;
+import com.sprint.mission.discodeit.storage.exception.StorageException;
 import com.sprint.mission.discodeit.user.exception.AuthenticationFailedException;
 import com.sprint.mission.discodeit.user.exception.EmailDuplicationException;
 import com.sprint.mission.discodeit.user.exception.UserDuplicationException;
@@ -111,6 +112,12 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(BinaryContentFileProcessingException.class)
   public ResponseEntity<ErrorResponse> handle(BinaryContentFileProcessingException e) {
     ErrorResponse response = new ErrorResponse("FILE_PROCESSING_ERROR", e.getMessage());
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+  }
+
+  @ExceptionHandler(StorageException.class)
+  public ResponseEntity<ErrorResponse> handle(StorageException e) {
+    ErrorResponse response = new ErrorResponse("STORAGE_ERROR", e.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
   }
 

@@ -1,7 +1,9 @@
 package com.sprint.mission.discodeit.storage;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentDto;
+import com.sprint.mission.discodeit.storage.exception.StorageException;
 import jakarta.annotation.PostConstruct;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,8 +32,8 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     if (Files.notExists(root)) {
       try {
         Files.createDirectories(root);
-      } catch (Exception e) {
-        throw new RuntimeException("Failed to create root directory", e);
+      } catch (IOException e) {
+        throw new StorageException("디렉터리 생성을 실패했습니다.");
       }
     }
   }
@@ -41,8 +43,8 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     Path path = resolvePath(id);
     try {
       Files.write(path, bytes);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to write file", e);
+    } catch (IOException e) {
+      throw new StorageException("파일 쓰기에 실패했습니다.");
     }
     return id;
   }
@@ -52,8 +54,8 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     Path path = resolvePath(id);
     try {
       return Files.newInputStream(path);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to read file", e);
+    } catch (IOException e) {
+      throw new StorageException("파일 읽기에 실패했습니다.");
     }
   }
 
@@ -69,8 +71,8 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
           .header(HttpHeaders.CONTENT_DISPOSITION,
               "attachment; filename=\"" + binaryContentDto.fileName() + "\"")
           .body(resource);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to read file", e);
+    } catch (IOException e) {
+      throw new StorageException("다운로드 파일 로드에 실패했습니다.");
     }
   }
 
