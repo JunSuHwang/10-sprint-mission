@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.message.service;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
+import com.sprint.mission.discodeit.binarycontent.mapper.BinaryContentMapper;
 import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
@@ -13,6 +14,7 @@ import com.sprint.mission.discodeit.message.entity.Message;
 import com.sprint.mission.discodeit.message.exception.MessageNotFoundException;
 import com.sprint.mission.discodeit.message.mapper.MessageMapper;
 import com.sprint.mission.discodeit.message.repository.MessageRepository;
+import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
@@ -32,7 +34,9 @@ public class BasicMessageService implements MessageService {
   private final UserRepository userRepository;
   private final ChannelRepository channelRepository;
   private final BinaryContentRepository contentRepository;
+  private final BinaryContentStorage storage;
   private final MessageMapper messageMapper;
+  private final BinaryContentMapper binaryContentMapper;
 
   @Transactional
   @Override
@@ -46,13 +50,8 @@ public class BasicMessageService implements MessageService {
 
     List<BinaryContent> attachments = binaryContentCreateRequests.stream()
         .map(contentRequest -> {
-          BinaryContent binaryContent = new BinaryContent(
-              contentRequest.fileName(),
-              (long) contentRequest.bytes().length,
-              contentRequest.contentType(),
-              contentRequest.bytes()
-          );
-          contentRepository.save(binaryContent);
+          BinaryContent binaryContent = binaryContentMapper.toEntity(contentRequest);
+          storage.put(binaryContent.getId(), contentRequest.bytes());
           return binaryContent;
         })
         .toList();

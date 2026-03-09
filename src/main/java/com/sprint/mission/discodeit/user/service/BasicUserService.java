@@ -5,6 +5,7 @@ import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.mapper.BinaryContentMapper;
 import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.readstatus.repository.ReadStatusRepository;
+import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
@@ -32,6 +33,7 @@ public class BasicUserService implements UserService {
   private final ReadStatusRepository readStatusRepository;
   private final BinaryContentRepository contentRepository;
   private final UserStatusRepository userStatusRepository;
+  private final BinaryContentStorage storage;
   private final UserMapper userMapper;
   private final BinaryContentMapper binaryContentMapper;
 
@@ -51,8 +53,8 @@ public class BasicUserService implements UserService {
     if (image.isPresent()) {
       BinaryContent profileImage = binaryContentMapper.toEntity(image.get());
       user.setProfile(profileImage);
+      storage.put(profileImage.getId(), image.get().bytes());
     }
-
     userRepository.save(user);
     return userMapper.toDto(user);
   }
@@ -107,6 +109,7 @@ public class BasicUserService implements UserService {
       }
       BinaryContent profileImage = binaryContentMapper.toEntity(image.get());
       findUser.setProfile(profileImage);
+      storage.put(profileImage.getId(), image.get().bytes());
     }
 
     userStatusRepository.findByUserId(findUser.getId())
