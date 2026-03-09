@@ -69,3 +69,5 @@ CREATE TABLE message_attachments
 ALTER TABLE users
     ADD CONSTRAINT fk_users_binary_contents FOREIGN KEY (profile_id)
         REFERENCES binary_contents (id) ON DELETE SET NULL;
+ALTER TABLE binary_contents
+    DROP COLUMN bytes;
