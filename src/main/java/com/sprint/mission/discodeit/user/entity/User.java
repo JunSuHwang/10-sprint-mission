@@ -9,12 +9,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.Instant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
@@ -42,21 +42,6 @@ public class User extends BaseUpdatableEntity {
     this.username = username;
     this.password = password;
     this.email = email;
-  }
-
-  public void updateUserName(String username) {
-    this.username = username;
-    this.updatedAt = Instant.now();
-  }
-
-  public void updatePassword(String password) {
-    this.password = password;
-    this.updatedAt = Instant.now();
-  }
-
-  public void updateEmail(String email) {
-    this.email = email;
-    this.updatedAt = Instant.now();
   }
 
   public boolean isProfileImageUploaded() {

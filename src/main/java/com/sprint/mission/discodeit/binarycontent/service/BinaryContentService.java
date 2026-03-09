@@ -23,10 +23,7 @@ public class BinaryContentService {
 
   @Transactional
   public BinaryContentDto createBinaryContent(BinaryContentCreateRequest request) {
-    byte[] bytes = request.bytes();
-    BinaryContent content = new BinaryContent(request.fileName(), (long) bytes.length,
-        request.contentType(),
-        bytes);
+    BinaryContent content = binaryContentMapper.toEntity(request);
     contentRepository.save(content);
     return binaryContentMapper.toDto(content);
   }
@@ -35,11 +32,6 @@ public class BinaryContentService {
     BinaryContent content = contentRepository.findById(contentId)
         .orElseThrow(BinaryContentNotFoundException::new);
     return binaryContentMapper.toDto(content);
-  }
-
-  public BinaryContent findBinaryContentEntity(UUID contentId) {
-    return contentRepository.findById(contentId)
-        .orElseThrow(BinaryContentNotFoundException::new);
   }
 
   public List<BinaryContentDto> findAll() {
