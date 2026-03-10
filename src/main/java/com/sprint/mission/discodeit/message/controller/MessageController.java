@@ -2,13 +2,14 @@ package com.sprint.mission.discodeit.message.controller;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentFileProcessingException;
+import com.sprint.mission.discodeit.global.dto.MyPageRequest;
+import com.sprint.mission.discodeit.global.dto.PageResponse;
 import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
 import com.sprint.mission.discodeit.message.dto.MessageDto;
 import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
 import com.sprint.mission.discodeit.message.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -22,6 +23,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,7 +38,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -150,16 +156,16 @@ public class MessageController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "Message 목록 조회 성공",
-          content = @Content(
-              mediaType = MediaType.ALL_VALUE,
-              array = @ArraySchema(schema = @Schema(implementation = MessageDto.class))
-          )
+          content = @Content(mediaType = MediaType.ALL_VALUE)
       )
   })
-  @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<MessageDto>> findAllByChannelId(
-      @Parameter(description = "조회할 Channel ID") @RequestParam UUID channelId
+  @GetMapping
+  public ResponseEntity<PageResponse<MessageDto>> findAllByChannelId(
+      @Parameter(description = "조회할 Channel ID") @RequestParam UUID channelId,
+      @ParameterObject @PageableDefault(size = 50, sort =
+          "createdAt", direction = Direction.DESC) Pageable pageable
   ) {
-    return ResponseEntity.ok(messageService.findAllByChannelId(channelId));
+    MyPageRequest<UUID> messagePagingRequest = new MyPageRequest<>(channelId, pageable);
+    return ResponseEntity.status(200).body(messageService.findAllByChannelId(messagePagingRequest));
   }
 }

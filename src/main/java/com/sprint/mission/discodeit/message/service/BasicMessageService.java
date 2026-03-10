@@ -7,6 +7,9 @@ import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentReposi
 import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
+import com.sprint.mission.discodeit.global.dto.MyPageRequest;
+import com.sprint.mission.discodeit.global.dto.PageResponse;
+import com.sprint.mission.discodeit.global.mapper.PageResponseMapper;
 import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
 import com.sprint.mission.discodeit.message.dto.MessageDto;
 import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +41,7 @@ public class BasicMessageService implements MessageService {
   private final BinaryContentStorage storage;
   private final MessageMapper messageMapper;
   private final BinaryContentMapper binaryContentMapper;
+  private final PageResponseMapper pageResponseMapper;
 
   @Transactional
   @Override
@@ -81,8 +86,12 @@ public class BasicMessageService implements MessageService {
   }
 
   @Override
-  public List<MessageDto> findAllByChannelId(UUID channelId) {
-    return toMessageDtoList(messageRepository.findAllByChannelId(channelId));
+  public PageResponse<MessageDto> findAllByChannelId(MyPageRequest<UUID> request) {
+    Slice<Message> slice = messageRepository.findAllByChannelId(request.t(),
+        request.pageable());
+    Slice<MessageDto> messageDtoSlice = slice.map(messageMapper::toDto);
+    return pageResponseMapper.fromSlice(messageDtoSlice);
+
   }
 
   @Transactional
