@@ -10,12 +10,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Table(name = "read_statuses")
 public class ReadStatus extends BaseUpdatableEntity {
 
@@ -29,12 +31,6 @@ public class ReadStatus extends BaseUpdatableEntity {
 
   @Column(nullable = false)
   private Instant lastReadAt;
-
-  public ReadStatus(User user, Channel channel) {
-    this.user = user;
-    this.channel = channel;
-    this.lastReadAt = Instant.now();
-  }
 
   public void update(Instant newLastReadAt) {
     boolean anyValueUpdated = false;
