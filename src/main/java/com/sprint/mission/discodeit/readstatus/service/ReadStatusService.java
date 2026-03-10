@@ -41,7 +41,7 @@ public class ReadStatusService {
       throw new ReadStatusDuplicationException();
     }
 
-    ReadStatus readStatus = new ReadStatus(user, channel);
+    ReadStatus readStatus = new ReadStatus(user, channel, request.lastReadAt());
     readStatusRepository.save(readStatus);
     return readStatusMapper.toDto(readStatus);
   }
