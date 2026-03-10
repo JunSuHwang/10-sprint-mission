@@ -50,7 +50,7 @@ public class BasicChannelService implements ChannelService {
         userId -> {
           User findUser = userRepository.findById(userId)
               .orElseThrow(UserNotFoundException::new);
-          readStatusRepository.save(new ReadStatus(findUser, channel, Instant.now()));
+          readStatusRepository.save(new ReadStatus(findUser, channel, channel.getCreatedAt()));
         });
     return channelMapper.toDto(channel);
   }
