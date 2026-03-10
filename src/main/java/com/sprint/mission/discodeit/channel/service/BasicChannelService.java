@@ -17,6 +17,7 @@ import com.sprint.mission.discodeit.readstatus.repository.ReadStatusRepository;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,12 @@ public class BasicChannelService implements ChannelService {
   public ChannelDto createPrivateChannel(PrivateChannelCreateRequest request) {
     Channel channel = channelMapper.toEntity(request);
     channelRepository.save(channel);
-    request.participantIds().forEach(userId -> joinChannel(channel.getId(), userId));
+    request.participantIds().forEach(
+        userId -> {
+          User findUser = userRepository.findById(userId)
+              .orElseThrow(UserNotFoundException::new);
+          readStatusRepository.save(new ReadStatus(findUser, channel, Instant.now()));
+        });
     return channelMapper.toDto(channel);
   }
 
@@ -94,30 +100,6 @@ public class BasicChannelService implements ChannelService {
     channelRepository.findById(channelId)
         .orElseThrow(ChannelNotFoundException::new);
     channelRepository.deleteById(channelId);
-  }
-
-  @Transactional
-  @Override
-  public void joinChannel(UUID channelId, UUID userId) {
-    Channel channel = channelRepository.findById(channelId)
-        .orElseThrow(ChannelNotFoundException::new);
-    User user = userRepository.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
-
-    readStatusRepository.save(new ReadStatus(user, channel));
-  }
-
-  @Transactional
-  @Override
-  public void leaveChannel(UUID channelId, UUID userId) {
-    channelRepository.findById(channelId)
-        .orElseThrow(ChannelNotFoundException::new);
-    userRepository.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
-    ReadStatus findReadStatus = readStatusRepository.findByUserIdAndChannelId(userId, channelId)
-        .orElseThrow(ReadStatusNotFoundException::new);
-
-    readStatusRepository.deleteById(findReadStatus.getId());
   }
 
   private void validateChannelExist(String name) {
