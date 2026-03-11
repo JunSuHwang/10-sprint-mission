@@ -4,7 +4,8 @@ import org.springframework.data.domain.Pageable;
 
 public record MyPageRequest<T>(
     T t,
-    Pageable pageable
+    Pageable pageable,
+    Object currentCursor
 ) {
 
 }
