@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +26,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -162,10 +161,11 @@ public class MessageController {
   @GetMapping
   public ResponseEntity<PageResponse<MessageDto>> findAllByChannelId(
       @Parameter(description = "조회할 Channel ID") @RequestParam UUID channelId,
+      @Parameter(description = "페이징 커서 정보") @RequestParam(required = false) Instant cursor,
       @ParameterObject @PageableDefault(size = 50, sort =
           "createdAt", direction = Direction.DESC) Pageable pageable
   ) {
-    MyPageRequest<UUID> messagePagingRequest = new MyPageRequest<>(channelId, pageable);
+    MyPageRequest<UUID> messagePagingRequest = new MyPageRequest<>(channelId, pageable, cursor);
     return ResponseEntity.status(200).body(messageService.findAllByChannelId(messagePagingRequest));
   }
 }

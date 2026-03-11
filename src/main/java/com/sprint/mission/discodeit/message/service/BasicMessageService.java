@@ -21,11 +21,13 @@ import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,11 +89,23 @@ public class BasicMessageService implements MessageService {
 
   @Override
   public PageResponse<MessageDto> findAllByChannelId(MyPageRequest<UUID> request) {
-    Slice<Message> slice = messageRepository.findAllByChannelId(request.t(),
-        request.pageable());
-    Slice<MessageDto> messageDtoSlice = slice.map(messageMapper::toDto);
-    return pageResponseMapper.fromSlice(messageDtoSlice);
+    Pageable pageable = PageRequest.of(0, request.pageable().getPageSize() + 1);
+    List<Message> messages =
+        request.currentCursor() == null
+            ? messageRepository.findFirstPageByChannelId(request.t(), pageable)
+            : messageRepository.findNextPageByChannelId(request.t(),
+                (Instant) request.currentCursor(),
+                pageable);
+    boolean hasNext = messages.size() > request.pageable().getPageSize();
 
+    if (hasNext) {
+      messages = messages.subList(0, request.pageable().getPageSize());
+    }
+
+    Instant nextCursor = hasNext ? messages.get(messages.size() - 1).getCreatedAt() : null;
+    List<MessageDto> messageDtos = toMessageDtoList(messages);
+
+    return new PageResponse<>(messageDtos, nextCursor, messageDtos.size(), hasNext, null);
   }
 
   @Transactional
