@@ -1,0 +1,10 @@
+package com.sprint.mission.discodeit.channel.repository;
+
+import com.sprint.mission.discodeit.channel.entity.Channel;
+import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ChannelRepository extends JpaRepository<Channel, UUID> {
+
+  boolean existsByName(String name);
+}

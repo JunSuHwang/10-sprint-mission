@@ -1,0 +1,68 @@
+package com.sprint.mission.discodeit.channel.mapper;
+
+import com.sprint.mission.discodeit.base.BaseEntity;
+import com.sprint.mission.discodeit.channel.dto.ChannelDto;
+import com.sprint.mission.discodeit.channel.dto.PrivateChannelCreateRequest;
+import com.sprint.mission.discodeit.channel.dto.PublicChannelCreateRequest;
+import com.sprint.mission.discodeit.channel.dto.PublicChannelUpdateRequest;
+import com.sprint.mission.discodeit.channel.entity.Channel;
+import com.sprint.mission.discodeit.message.repository.MessageRepository;
+import com.sprint.mission.discodeit.readstatus.repository.ReadStatusRepository;
+import com.sprint.mission.discodeit.user.dto.UserDto;
+import com.sprint.mission.discodeit.user.mapper.UserMapper;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Mapper(componentModel = "spring")
+public abstract class ChannelMapper {
+
+  @Autowired
+  protected MessageRepository messageRepository;
+
+  @Autowired
+  protected ReadStatusRepository readStatusRepository;
+
+  @Autowired
+  protected UserMapper userMapper;
+
+  @Mapping(target = "lastMessageAt", expression = "java(getLastMessageAt(channel.getId()))")
+  @Mapping(target = "participants", expression = "java(getParticipants(channel.getId()))")
+  public abstract ChannelDto toDto(Channel channel);
+
+  @Mapping(target = "type", constant = "PUBLIC")
+  public abstract Channel toEntity(PublicChannelCreateRequest request);
+
+  @Mapping(target = "type", constant = "PRIVATE")
+  @Mapping(target = "name", ignore = true)
+  @Mapping(target = "description", ignore = true)
+  public abstract Channel toEntity(PrivateChannelCreateRequest request);
+
+  @Mapping(target = "name", source = "request.newName")
+  @Mapping(target = "description", source = "request.newDescription")
+  @Mapping(target = "type", ignore = true)
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  public abstract void update(PublicChannelUpdateRequest request, @MappingTarget Channel channel);
+
+
+  protected Instant getLastMessageAt(UUID channelId) {
+    return messageRepository.findFirstByChannel_IdOrderByCreatedAtDesc(channelId)
+        .map(BaseEntity::getCreatedAt)
+        .orElse(null);
+  }
+
+  protected List<UserDto> getParticipants(UUID channelId) {
+    return readStatusRepository.findAllByChannelId(channelId)
+        .stream()
+        .map(readStatus ->
+            userMapper.toDto(readStatus.getUser())
+        )
+        .toList();
+  }
+}
