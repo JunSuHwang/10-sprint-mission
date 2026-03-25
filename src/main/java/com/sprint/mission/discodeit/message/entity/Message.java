@@ -12,7 +12,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.Instant;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -51,7 +50,6 @@ public class Message extends BaseUpdatableEntity {
 
   public void update(String newContent) {
     this.content = newContent;
-    this.updatedAt = Instant.now();
   }
 
   public List<BinaryContent> getAttachmentIds() {
