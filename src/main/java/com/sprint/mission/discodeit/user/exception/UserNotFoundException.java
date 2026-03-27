@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.user.exception;
 
-import com.sprint.mission.discodeit.common.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
 
-public class UserNotFoundException extends BusinessException {
+public class UserNotFoundException extends UserException {
 
   public UserNotFoundException() {
-    super("해당 사용자를 찾을 수 없습니다.");
+    super(ErrorCode.USER_NOT_FOUND, null);
   }
 }

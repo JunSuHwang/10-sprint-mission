@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.userstatus.exception;
 
-import com.sprint.mission.discodeit.common.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
 
-public class UserStatusDuplicationException extends BusinessException {
+public class UserStatusDuplicationException extends UserStatusException {
 
   public UserStatusDuplicationException() {
-    super("해당 사용자 상태가 이미 존재합니다.");
+    super(ErrorCode.USER_STATUS_DUPLICATION_ERROR, null);
   }
 }

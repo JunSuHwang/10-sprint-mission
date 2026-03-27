@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.user.exception;
 
-import com.sprint.mission.discodeit.common.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
 
-public class EmailDuplicationException extends BusinessException {
+public class EmailDuplicationException extends UserException {
 
   public EmailDuplicationException() {
-    super("해당 이메일이 이미 존재합니다.");
+    super(ErrorCode.EMAIL_DUPLICATION_ERROR, null);
   }
 }

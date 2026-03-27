@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.channel.exception;
 
-import com.sprint.mission.discodeit.common.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
 
-public class AlreadyJoinedException extends BusinessException {
+public class AlreadyJoinedException extends ChannelException {
 
   public AlreadyJoinedException() {
-    super("이미 가입된 유저입니다.");
+    super(ErrorCode.ALREADY_JOINED, null);
   }
 }

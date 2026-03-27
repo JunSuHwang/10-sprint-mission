@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.binarycontent.exception;
 
-import com.sprint.mission.discodeit.common.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
 
-public class BinaryContentNotFoundException extends BusinessException {
+public class BinaryContentNotFoundException extends BinaryContentException {
 
   public BinaryContentNotFoundException() {
-    super("해당 콘텐츠를 찾을 수 없습니다.");
+    super(ErrorCode.BINARY_CONTENT_NOT_FOUND, null);
   }
 }

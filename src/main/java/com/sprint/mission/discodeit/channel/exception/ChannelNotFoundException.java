@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.channel.exception;
 
-import com.sprint.mission.discodeit.common.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
 
-public class ChannelNotFoundException extends BusinessException {
+public class ChannelNotFoundException extends ChannelException {
 
   public ChannelNotFoundException() {
-    super("해당 채널을 찾을 수 없습니다.");
+    super(ErrorCode.CHANNEL_NOT_FOUND, null);
   }
 }

@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.channel.exception;
 
-import com.sprint.mission.discodeit.common.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
 
-public class ChannelUpdateNotAllowedException extends BusinessException {
+public class ChannelUpdateNotAllowedException extends ChannelException {
 
   public ChannelUpdateNotAllowedException() {
-    super("해당 채널은 수정할 수 없습니다.");
+    super(ErrorCode.CHANNEL_UPDATE_NOT_ALLOWED, null);
   }
 }

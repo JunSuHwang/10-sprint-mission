@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.message.exception;
 
-import com.sprint.mission.discodeit.common.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
 
-public class MessageNotFoundException extends BusinessException {
+public class MessageNotFoundException extends MessageException {
 
   public MessageNotFoundException() {
-    super("해당 메시지를 찾을 수 없습니다.");
+    super(ErrorCode.MESSAGE_NOT_FOUND, null);
   }
 }

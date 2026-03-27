@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.user.exception;
 
-import com.sprint.mission.discodeit.common.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
 
-public class AuthenticationFailedException extends BusinessException {
+public class AuthenticationFailedException extends UserException {
 
   public AuthenticationFailedException() {
-    super("아이디 또는 비밀번호가 올바르지 않습니다.");
+    super(ErrorCode.AUTHENTICATION_FAILED, null);
   }
 }
