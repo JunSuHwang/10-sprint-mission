@@ -146,8 +146,8 @@ public class GlobalExceptionHandler {
     return ResponseEntity.badRequest().body(response);
   }
 
-  @ExceptionHandler(BusinessException.class)
-  public ResponseEntity<ErrorResponse> handle(BusinessException e) {
+  @ExceptionHandler(DiscodeitException.class)
+  public ResponseEntity<ErrorResponse> handle(DiscodeitException e) {
     ErrorResponse response = new ErrorResponse("UNKNOWN_ERROR", "알 수 없는 오류가 발생했습니다.");
     log.error("[{}] {}", response.getCode(), response.getMessage());
     return ResponseEntity.badRequest().body(response);

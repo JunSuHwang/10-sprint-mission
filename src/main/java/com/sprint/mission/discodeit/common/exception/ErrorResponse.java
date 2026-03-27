@@ -1,12 +1,15 @@
 package com.sprint.mission.discodeit.common.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.time.Instant;
+import java.util.Map;
 
-@Getter
-@AllArgsConstructor
-public class ErrorResponse {
+public record ErrorResponse(
+    Instant timestamp,
+    String code,
+    String message,
+    Map<String, Object> details,
+    String exceptionType,
+    int status
+) {
 
-  String code;
-  String message;
 }
