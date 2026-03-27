@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/binaryContents")
@@ -92,6 +94,7 @@ public class BinaryContentController {
   public ResponseEntity<?> download(
       @Parameter(description = "다운로드할 파일 ID", required = true) @PathVariable UUID binaryContentId
   ) {
+    log.info("[API] GET /api/binaryContents/{id}/download id={}", binaryContentId);
     BinaryContentDto binaryContent = binaryContentService.findBinaryContent(binaryContentId);
     return storage.download(binaryContent);
   }

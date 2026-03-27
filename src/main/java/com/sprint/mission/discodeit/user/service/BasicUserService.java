@@ -21,9 +21,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -42,6 +44,7 @@ public class BasicUserService implements UserService {
   public UserDto createUser(UserCreateRequest request,
       Optional<BinaryContentCreateRequest> image) {
 
+    log.debug("[USER_CREATE] 사용자 등록 시작 username={}", request.username());
     validateUserExist(request.username());
     validateEmailExist(request.email());
 
@@ -51,12 +54,18 @@ public class BasicUserService implements UserService {
     status.setUser(user);
 
     if (image.isPresent()) {
+      log.debug("[BINARY_CONTENT_UPLOAD] 프로필 업로드 시작 username={}, fileName={}", request.username(),
+          image.get().fileName());
       BinaryContent profileImage = binaryContentMapper.toEntity(image.get());
       user.setProfile(profileImage);
       contentRepository.save(profileImage);
       storage.put(profileImage.getId(), image.get().bytes());
+      log.debug("[BINARY_CONTENT_UPLOAD] 프로필 업로드 id={}", profileImage.getId());
     }
     userRepository.save(user);
+
+    log.info("[USER_CREATE] 사용자 등록 id={}", user.getId());
+
     return userMapper.toDto(user);
   }
 
@@ -95,6 +104,8 @@ public class BasicUserService implements UserService {
   @Override
   public UserDto updateUser(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> image) {
+    log.debug("[USER_UPDATE] 사용자 수정 시작 id={}", userId);
+
     Optional.ofNullable(request.newUsername())
         .ifPresent(this::validateUserExist);
     Optional.ofNullable(request.newEmail())
@@ -105,6 +116,8 @@ public class BasicUserService implements UserService {
     userMapper.update(request, findUser);
 
     if (image.isPresent()) {
+      log.debug("[BINARY_CONTENT_UPLOAD] 프로필 수정 시작 userId={}, fileName={}", findUser.getId(),
+          image.get().fileName());
       if (findUser.isProfileImageUploaded()) {
         contentRepository.deleteById(findUser.getProfile().getId());
       }
@@ -112,10 +125,13 @@ public class BasicUserService implements UserService {
       findUser.setProfile(profileImage);
       contentRepository.save(profileImage);
       storage.put(profileImage.getId(), image.get().bytes());
+      log.info("[BINARY_CONTENT_UPLOAD] 프로필 수정 id={}", profileImage.getId());
     }
 
     userStatusRepository.findByUserId(findUser.getId())
         .ifPresent(UserStatus::update);
+
+    log.info("[USER_UPDATE] 사용자 수정 id={}", userId);
 
     return userMapper.toDto(findUser);
   }
@@ -123,9 +139,13 @@ public class BasicUserService implements UserService {
   @Transactional
   @Override
   public void deleteUser(UUID userId) {
+    log.debug("[USER_DELETE] 사용자 삭제 시작 id={}", userId);
+
     userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
     userRepository.deleteById(userId);
+
+    log.info("[USER_DELETE] 사용자 삭제 id={}", userId);
   }
 
   private void validateUserExist(String username) {
