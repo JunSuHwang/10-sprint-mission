@@ -94,6 +94,7 @@ public class BinaryContentController {
   public ResponseEntity<?> download(
       @Parameter(description = "다운로드할 파일 ID", required = true) @PathVariable UUID binaryContentId
   ) {
+    log.info("[API] GET /api/binaryContents/{id}/download id={}", binaryContentId);
     BinaryContentDto binaryContent = binaryContentService.findBinaryContent(binaryContentId);
     return storage.download(binaryContent);
   }

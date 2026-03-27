@@ -94,6 +94,7 @@ public class UserController {
       @Parameter() @RequestPart UserCreateRequest userCreateRequest,
       @Parameter(description = "User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
   ) {
+    log.info("[API] POST /api/users username={}", userCreateRequest.username());
     return ResponseEntity.status(201).body(
         userService.createUser(userCreateRequest, resolveProfileFile(profile))
     );
@@ -110,6 +111,7 @@ public class UserController {
   public ResponseEntity<Void> delete(
       @Parameter(description = "삭제할 User ID") @PathVariable UUID userId
   ) {
+    log.info("[API] DELETE /api/users id={}", userId);
     userService.deleteUser(userId);
     return ResponseEntity.noContent().build();
   }
@@ -148,6 +150,7 @@ public class UserController {
       @Parameter(description = "수정할 User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
 
   ) {
+    log.info("[API] PATCH /api/users id={}", userId);
     return ResponseEntity.ok(
         userService.updateUser(userId, userUpdateRequest, resolveProfileFile(profile)));
   }

@@ -63,9 +63,11 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
 
   @Override
   public ResponseEntity<Resource> download(BinaryContentDto binaryContentDto) {
+    log.debug("[BINARY_CONTENT_DOWNLOAD] 파일 다운로드 시작 id={}", binaryContentDto.id());
     Path path = resolvePath(binaryContentDto.id());
     try {
       Resource resource = new InputStreamResource(Files.newInputStream(path));
+      log.info("[BINARY_CONTENT_DOWNLOAD] 파일 다운로드 id={}", binaryContentDto.id());
       return ResponseEntity
           .status(200)
           .contentType(MediaType.valueOf(binaryContentDto.contentType()))

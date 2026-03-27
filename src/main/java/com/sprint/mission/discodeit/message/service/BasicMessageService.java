@@ -51,6 +51,8 @@ public class BasicMessageService implements MessageService {
   @Override
   public MessageDto createMessage(MessageCreateRequest request,
       List<BinaryContentCreateRequest> binaryContentCreateRequests) {
+    log.debug("[MESSAGE_CREATE] 메시지 생성 시작 authorId={}, channelId={}", request.authorId(),
+        request.channelId());
 
     User author = userRepository.findById(request.authorId())
         .orElseThrow(UserNotFoundException::new);
@@ -59,15 +61,18 @@ public class BasicMessageService implements MessageService {
 
     List<BinaryContent> attachments = binaryContentCreateRequests.stream()
         .map(contentRequest -> {
+          log.debug("[BINARY_CONTENT_UPLOAD] 첨부파일 업로드 시작 fileName={}", contentRequest.fileName());
           BinaryContent binaryContent = binaryContentMapper.toEntity(contentRequest);
           contentRepository.save(binaryContent);
           storage.put(binaryContent.getId(), contentRequest.bytes());
           return binaryContent;
         })
         .toList();
+    log.info("[BINARY_CONTENT_UPLOAD] 첨부파일 업로드 count={}", attachments.size());
 
     Message message = new Message(request.content(), findChannel, author, attachments);
     messageRepository.save(message);
+    log.info("[MESSAGE_CREATE] 메시지 생성 id={}", message.getId());
     return messageMapper.toDto(message);
   }
 
@@ -113,19 +118,23 @@ public class BasicMessageService implements MessageService {
   @Transactional
   @Override
   public MessageDto updateMessage(UUID messageId, MessageUpdateRequest request) {
+    log.debug("[MESSAGE_UPDATE] 메시지 수정 시작 id={}", messageId);
     Message findMessage = messageRepository.findById(messageId)
         .orElseThrow(MessageNotFoundException::new);
 
     Optional.ofNullable(request.newContent())
         .ifPresent(findMessage::update);
 
+    log.info("[MESSAGE_UPDATE] 메시지 수정 id={}", findMessage.getId());
     return messageMapper.toDto(findMessage);
   }
 
   @Transactional
   @Override
   public void deleteMessage(UUID messageId) {
+    log.debug("[MESSAGE_DELETE] 메시지 삭제 시작 id={}", messageId);
     messageRepository.deleteById(messageId);
+    log.info("[MESSAGE_DELETE] 메시지 삭제 id={}", messageId);
   }
 
   private List<MessageDto> toMessageDtoList(List<Message> messages) {

@@ -79,6 +79,9 @@ public class MessageController {
   public ResponseEntity<MessageDto> create_2(
       @RequestPart MessageCreateRequest messageCreateRequest,
       @Parameter(description = "Message 첨부 파일들") @RequestPart(required = false) List<MultipartFile> attachments) {
+    log.info("[API] POST /api/messages authorId={}, channelId={}", messageCreateRequest.authorId(),
+        messageCreateRequest.channelId());
+
     List<BinaryContentCreateRequest> attachmentRequests = Optional.ofNullable(attachments)
         .map(files -> files.stream()
             .map(file -> {
@@ -131,6 +134,7 @@ public class MessageController {
       @Parameter(description = "수정할 Message ID") @PathVariable UUID messageId,
       @RequestBody MessageUpdateRequest messageInfo
   ) {
+    log.info("[API] PATCH /api/messages id={}", messageId);
     return ResponseEntity.ok(messageService.updateMessage(messageId, messageInfo));
   }
 
@@ -149,6 +153,7 @@ public class MessageController {
   public ResponseEntity<Void> delete_1(
       @Parameter(description = "삭제할 Message ID") @PathVariable UUID messageId
   ) {
+    log.info("[API] DELETE /api/messages id={}", messageId);
     messageService.deleteMessage(messageId);
     return ResponseEntity.noContent().build();
   }

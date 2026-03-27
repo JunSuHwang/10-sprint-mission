@@ -38,14 +38,19 @@ public class BasicChannelService implements ChannelService {
 
   @Transactional
   public ChannelDto createPublicChannel(PublicChannelCreateRequest request) {
+    log.debug("[CHANNEL_CREATE] PUBLIC 채널 생성 시작 name={}", request.name());
+
     validateChannelExist(request.name());
     Channel channel = channelMapper.toEntity(request);
     channelRepository.save(channel);
+    log.info("[CHANNEL_CREATE] PUBLIC 채널 생성 id={}", channel.getId());
     return channelMapper.toDto(channel);
   }
 
   @Transactional
   public ChannelDto createPrivateChannel(PrivateChannelCreateRequest request) {
+    log.debug("[CHANNEL_CREATE] PRIVATE 채널 생성 시작");
+
     Channel channel = channelMapper.toEntity(request);
     channelRepository.save(channel);
     request.participantIds().forEach(
@@ -54,6 +59,7 @@ public class BasicChannelService implements ChannelService {
               .orElseThrow(UserNotFoundException::new);
           readStatusRepository.save(new ReadStatus(findUser, channel, channel.getCreatedAt()));
         });
+    log.info("[CHANNEL_CREATE] PRIVATE 채널 생성 id={}", channel.getId());
     return channelMapper.toDto(channel);
   }
 
@@ -86,6 +92,7 @@ public class BasicChannelService implements ChannelService {
   @Override
   public ChannelDto updateChannel(UUID channelId,
       PublicChannelUpdateRequest request) {
+    log.debug("[CHANNEL_UPDATE] 채널 수정 시작 id={}", channelId);
     Channel findChannel = channelRepository.findById(channelId)
         .orElseThrow(ChannelNotFoundException::new);
     if (findChannel.getType() == ChannelType.PRIVATE) {
@@ -93,15 +100,21 @@ public class BasicChannelService implements ChannelService {
     }
     channelMapper.update(request, findChannel);
 
+    log.info("[CHANNEL_UPDATE] 채널 수정 id={}", findChannel.getId());
+
     return channelMapper.toDto(findChannel);
   }
 
   @Transactional
   @Override
   public void deleteChannel(UUID channelId) {
+    log.debug("[CHANNEL_DELETE] 채널 삭제 시작 id={}", channelId);
+
     channelRepository.findById(channelId)
         .orElseThrow(ChannelNotFoundException::new);
     channelRepository.deleteById(channelId);
+
+    log.info("[CHANNEL_DELETE] 채널 삭제 id={}", channelId);
   }
 
   private void validateChannelExist(String name) {
