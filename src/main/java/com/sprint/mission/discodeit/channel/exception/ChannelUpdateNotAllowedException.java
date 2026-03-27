@@ -1,6 +1,6 @@
 package com.sprint.mission.discodeit.channel.exception;
 
-import com.sprint.mission.discodeit.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.BusinessException;
 
 public class ChannelUpdateNotAllowedException extends BusinessException {
 

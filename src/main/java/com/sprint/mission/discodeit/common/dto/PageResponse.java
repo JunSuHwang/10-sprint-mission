@@ -1,4 +1,4 @@
-package com.sprint.mission.discodeit.global.dto;
+package com.sprint.mission.discodeit.common.dto;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
-package com.sprint.mission.discodeit.global.mapper;
+package com.sprint.mission.discodeit.common.mapper;
 
-import com.sprint.mission.discodeit.global.dto.PageResponse;
+import com.sprint.mission.discodeit.common.dto.PageResponse;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;

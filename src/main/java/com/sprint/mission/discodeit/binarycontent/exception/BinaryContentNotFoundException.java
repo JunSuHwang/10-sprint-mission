@@ -1,6 +1,6 @@
 package com.sprint.mission.discodeit.binarycontent.exception;
 
-import com.sprint.mission.discodeit.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.BusinessException;
 
 public class BinaryContentNotFoundException extends BusinessException {
 

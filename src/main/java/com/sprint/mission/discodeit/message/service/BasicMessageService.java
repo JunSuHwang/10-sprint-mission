@@ -7,9 +7,9 @@ import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentReposi
 import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
-import com.sprint.mission.discodeit.global.dto.MyPageRequest;
-import com.sprint.mission.discodeit.global.dto.PageResponse;
-import com.sprint.mission.discodeit.global.mapper.PageResponseMapper;
+import com.sprint.mission.discodeit.common.dto.MyPageRequest;
+import com.sprint.mission.discodeit.common.dto.PageResponse;
+import com.sprint.mission.discodeit.common.mapper.PageResponseMapper;
 import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
 import com.sprint.mission.discodeit.message.dto.MessageDto;
 import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
