@@ -24,3 +24,7 @@ springdoc:
     enabled: false
   swagger-ui:
     enabled: false
+
+info:
+  datasource:
+    url: hidden
