@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -42,6 +43,13 @@ public class GlobalExceptionHandler {
 
     ErrorResponse response = ErrorResponse.of(e, details);
     log.warn("[{}] {} details={}", response.code(), response.message(), response.details());
+    return ResponseEntity.status(response.status()).body(response);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> handle(MethodArgumentNotValidException e) {
+    ErrorResponse response = ErrorResponse.of(e);
+    log.error("[{}] {} details={}", response.code(), response.message(), response.details());
     return ResponseEntity.status(response.status()).body(response);
   }
 

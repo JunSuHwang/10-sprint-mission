@@ -1,8 +1,10 @@
 package com.sprint.mission.discodeit.common.exception;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 public record ErrorResponse(
@@ -45,6 +47,23 @@ public record ErrorResponse(
         null,
         e.getClass().getSimpleName(),
         HttpStatus.INTERNAL_SERVER_ERROR.value()
+    );
+  }
+
+  public static ErrorResponse of(MethodArgumentNotValidException e) {
+    Map<String, Object> details = new HashMap<>();
+
+    e.getBindingResult().getFieldErrors().forEach(error -> {
+      details.put(error.getField(), error.getDefaultMessage());
+    });
+
+    return new ErrorResponse(
+        Instant.now(),
+        ErrorCode.INVALID_INPUT_VALUE.name(),
+        ErrorCode.INVALID_INPUT_VALUE.getMessage(),
+        details,
+        e.getClass().getSimpleName(),
+        ErrorCode.INVALID_INPUT_VALUE.getStatus().value()
     );
   }
 }
