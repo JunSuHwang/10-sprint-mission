@@ -13,6 +13,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +77,10 @@ public class BinaryContentController {
       @Parameter(description = "조회할 첨부 파일 ID 목록",
           array = @ArraySchema(schema = @Schema(implementation = UUID.class))
       )
-      @RequestParam List<UUID> binaryContentIds
+      @RequestParam
+      @NotEmpty(message = "조회할 첨부 파일 ID 목록은 비어 있을 수 없습니다.")
+      @Size(max = 100, message = "최대 100개까지 조회할 수 있습니다.")
+      List<UUID> binaryContentIds
   ) {
     BinaryContentsRequest request = new BinaryContentsRequest(binaryContentIds);
     return ResponseEntity.ok(binaryContentService.findAllByIdIn(request));
