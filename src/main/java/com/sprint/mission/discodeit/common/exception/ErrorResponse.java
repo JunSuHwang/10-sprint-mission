@@ -25,12 +25,13 @@ public record ErrorResponse(
     );
   }
 
-  public static ErrorResponse of(MethodArgumentTypeMismatchException e) {
+  public static ErrorResponse of(MethodArgumentTypeMismatchException e,
+      Map<String, Object> details) {
     return new ErrorResponse(
         Instant.now(),
         ErrorCode.INVALID_PARAMETER_TYPE.name(),
         ErrorCode.INVALID_PARAMETER_TYPE.getMessage(),
-        null,
+        details,
         e.getClass().getSimpleName(),
         HttpStatus.INTERNAL_SERVER_ERROR.value()
     );

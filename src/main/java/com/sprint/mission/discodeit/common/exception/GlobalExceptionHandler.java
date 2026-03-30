@@ -1,5 +1,7 @@
 package com.sprint.mission.discodeit.common.exception;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,8 +33,15 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ErrorResponse> handle(MethodArgumentTypeMismatchException e) {
-    ErrorResponse response = ErrorResponse.of(e);
-    log.warn("[{}] {}", response.code(), response.message());
+    Map<String, Object> details = new HashMap<>();
+    details.put("parameter", e.getName());
+    details.put("value", e.getValue());
+    details.put("requiredType",
+        e.getRequiredType() != null ? e.getRequiredType().getSimpleName() : "unknown"
+    );
+
+    ErrorResponse response = ErrorResponse.of(e, details);
+    log.warn("[{}] {} details={}", response.code(), response.message(), response.details());
     return ResponseEntity.status(response.status()).body(response);
   }
 
