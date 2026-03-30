@@ -72,7 +72,7 @@ public class BasicUserService implements UserService {
   @Override
   public UserDto findUser(UUID userId) {
     User user = userRepository.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(() -> UserNotFoundException.ById(userId));
     return userMapper.toDto(user);
   }
 
@@ -112,7 +112,7 @@ public class BasicUserService implements UserService {
         .ifPresent(this::validateEmailExist);
 
     User findUser = userRepository.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(() -> UserNotFoundException.ById(userId));
     userMapper.update(request, findUser);
 
     if (image.isPresent()) {
@@ -142,7 +142,7 @@ public class BasicUserService implements UserService {
     log.debug("[USER_DELETE] 사용자 삭제 시작 id={}", userId);
 
     userRepository.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(() -> UserNotFoundException.ById(userId));
     userRepository.deleteById(userId);
 
     log.info("[USER_DELETE] 사용자 삭제 id={}", userId);
@@ -150,13 +150,13 @@ public class BasicUserService implements UserService {
 
   private void validateUserExist(String username) {
     if (userRepository.existsUserByUsername(username)) {
-      throw new UserDuplicationException();
+      throw new UserDuplicationException(username);
     }
   }
 
   private void validateEmailExist(String email) {
     if (userRepository.existsByEmail(email)) {
-      throw new EmailDuplicationException();
+      throw new EmailDuplicationException(email);
     }
   }
 }

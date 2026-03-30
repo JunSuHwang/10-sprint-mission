@@ -35,7 +35,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
       try {
         Files.createDirectories(root);
       } catch (IOException e) {
-        throw new StorageException("디렉터리 생성을 실패했습니다.");
+        throw new StorageException(null);
       }
     }
   }
@@ -46,7 +46,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     try {
       Files.write(path, bytes);
     } catch (IOException e) {
-      throw new StorageException("파일 쓰기에 실패했습니다.");
+      throw new StorageException(id);
     }
     return id;
   }
@@ -57,7 +57,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     try {
       return Files.newInputStream(path);
     } catch (IOException e) {
-      throw new StorageException("파일 읽기에 실패했습니다.");
+      throw new StorageException(id);
     }
   }
 
@@ -75,7 +75,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
               "attachment; filename=\"" + binaryContentDto.fileName() + "\"")
           .body(resource);
     } catch (IOException e) {
-      throw new StorageException("다운로드 파일 로드에 실패했습니다.");
+      throw new StorageException(binaryContentDto.id());
     }
   }
 

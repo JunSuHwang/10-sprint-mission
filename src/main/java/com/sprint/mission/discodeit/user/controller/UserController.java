@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.user.controller;
 
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
+import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentFileProcessingException;
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoundException;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
@@ -195,7 +196,7 @@ public class UserController {
         );
         return Optional.of(contentInfo);
       } catch (IOException e) {
-        throw new BinaryContentNotFoundException();
+        throw new BinaryContentFileProcessingException(profileFile);
       }
     }
   }

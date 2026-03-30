@@ -56,7 +56,7 @@ public class BasicChannelService implements ChannelService {
     request.participantIds().forEach(
         userId -> {
           User findUser = userRepository.findById(userId)
-              .orElseThrow(UserNotFoundException::new);
+              .orElseThrow(() -> UserNotFoundException.ById(userId));
           readStatusRepository.save(new ReadStatus(findUser, channel, channel.getCreatedAt()));
         });
     log.info("[CHANNEL_CREATE] PRIVATE 채널 생성 id={}", channel.getId());
@@ -66,7 +66,7 @@ public class BasicChannelService implements ChannelService {
   @Override
   public ChannelDto findChannel(UUID channelId) {
     Channel channel = channelRepository.findById(channelId)
-        .orElseThrow(ChannelNotFoundException::new);
+        .orElseThrow(() -> new ChannelNotFoundException(channelId));
     return channelMapper.toDto(channel);
   }
 
@@ -94,9 +94,9 @@ public class BasicChannelService implements ChannelService {
       PublicChannelUpdateRequest request) {
     log.debug("[CHANNEL_UPDATE] 채널 수정 시작 id={}", channelId);
     Channel findChannel = channelRepository.findById(channelId)
-        .orElseThrow(ChannelNotFoundException::new);
+        .orElseThrow(() -> new ChannelNotFoundException(channelId));
     if (findChannel.getType() == ChannelType.PRIVATE) {
-      throw new ChannelUpdateNotAllowedException();
+      throw new ChannelUpdateNotAllowedException(channelId);
     }
     channelMapper.update(request, findChannel);
 
@@ -111,7 +111,7 @@ public class BasicChannelService implements ChannelService {
     log.debug("[CHANNEL_DELETE] 채널 삭제 시작 id={}", channelId);
 
     channelRepository.findById(channelId)
-        .orElseThrow(ChannelNotFoundException::new);
+        .orElseThrow(() -> new ChannelNotFoundException(channelId));
     channelRepository.deleteById(channelId);
 
     log.info("[CHANNEL_DELETE] 채널 삭제 id={}", channelId);
@@ -119,7 +119,7 @@ public class BasicChannelService implements ChannelService {
 
   private void validateChannelExist(String name) {
     if (channelRepository.existsByName(name)) {
-      throw new ChannelDuplicationException();
+      throw new ChannelDuplicationException(name);
     }
   }
 }

@@ -92,7 +92,7 @@ public class MessageController {
                     file.getBytes()
                 );
               } catch (IOException e) {
-                throw new BinaryContentFileProcessingException();
+                throw new BinaryContentFileProcessingException(file);
               }
             })
             .toList())

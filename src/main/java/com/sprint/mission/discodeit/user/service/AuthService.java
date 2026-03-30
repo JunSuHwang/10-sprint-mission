@@ -23,9 +23,9 @@ public class AuthService {
 
   public UserDto login(LoginRequest loginRequest) {
     User findUser = userRepository.findByUsername(loginRequest.username())
-        .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(() -> new AuthenticationFailedException(loginRequest.username()));
     if (!findUser.getPassword().equals(loginRequest.password())) {
-      throw new AuthenticationFailedException();
+      throw new AuthenticationFailedException(loginRequest.username());
     }
     return userMapper.toDto(findUser);
   }

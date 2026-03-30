@@ -35,7 +35,7 @@ public class BinaryContentService {
 
   public BinaryContentDto findBinaryContent(UUID contentId) {
     BinaryContent content = contentRepository.findById(contentId)
-        .orElseThrow(BinaryContentNotFoundException::new);
+        .orElseThrow(() -> new BinaryContentNotFoundException(contentId));
     return binaryContentMapper.toDto(content);
   }
 

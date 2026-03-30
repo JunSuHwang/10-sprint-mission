@@ -31,9 +31,9 @@ public class UserStatusService {
   @Transactional
   public UserStatusDto createUserStatus(UserStatusCreateRequest request) {
     User findUser = userRepository.findById(request.userId())
-        .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(() -> UserNotFoundException.ById(request.userId()));
     if (userStatusRepository.existsByUserId(request.userId())) {
-      throw new UserStatusDuplicationException();
+      throw new UserStatusDuplicationException(request.userId());
     }
 
     UserStatus userStatus = new UserStatus();
@@ -45,13 +45,13 @@ public class UserStatusService {
 
   public UserStatusDto findUserStatus(UUID userStatusId) {
     UserStatus userStatus = userStatusRepository.findById(userStatusId)
-        .orElseThrow(UserStatusNotFoundException::new);
+        .orElseThrow(() -> UserStatusNotFoundException.ById(userStatusId));
     return userStatusMapper.toDto(userStatus);
   }
 
   public UserStatusDto findUserStatusByUserId(UUID userId) {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
-        .orElseThrow(UserStatusNotFoundException::new);
+        .orElseThrow(() -> UserStatusNotFoundException.ByUserId(userId));
     return userStatusMapper.toDto(userStatus);
   }
 
@@ -65,7 +65,7 @@ public class UserStatusService {
   @Transactional
   public UserStatusDto update(UUID userStatusId) {
     UserStatus userStatus = userStatusRepository.findById(userStatusId)
-        .orElseThrow(UserStatusNotFoundException::new);
+        .orElseThrow(() -> UserStatusNotFoundException.ById(userStatusId));
     userStatus.update();
     return userStatusMapper.toDto(userStatus);
   }
@@ -73,7 +73,7 @@ public class UserStatusService {
   @Transactional
   public UserStatusDto updateUserStatusByUserId(UUID userId) {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
-        .orElseThrow(UserStatusNotFoundException::new);
+        .orElseThrow(() -> UserStatusNotFoundException.ByUserId(userId));
     userStatus.update();
     return userStatusMapper.toDto(userStatus);
   }
@@ -82,7 +82,7 @@ public class UserStatusService {
   public UserStatusDto update(UUID userId, UserStatusUpdateRequest request) {
 
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
-        .orElseThrow(UserStatusNotFoundException::new);
+        .orElseThrow(() -> UserStatusNotFoundException.ByUserId(userId));
     userStatus.update(request.newLastActiveAt());
     return userStatusMapper.toDto(userStatus);
   }
