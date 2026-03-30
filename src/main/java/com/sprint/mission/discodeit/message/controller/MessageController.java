@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class MessageController {
   })
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MessageDto> create_2(
-      @RequestPart MessageCreateRequest messageCreateRequest,
+      @Valid @RequestPart MessageCreateRequest messageCreateRequest,
       @Parameter(description = "Message 첨부 파일들") @RequestPart(required = false) List<MultipartFile> attachments) {
     log.info("[API] POST /api/messages authorId={}, channelId={}", messageCreateRequest.authorId(),
         messageCreateRequest.channelId());
@@ -132,7 +133,7 @@ public class MessageController {
   @PatchMapping(value = "/{messageId}")
   public ResponseEntity<MessageDto> update_2(
       @Parameter(description = "수정할 Message ID") @PathVariable UUID messageId,
-      @RequestBody MessageUpdateRequest messageInfo
+      @Valid @RequestBody MessageUpdateRequest messageInfo
   ) {
     log.info("[API] PATCH /api/messages id={}", messageId);
     return ResponseEntity.ok(messageService.updateMessage(messageId, messageInfo));

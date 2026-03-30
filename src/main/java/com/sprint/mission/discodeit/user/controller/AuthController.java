@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -50,7 +51,9 @@ public class AuthController {
       )
   })
   @PostMapping(value = "/login", consumes = "application/json")
-  public ResponseEntity<UserDto> login(@RequestBody LoginRequest loginInfo) {
+  public ResponseEntity<UserDto> login(
+      @Valid @RequestBody LoginRequest loginInfo
+  ) {
     return ResponseEntity.ok(authService.login(loginInfo));
   }
 }

@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -92,7 +93,7 @@ public class UserController {
   })
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<UserDto> create(
-      @Parameter() @RequestPart UserCreateRequest userCreateRequest,
+      @Valid @Parameter() @RequestPart UserCreateRequest userCreateRequest,
       @Parameter(description = "User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
   ) {
     log.info("[API] POST /api/users username={}", userCreateRequest.username());
@@ -147,7 +148,7 @@ public class UserController {
   @PatchMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<UserDto> update(
       @Parameter(description = "수정할 User ID") @PathVariable UUID userId,
-      @RequestPart UserUpdateRequest userUpdateRequest,
+      @Valid @RequestPart UserUpdateRequest userUpdateRequest,
       @Parameter(description = "수정할 User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
 
   ) {
@@ -174,7 +175,7 @@ public class UserController {
   @PatchMapping(value = "/{userId}/userStatus")
   public ResponseEntity<UserStatusDto> updateUserStatusByUserId(
       @Parameter(description = "상태를 변경할 User ID") @PathVariable UUID userId,
-      @RequestBody UserStatusUpdateRequest request
+      @Valid @RequestBody UserStatusUpdateRequest request
   ) {
     return ResponseEntity.ok(userStatusService.update(userId, request));
   }
