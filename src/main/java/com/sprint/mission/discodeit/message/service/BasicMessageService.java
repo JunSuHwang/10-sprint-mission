@@ -55,9 +55,9 @@ public class BasicMessageService implements MessageService {
         request.channelId());
 
     User author = userRepository.findById(request.authorId())
-        .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(() -> UserNotFoundException.ById(request.authorId()));
     Channel findChannel = channelRepository.findById(request.channelId())
-        .orElseThrow(ChannelNotFoundException::new);
+        .orElseThrow(() -> new ChannelNotFoundException(request.channelId()));
 
     List<BinaryContent> attachments = binaryContentCreateRequests.stream()
         .map(contentRequest -> {
@@ -79,7 +79,7 @@ public class BasicMessageService implements MessageService {
   @Override
   public MessageDto findMessage(UUID messageId) {
     Message message = messageRepository.findById(messageId)
-        .orElseThrow(MessageNotFoundException::new);
+        .orElseThrow(() -> new MessageNotFoundException(messageId));
 
     return messageMapper.toDto(message);
   }
@@ -120,7 +120,7 @@ public class BasicMessageService implements MessageService {
   public MessageDto updateMessage(UUID messageId, MessageUpdateRequest request) {
     log.debug("[MESSAGE_UPDATE] 메시지 수정 시작 id={}", messageId);
     Message findMessage = messageRepository.findById(messageId)
-        .orElseThrow(MessageNotFoundException::new);
+        .orElseThrow(() -> new MessageNotFoundException(messageId));
 
     Optional.ofNullable(request.newContent())
         .ifPresent(findMessage::update);
