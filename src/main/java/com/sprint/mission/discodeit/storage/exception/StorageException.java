@@ -6,6 +6,6 @@ import com.sprint.mission.discodeit.common.exception.ErrorCode;
 public class StorageException extends BinaryContentException {
 
   public StorageException() {
-    super(ErrorCode.STORAGE_ERROR, null);
+    super(ErrorCode.STORAGE_ERROR);
   }
 }
