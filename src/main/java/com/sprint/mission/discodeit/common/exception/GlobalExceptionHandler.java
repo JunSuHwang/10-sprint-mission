@@ -13,7 +13,19 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(DiscodeitException.class)
   public ResponseEntity<ErrorResponse> handle(DiscodeitException e) {
     ErrorResponse response = ErrorResponse.of(e);
-    log.error("[{}] {} details={}", response.code(), response.message(), response.details());
+    if (e.getErrorCode().getStatus().is5xxServerError()) {
+      log.error("errorCode={}, message={}, details={}",
+          response.code(),
+          response.message(),
+          response.details()
+      );
+    } else {
+      log.warn("errorCode={}, message={}, details={}",
+          response.code(),
+          response.message(),
+          response.details()
+      );
+    }
     return ResponseEntity.status(response.status()).body(response);
   }
 
