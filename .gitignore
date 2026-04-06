@@ -54,3 +54,4 @@ bin/
 /data/**
 /.logs/**
 /src/main/resources/application-prod.yaml
+/.env
