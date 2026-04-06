@@ -1,10 +1,12 @@
 package com.sprint.mission.discodeit.user.exception;
 
-import com.sprint.mission.discodeit.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
+import java.util.Map;
 
-public class UserDuplicationException extends BusinessException {
+public class UserDuplicationException extends UserException {
 
-  public UserDuplicationException() {
-    super("해당 사용자가 이미 존재합니다.");
+  public UserDuplicationException(String userName) {
+    super(ErrorCode.USER_DUPLICATION_ERROR);
+    setDetails(Map.of("userName", userName));
   }
 }

@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.user.controller;
 
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
+import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentFileProcessingException;
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentNotFoundException;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
@@ -20,11 +21,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/users")
@@ -89,9 +93,10 @@ public class UserController {
   })
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<UserDto> create(
-      @Parameter() @RequestPart UserCreateRequest userCreateRequest,
+      @Valid @Parameter() @RequestPart UserCreateRequest userCreateRequest,
       @Parameter(description = "User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
   ) {
+    log.info("[API] POST /api/users username={}", userCreateRequest.username());
     return ResponseEntity.status(201).body(
         userService.createUser(userCreateRequest, resolveProfileFile(profile))
     );
@@ -108,6 +113,7 @@ public class UserController {
   public ResponseEntity<Void> delete(
       @Parameter(description = "삭제할 User ID") @PathVariable UUID userId
   ) {
+    log.info("[API] DELETE /api/users id={}", userId);
     userService.deleteUser(userId);
     return ResponseEntity.noContent().build();
   }
@@ -142,10 +148,11 @@ public class UserController {
   @PatchMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<UserDto> update(
       @Parameter(description = "수정할 User ID") @PathVariable UUID userId,
-      @RequestPart UserUpdateRequest userUpdateRequest,
+      @Valid @RequestPart UserUpdateRequest userUpdateRequest,
       @Parameter(description = "수정할 User 프로필 이미지") @RequestPart(required = false) MultipartFile profile
 
   ) {
+    log.info("[API] PATCH /api/users id={}", userId);
     return ResponseEntity.ok(
         userService.updateUser(userId, userUpdateRequest, resolveProfileFile(profile)));
   }
@@ -168,7 +175,7 @@ public class UserController {
   @PatchMapping(value = "/{userId}/userStatus")
   public ResponseEntity<UserStatusDto> updateUserStatusByUserId(
       @Parameter(description = "상태를 변경할 User ID") @PathVariable UUID userId,
-      @RequestBody UserStatusUpdateRequest request
+      @Valid @RequestBody UserStatusUpdateRequest request
   ) {
     return ResponseEntity.ok(userStatusService.update(userId, request));
   }
@@ -190,7 +197,7 @@ public class UserController {
         );
         return Optional.of(contentInfo);
       } catch (IOException e) {
-        throw new BinaryContentNotFoundException();
+        throw new BinaryContentFileProcessingException(profileFile);
       }
     }
   }

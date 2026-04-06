@@ -2,8 +2,8 @@ package com.sprint.mission.discodeit.message.controller;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.exception.BinaryContentFileProcessingException;
-import com.sprint.mission.discodeit.global.dto.MyPageRequest;
-import com.sprint.mission.discodeit.global.dto.PageResponse;
+import com.sprint.mission.discodeit.common.dto.MyPageRequest;
+import com.sprint.mission.discodeit.common.dto.PageResponse;
 import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
 import com.sprint.mission.discodeit.message.dto.MessageDto;
 import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/messages")
@@ -75,8 +78,11 @@ public class MessageController {
   })
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MessageDto> create_2(
-      @RequestPart MessageCreateRequest messageCreateRequest,
+      @Valid @RequestPart MessageCreateRequest messageCreateRequest,
       @Parameter(description = "Message 첨부 파일들") @RequestPart(required = false) List<MultipartFile> attachments) {
+    log.info("[API] POST /api/messages authorId={}, channelId={}", messageCreateRequest.authorId(),
+        messageCreateRequest.channelId());
+
     List<BinaryContentCreateRequest> attachmentRequests = Optional.ofNullable(attachments)
         .map(files -> files.stream()
             .map(file -> {
@@ -87,7 +93,7 @@ public class MessageController {
                     file.getBytes()
                 );
               } catch (IOException e) {
-                throw new BinaryContentFileProcessingException();
+                throw new BinaryContentFileProcessingException(file);
               }
             })
             .toList())
@@ -127,8 +133,9 @@ public class MessageController {
   @PatchMapping(value = "/{messageId}")
   public ResponseEntity<MessageDto> update_2(
       @Parameter(description = "수정할 Message ID") @PathVariable UUID messageId,
-      @RequestBody MessageUpdateRequest messageInfo
+      @Valid @RequestBody MessageUpdateRequest messageInfo
   ) {
+    log.info("[API] PATCH /api/messages id={}", messageId);
     return ResponseEntity.ok(messageService.updateMessage(messageId, messageInfo));
   }
 
@@ -147,6 +154,7 @@ public class MessageController {
   public ResponseEntity<Void> delete_1(
       @Parameter(description = "삭제할 Message ID") @PathVariable UUID messageId
   ) {
+    log.info("[API] DELETE /api/messages id={}", messageId);
     messageService.deleteMessage(messageId);
     return ResponseEntity.noContent().build();
   }

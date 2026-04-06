@@ -7,9 +7,9 @@ import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentReposi
 import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
-import com.sprint.mission.discodeit.global.dto.MyPageRequest;
-import com.sprint.mission.discodeit.global.dto.PageResponse;
-import com.sprint.mission.discodeit.global.mapper.PageResponseMapper;
+import com.sprint.mission.discodeit.common.dto.MyPageRequest;
+import com.sprint.mission.discodeit.common.dto.PageResponse;
+import com.sprint.mission.discodeit.common.mapper.PageResponseMapper;
 import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
 import com.sprint.mission.discodeit.message.dto.MessageDto;
 import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
@@ -26,11 +26,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -49,30 +51,35 @@ public class BasicMessageService implements MessageService {
   @Override
   public MessageDto createMessage(MessageCreateRequest request,
       List<BinaryContentCreateRequest> binaryContentCreateRequests) {
+    log.debug("[MESSAGE_CREATE] 메시지 생성 시작 authorId={}, channelId={}", request.authorId(),
+        request.channelId());
 
     User author = userRepository.findById(request.authorId())
-        .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(() -> UserNotFoundException.ById(request.authorId()));
     Channel findChannel = channelRepository.findById(request.channelId())
-        .orElseThrow(ChannelNotFoundException::new);
+        .orElseThrow(() -> new ChannelNotFoundException(request.channelId()));
 
     List<BinaryContent> attachments = binaryContentCreateRequests.stream()
         .map(contentRequest -> {
+          log.debug("[BINARY_CONTENT_UPLOAD] 첨부파일 업로드 시작 fileName={}", contentRequest.fileName());
           BinaryContent binaryContent = binaryContentMapper.toEntity(contentRequest);
           contentRepository.save(binaryContent);
           storage.put(binaryContent.getId(), contentRequest.bytes());
           return binaryContent;
         })
         .toList();
+    log.info("[BINARY_CONTENT_UPLOAD] 첨부파일 업로드 count={}", attachments.size());
 
     Message message = new Message(request.content(), findChannel, author, attachments);
     messageRepository.save(message);
+    log.info("[MESSAGE_CREATE] 메시지 생성 id={}", message.getId());
     return messageMapper.toDto(message);
   }
 
   @Override
   public MessageDto findMessage(UUID messageId) {
     Message message = messageRepository.findById(messageId)
-        .orElseThrow(MessageNotFoundException::new);
+        .orElseThrow(() -> new MessageNotFoundException(messageId));
 
     return messageMapper.toDto(message);
   }
@@ -111,19 +118,23 @@ public class BasicMessageService implements MessageService {
   @Transactional
   @Override
   public MessageDto updateMessage(UUID messageId, MessageUpdateRequest request) {
+    log.debug("[MESSAGE_UPDATE] 메시지 수정 시작 id={}", messageId);
     Message findMessage = messageRepository.findById(messageId)
-        .orElseThrow(MessageNotFoundException::new);
+        .orElseThrow(() -> new MessageNotFoundException(messageId));
 
     Optional.ofNullable(request.newContent())
         .ifPresent(findMessage::update);
 
+    log.info("[MESSAGE_UPDATE] 메시지 수정 id={}", findMessage.getId());
     return messageMapper.toDto(findMessage);
   }
 
   @Transactional
   @Override
   public void deleteMessage(UUID messageId) {
+    log.debug("[MESSAGE_DELETE] 메시지 삭제 시작 id={}", messageId);
     messageRepository.deleteById(messageId);
+    log.info("[MESSAGE_DELETE] 메시지 삭제 id={}", messageId);
   }
 
   private List<MessageDto> toMessageDtoList(List<Message> messages) {

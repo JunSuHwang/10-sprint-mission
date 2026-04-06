@@ -14,9 +14,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/channels")
@@ -49,8 +52,9 @@ public class ChannelController {
   })
   @PostMapping(value = "/public", consumes = "application/json")
   public ResponseEntity<ChannelDto> create_3(
-      @RequestBody PublicChannelCreateRequest channelInfo
+      @Valid @RequestBody PublicChannelCreateRequest channelInfo
   ) {
+    log.info("[API] POST /api/channels/public name={}", channelInfo.name());
     return ResponseEntity.status(201).body(channelService.createPublicChannel(channelInfo));
   }
 
@@ -66,8 +70,9 @@ public class ChannelController {
   })
   @PostMapping(value = "/private", consumes = "application/json")
   public ResponseEntity<ChannelDto> create_4(
-      @RequestBody PrivateChannelCreateRequest channelInfo
+      @Valid @RequestBody PrivateChannelCreateRequest channelInfo
   ) {
+    log.info("[API] POST /api/channels/private");
     return ResponseEntity.status(201).body(channelService.createPrivateChannel(channelInfo));
   }
 
@@ -120,8 +125,9 @@ public class ChannelController {
   @PatchMapping(value = "/{channelId}", consumes = "application/json")
   public ResponseEntity<ChannelDto> update_3(
       @Parameter(description = "수정할 Channel ID") @PathVariable UUID channelId,
-      @RequestBody PublicChannelUpdateRequest channelInfo
+      @Valid @RequestBody PublicChannelUpdateRequest channelInfo
   ) {
+    log.info("[API] PATCH /api/channels id={}", channelId);
     return ResponseEntity.ok(channelService.updateChannel(channelId, channelInfo));
   }
 
@@ -140,6 +146,7 @@ public class ChannelController {
   public ResponseEntity<Void> delete_2(
       @Parameter(description = "삭제할 Channel ID") @PathVariable UUID channelId
   ) {
+    log.info("[API] DELETE /api/channels id={}", channelId);
     channelService.deleteChannel(channelId);
     return ResponseEntity.noContent().build();
   }

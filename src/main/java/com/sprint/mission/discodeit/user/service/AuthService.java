@@ -8,9 +8,11 @@ import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.mapper.UserMapper;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -21,9 +23,9 @@ public class AuthService {
 
   public UserDto login(LoginRequest loginRequest) {
     User findUser = userRepository.findByUsername(loginRequest.username())
-        .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(() -> new AuthenticationFailedException(loginRequest.username()));
     if (!findUser.getPassword().equals(loginRequest.password())) {
-      throw new AuthenticationFailedException();
+      throw new AuthenticationFailedException(loginRequest.username());
     }
     return userMapper.toDto(findUser);
   }

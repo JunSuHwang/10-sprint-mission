@@ -17,9 +17,11 @@ import com.sprint.mission.discodeit.user.repository.UserRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -33,12 +35,12 @@ public class ReadStatusService {
   @Transactional
   public ReadStatusDto createReadStatus(ReadStatusCreateRequest request) {
     User user = userRepository.findById(request.userId())
-        .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(() -> UserNotFoundException.ById(request.userId()));
     Channel channel = channelRepository.findById(request.channelId())
-        .orElseThrow(ChannelNotFoundException::new);
+        .orElseThrow(() -> new ChannelNotFoundException(request.channelId()));
 
     if (readStatusRepository.existsByUserIdAndChannelId(user.getId(), channel.getId())) {
-      throw new ReadStatusDuplicationException();
+      throw new ReadStatusDuplicationException(user.getId(), channel.getId());
     }
 
     ReadStatus readStatus = new ReadStatus(user, channel, request.lastReadAt());
@@ -46,9 +48,9 @@ public class ReadStatusService {
     return readStatusMapper.toDto(readStatus);
   }
 
-  public ReadStatusDto find(UUID reaStatusId) {
-    ReadStatus readStatus = readStatusRepository.findById(reaStatusId)
-        .orElseThrow(ReadStatusNotFoundException::new);
+  public ReadStatusDto find(UUID readStatusId) {
+    ReadStatus readStatus = readStatusRepository.findById(readStatusId)
+        .orElseThrow(() -> new ReadStatusNotFoundException(readStatusId));
     return readStatusMapper.toDto(readStatus);
   }
 
@@ -69,7 +71,7 @@ public class ReadStatusService {
   @Transactional
   public ReadStatusDto updateReadStatus(UUID readStatusId) {
     ReadStatus readStatus = readStatusRepository.findById(readStatusId)
-        .orElseThrow(ReadStatusNotFoundException::new);
+        .orElseThrow(() -> new ReadStatusNotFoundException(readStatusId));
     readStatus.updateLastReadAt();
     return readStatusMapper.toDto(readStatus);
   }
@@ -77,7 +79,7 @@ public class ReadStatusService {
   @Transactional
   public ReadStatusDto updateReadStatus(UUID readStatusId, ReadStatusUpdateRequest request) {
     ReadStatus readStatus = readStatusRepository.findById(readStatusId)
-        .orElseThrow(ReadStatusNotFoundException::new);
+        .orElseThrow(() -> new ReadStatusNotFoundException(readStatusId));
     readStatus.update(request.newLastReadAt());
     return readStatusMapper.toDto(readStatus);
   }

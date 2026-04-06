@@ -52,3 +52,5 @@ bin/
 ### Mac OS ###
 .DS_Store
 /data/**
+/.logs/**
+/src/main/resources/application-prod.yaml
