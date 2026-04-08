@@ -1,19 +1,13 @@
 package com.sprint.mission.discodeit.userstatus.mapper;
 
-import com.sprint.mission.discodeit.userstatus.dto.UserStatusInfo;
+import com.sprint.mission.discodeit.userstatus.dto.UserStatusDto;
 import com.sprint.mission.discodeit.userstatus.entity.UserStatus;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-public class UserStatusMapper {
-    private UserStatusMapper(){}
+@Mapper(componentModel = "spring")
+public interface UserStatusMapper {
 
-    public static UserStatusInfo toUserStatusInfo(UserStatus userStatus) {
-        return new UserStatusInfo(
-                userStatus.getId(),
-                userStatus.getUserId(),
-                userStatus.getLastOnlineAt(),
-                userStatus.isOnline()
-        );
-    }
-
-
+  @Mapping(target = "userId", source = "user.id")
+  UserStatusDto toDto(UserStatus userStatus);
 }

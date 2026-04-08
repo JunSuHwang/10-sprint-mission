@@ -1,9 +1,13 @@
 package com.sprint.mission.discodeit.userstatus.exception;
 
-import com.sprint.mission.discodeit.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
+import java.util.Map;
+import java.util.UUID;
 
-public class UserStatusDuplicationException extends BusinessException {
-    public UserStatusDuplicationException() {
-        super("해당 사용자 상태가 이미 존재합니다.");
-    }
+public class UserStatusDuplicationException extends UserStatusException {
+
+  public UserStatusDuplicationException(UUID userId) {
+    super(ErrorCode.USER_STATUS_DUPLICATION_ERROR);
+    setDetails(Map.of("userId", userId));
+  }
 }

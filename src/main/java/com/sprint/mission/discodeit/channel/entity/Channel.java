@@ -1,69 +1,36 @@
 package com.sprint.mission.discodeit.channel.entity;
 
-import com.sprint.mission.discodeit.common.ChannelType;
-import com.sprint.mission.discodeit.common.CommonEntity;
+import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-public class Channel extends CommonEntity {
-    private static final long serialVersionUID = 1L;
-    private String channelName;
-    private ChannelType channelType;
-    private String description;
-    private final List<UUID> messageIds = new ArrayList<>();
-    private final List<UUID> userIds = new ArrayList<>();
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "channels")
+public class Channel extends BaseUpdatableEntity {
 
-    public Channel(String channelName, ChannelType channelType, String description) {
-        this.channelName = channelName;
-        this.channelType = channelType;
-        this.description = description;
-    }
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private ChannelType type;
 
-    public List<UUID> getMessageIds() {
-        return List.copyOf(messageIds);
-    }
+  @Column(length = 100)
+  private String name;
 
-    public List<UUID> getUserIds() {
-        return List.copyOf(userIds);
-    }
+  @Column(length = 500)
+  private String description;
 
-    public void updateChannelName(String channelName) {
-        this.channelName = channelName;
-        this.updateAt = Instant.now();
-    }
-
-    public void updateChannelType(ChannelType channelType) {
-        this.channelType = channelType;
-        this.updateAt = Instant.now();
-    }
-
-    public void updateDescription(String description) {
-        this.description = description;
-        this.updateAt = Instant.now();
-    }
-
-    public void addMessageId(UUID messageId) {
-        messageIds.add(messageId);
-        this.updateAt = Instant.now();
-    }
-
-    public void removeMessageId(UUID messageId) {
-        messageIds.remove(messageId);
-        this.updateAt = Instant.now();
-    }
-
-    public void addUserId(UUID userId) {
-        userIds.add(userId);
-        this.updateAt = Instant.now();
-    }
-
-    public void removeUserId(UUID userId) {
-        userIds.remove(userId);
-        this.updateAt = Instant.now();
-    }
+  public Channel(String name, ChannelType type, String description) {
+    this.name = name;
+    this.type = type;
+    this.description = description;
+  }
 }

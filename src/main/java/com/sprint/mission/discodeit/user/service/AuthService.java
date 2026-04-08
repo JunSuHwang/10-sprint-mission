@@ -1,32 +1,32 @@
 package com.sprint.mission.discodeit.user.service;
 
-import com.sprint.mission.discodeit.user.dto.UserLoginInfo;
+import com.sprint.mission.discodeit.user.dto.LoginRequest;
+import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.AuthenticationFailedException;
 import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
-import com.sprint.mission.discodeit.userstatus.entity.UserStatus;
 import com.sprint.mission.discodeit.user.mapper.UserMapper;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
-import com.sprint.mission.discodeit.user.dto.UserInfo;
-import com.sprint.mission.discodeit.userstatus.exception.UserStatusNotFoundException;
-import com.sprint.mission.discodeit.userstatus.repository.UserStatusRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class AuthService {
-    private final UserRepository userRepository;
-    private final UserStatusRepository userStatusRepository;
-    public UserInfo login(UserLoginInfo userLoginInfo) {
-        User findUser = userRepository.findByName(userLoginInfo.userName())
-                .orElseThrow(UserNotFoundException::new);
-        if (!findUser.getPassword().equals(userLoginInfo.password()))
-            throw new AuthenticationFailedException();
-        UserStatus status = userStatusRepository.findByUserId(findUser.getId())
-                .orElseThrow(UserStatusNotFoundException::new);;
-        status.updateLastOnlineAt();
-        userStatusRepository.save(status);
-        return UserMapper.toUserInfo(findUser, status);
+
+  private final UserRepository userRepository;
+  private final UserMapper userMapper;
+
+  public UserDto login(LoginRequest loginRequest) {
+    User findUser = userRepository.findByUsername(loginRequest.username())
+        .orElseThrow(() -> new AuthenticationFailedException(loginRequest.username()));
+    if (!findUser.getPassword().equals(loginRequest.password())) {
+      throw new AuthenticationFailedException(loginRequest.username());
     }
+    return userMapper.toDto(findUser);
+  }
 }

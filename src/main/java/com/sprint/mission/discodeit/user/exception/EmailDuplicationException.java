@@ -1,9 +1,12 @@
 package com.sprint.mission.discodeit.user.exception;
 
-import com.sprint.mission.discodeit.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
+import java.util.Map;
 
-public class EmailDuplicationException extends BusinessException {
-    public EmailDuplicationException() {
-        super("해당 이메일이 이미 존재합니다.");
-    }
+public class EmailDuplicationException extends UserException {
+
+  public EmailDuplicationException(String email) {
+    super(ErrorCode.EMAIL_DUPLICATION_ERROR);
+    setDetails(Map.of("email", email));
+  }
 }

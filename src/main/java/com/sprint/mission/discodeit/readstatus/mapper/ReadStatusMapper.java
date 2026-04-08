@@ -1,32 +1,14 @@
 package com.sprint.mission.discodeit.readstatus.mapper;
 
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusCreateInfo;
-import com.sprint.mission.discodeit.readstatus.dto.ReadStatusInfo;
+import com.sprint.mission.discodeit.readstatus.dto.ReadStatusDto;
 import com.sprint.mission.discodeit.readstatus.entity.ReadStatus;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-public class ReadStatusMapper {
-    private ReadStatusMapper(){}
+@Mapper(componentModel = "spring")
+public interface ReadStatusMapper {
 
-    public static ReadStatusInfo toReadStatusInfo(ReadStatus readStatus) {
-        return new ReadStatusInfo(
-                readStatus.getId(),
-                readStatus.getUserId(),
-                readStatus.getChannelId(),
-                readStatus.getLastReadAt()
-        );
-    }
-
-    public static ReadStatusCreateInfo toReadStatusCreateInfo(ReadStatus readStatus) {
-        return new ReadStatusCreateInfo(
-                readStatus.getUserId(),
-                readStatus.getChannelId()
-        );
-    }
-
-    public static ReadStatus toReadStatus(ReadStatusCreateInfo readStatusCreateInfo) {
-        return new ReadStatus(
-                readStatusCreateInfo.userId(),
-                readStatusCreateInfo.channelId()
-        );
-    }
+  @Mapping(target = "userId", source = "user.id")
+  @Mapping(target = "channelId", source = "channel.id")
+  ReadStatusDto toDto(ReadStatus readStatus);
 }

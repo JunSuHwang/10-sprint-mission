@@ -1,28 +1,47 @@
 package com.sprint.mission.discodeit.userstatus.entity;
 
-import com.sprint.mission.discodeit.common.CommonEntity;
+import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
+import com.sprint.mission.discodeit.user.entity.User;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.time.Instant;
 import lombok.Getter;
 
-import java.time.Instant;
-import java.util.UUID;
-
 @Getter
-public class UserStatus extends CommonEntity {
-    private static final long serialVersionUID = 1L;
-    private final UUID userId;
-    private Instant lastOnlineAt;
-    private final int loginLimitSeconds = 60 * 5;
+@Entity
+@Table(name = "user_statuses")
+public class UserStatus extends BaseUpdatableEntity {
 
-    public UserStatus(UUID userId) {
-        this.userId = userId;
-        lastOnlineAt = Instant.now();
-    }
+  @Transient
+  private final int loginLimitSeconds = 60 * 5;
+  @OneToOne(optional = false)
+  @JoinColumn(name = "user_id")
+  private User user;
+  @Column(nullable = false)
+  private Instant lastActiveAt;
 
-    public void updateLastOnlineAt() {
-        lastOnlineAt = Instant.now();
-    }
+  public UserStatus() {
+    lastActiveAt = Instant.now();
+  }
 
-    public boolean isOnline() {
-        return lastOnlineAt.isAfter(Instant.now().minusSeconds(loginLimitSeconds));
-    }
+  public void update() {
+    lastActiveAt = Instant.now();
+  }
+
+  public void update(Instant newLastActiveAt) {
+    lastActiveAt = newLastActiveAt;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+    user.setUserStatus(this);
+  }
+
+  public boolean isOnline() {
+    return lastActiveAt.isAfter(Instant.now().minusSeconds(loginLimitSeconds));
+  }
 }

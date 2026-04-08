@@ -1,45 +1,15 @@
 package com.sprint.mission.discodeit.message.mapper;
 
-import com.sprint.mission.discodeit.message.dto.MessageCreateInfo;
-import com.sprint.mission.discodeit.message.dto.MessageInfo;
-import com.sprint.mission.discodeit.message.dto.MessageUpdateInfo;
+import com.sprint.mission.discodeit.binarycontent.mapper.BinaryContentMapper;
+import com.sprint.mission.discodeit.message.dto.MessageDto;
 import com.sprint.mission.discodeit.message.entity.Message;
+import com.sprint.mission.discodeit.user.mapper.UserMapper;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import java.util.List;
-import java.util.UUID;
+@Mapper(componentModel = "spring", uses = {UserMapper.class, BinaryContentMapper.class})
+public interface MessageMapper {
 
-public final class MessageMapper {
-    private MessageMapper(){}
-
-    public static MessageInfo toMessageInfo(Message message) {
-        return new MessageInfo(
-                message.getId(),
-                message.getContent(),
-                message.getSenderId(),
-                message.getChannelId(),
-                message.getAttachmentIds()
-        );
-    }
-
-    public static MessageCreateInfo toMessageCreateInfo(
-            String content,
-            UUID senderId,
-            UUID channelId,
-            List<byte[]> attachments
-    ) {
-        return new MessageCreateInfo(
-                content,
-                senderId,
-                channelId,
-                attachments
-        );
-    }
-
-    public static MessageUpdateInfo toMessageUpdateInfo(
-            String content
-    ) {
-        return new MessageUpdateInfo(
-                content
-        );
-    }
+  @Mapping(target = "channelId", source = "channel.id")
+  MessageDto toDto(Message message);
 }

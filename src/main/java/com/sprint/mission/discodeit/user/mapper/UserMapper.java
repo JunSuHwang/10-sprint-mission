@@ -1,54 +1,31 @@
 package com.sprint.mission.discodeit.user.mapper;
 
+import com.sprint.mission.discodeit.binarycontent.mapper.BinaryContentMapper;
+import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
+import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
-import com.sprint.mission.discodeit.userstatus.entity.UserStatus;
-import com.sprint.mission.discodeit.user.dto.UserCreateInfo;
-import com.sprint.mission.discodeit.user.dto.UserInfo;
-import com.sprint.mission.discodeit.user.dto.UserInfoWithStatus;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-public class UserMapper {
-    private UserMapper() {
-    }
+@Mapper(componentModel = "spring", uses = BinaryContentMapper.class)
+public interface UserMapper {
 
-    public static UserInfo toUserInfo(User user, UserStatus userStatus) {
-        return new UserInfo(
-                user.getId(),
-                user.getUserName(),
-                user.getEmail(),
-                user.getProfileId(),
-                userStatus.getId()
-        );
-    }
+  @Mapping(target = "online", expression = "java(user.getUserStatus() != null && user.getUserStatus().isOnline())")
+  UserDto toDto(User user);
 
-    public static UserInfoWithStatus toUserInfoWithStatus(User user, UserStatus userStatus) {
-        return new UserInfoWithStatus(
-                user.getId(),
-                user.getUserName(),
-                user.getEmail(),
-                user.getProfileId(),
-                userStatus.getId(),
-                userStatus.isOnline()
-        );
-    }
+  @Mapping(target = "userStatus", ignore = true)
+  @Mapping(target = "profile", ignore = true)
+  User toEntity(UserCreateRequest request);
 
-    public static UserDto toUserDto(User user, UserStatus userStatus) {
-        return new UserDto(
-                user.getId(),
-                user.getCreatedAt(),
-                user.getUpdateAt(),
-                user.getUserName(),
-                user.getEmail(),
-                user.getProfileId(),
-                userStatus.isOnline()
-        );
-    }
-
-    public static User toUser(UserCreateInfo userInfo) {
-        return new User(
-                userInfo.userName(),
-                userInfo.password(),
-                userInfo.email()
-        );
-    }
+  @Mapping(target = "username", source = "request.newUsername")
+  @Mapping(target = "password", source = "request.newPassword")
+  @Mapping(target = "email", source = "request.newEmail")
+  @Mapping(target = "userStatus", ignore = true)
+  @Mapping(target = "profile", ignore = true)
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  void update(UserUpdateRequest request, @MappingTarget User user);
 }

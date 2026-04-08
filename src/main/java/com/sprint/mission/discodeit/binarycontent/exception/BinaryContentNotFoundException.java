@@ -1,9 +1,13 @@
 package com.sprint.mission.discodeit.binarycontent.exception;
 
-import com.sprint.mission.discodeit.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
+import java.util.Map;
+import java.util.UUID;
 
-public class BinaryContentNotFoundException extends BusinessException {
-    public BinaryContentNotFoundException() {
-        super("해당 콘텐츠를 찾을 수 없습니다.");
-    }
+public class BinaryContentNotFoundException extends BinaryContentException {
+
+  public BinaryContentNotFoundException(UUID id) {
+    super(ErrorCode.BINARY_CONTENT_NOT_FOUND);
+    setDetails(Map.of("contentId", id));
+  }
 }

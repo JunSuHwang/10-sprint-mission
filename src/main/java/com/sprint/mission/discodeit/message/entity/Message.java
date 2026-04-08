@@ -1,41 +1,66 @@
 package com.sprint.mission.discodeit.message.entity;
 
-import com.sprint.mission.discodeit.common.CommonEntity;
-import lombok.Getter;
-
-import java.time.Instant;
+import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
+import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
+import com.sprint.mission.discodeit.channel.entity.Channel;
+import com.sprint.mission.discodeit.user.entity.User;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.List;
-import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class Message extends CommonEntity {
-    private static final long serialVersionUID = 1L;
-    private String content;
-    private final UUID senderId;
-    private final UUID channelId;
-    private final List<UUID> attachmentIds;
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "messages")
+public class Message extends BaseUpdatableEntity {
 
-    public Message(String content, UUID sender, UUID channel, List<UUID> attachmentIds) {
-        this.content = content;
-        this.senderId = sender;
-        this.channelId = channel;
-        this.attachmentIds = attachmentIds;
-    }
+  @Column(columnDefinition = "TEXT")
+  private String content;
 
-    public void updateContent(String content) {
-        this.content = content;
-        this.updateAt = Instant.now();
-    }
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "channel_id", nullable = false)
+  private Channel channel;
 
-    public List<UUID> getAttachmentIds() {
-        return List.copyOf(attachmentIds);
-    }
+  @ManyToOne
+  @JoinColumn(name = "author_id")
+  private User author;
 
-    public void addAttachmentId(UUID attachmentId) {
-        attachmentIds.add(attachmentId);
-    }
+  @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+  @JoinTable(name = "message_attachments",
+      joinColumns = @JoinColumn(name = "message_id"),
+      inverseJoinColumns = @JoinColumn(name = "attachment_id")
+  )
+  private List<BinaryContent> attachments;
 
-    public void removeAttachmentId(UUID attachmentId) {
-        attachmentIds.remove(attachmentId);
-    }
+  public Message(String content, Channel channel, User author, List<BinaryContent> attachments) {
+    this.content = content;
+    this.channel = channel;
+    this.author = author;
+    this.attachments = attachments;
+  }
+
+  public void update(String newContent) {
+    this.content = newContent;
+  }
+
+  public List<BinaryContent> getAttachmentIds() {
+    return List.copyOf(attachments);
+  }
+
+  public void addAttachmentId(BinaryContent attachment) {
+    attachments.add(attachment);
+  }
+
+  public void removeAttachmentId(BinaryContent attachment) {
+    attachments.remove(attachment);
+  }
 }

@@ -1,119 +1,145 @@
 package com.sprint.mission.discodeit.message.service;
 
-import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
-import com.sprint.mission.discodeit.message.dto.MessageCreateInfo;
-import com.sprint.mission.discodeit.message.dto.MessageInfo;
-import com.sprint.mission.discodeit.message.dto.MessageUpdateInfo;
+import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
+import com.sprint.mission.discodeit.binarycontent.mapper.BinaryContentMapper;
+import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.channel.entity.Channel;
+import com.sprint.mission.discodeit.channel.exception.ChannelNotFoundException;
+import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
+import com.sprint.mission.discodeit.common.dto.MyPageRequest;
+import com.sprint.mission.discodeit.common.dto.PageResponse;
+import com.sprint.mission.discodeit.common.mapper.PageResponseMapper;
+import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
+import com.sprint.mission.discodeit.message.dto.MessageDto;
+import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
 import com.sprint.mission.discodeit.message.entity.Message;
 import com.sprint.mission.discodeit.message.exception.MessageNotFoundException;
-import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.message.mapper.MessageMapper;
-import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
-import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
 import com.sprint.mission.discodeit.message.repository.MessageRepository;
+import com.sprint.mission.discodeit.storage.BinaryContentStorage;
+import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class BasicMessageService implements MessageService {
-    private final MessageRepository messageRepository;
-    private final UserRepository userRepository;
-    private final ChannelRepository channelRepository;
-    private final BinaryContentRepository contentRepository;
 
-    @Override
-    public MessageInfo createMessage(MessageCreateInfo createInfo) {
-        List<UUID> attachmentIds = createInfo.attachments()
-                .stream()
-                .map(BinaryContent::new)
-                .peek(contentRepository::save)
-                .map(BinaryContent::getId)
-                .toList();
+  private final MessageRepository messageRepository;
+  private final UserRepository userRepository;
+  private final ChannelRepository channelRepository;
+  private final BinaryContentRepository contentRepository;
+  private final BinaryContentStorage storage;
+  private final MessageMapper messageMapper;
+  private final BinaryContentMapper binaryContentMapper;
+  private final PageResponseMapper pageResponseMapper;
 
-        Message message = new Message(createInfo.content(), createInfo.senderId(),
-                createInfo.channelId(), attachmentIds);
+  @Transactional
+  @Override
+  public MessageDto createMessage(MessageCreateRequest request,
+      List<BinaryContentCreateRequest> binaryContentCreateRequests) {
+    log.debug("[MESSAGE_CREATE] 메시지 생성 시작 authorId={}, channelId={}", request.authorId(),
+        request.channelId());
 
-        User sender = userRepository.findById(message.getSenderId())
-                        .orElseThrow(UserNotFoundException::new);
-        Channel findChannel = channelRepository.findById(message.getChannelId())
-                        .orElseThrow(ChannelNotFoundException::new);
+    User author = userRepository.findById(request.authorId())
+        .orElseThrow(() -> UserNotFoundException.ById(request.authorId()));
+    Channel findChannel = channelRepository.findById(request.channelId())
+        .orElseThrow(() -> new ChannelNotFoundException(request.channelId()));
 
-        sender.addMessageId(message.getId());
-        findChannel.addMessageId(message.getId());
+    List<BinaryContent> attachments = binaryContentCreateRequests.stream()
+        .map(contentRequest -> {
+          log.debug("[BINARY_CONTENT_UPLOAD] 첨부파일 업로드 시작 fileName={}", contentRequest.fileName());
+          BinaryContent binaryContent = binaryContentMapper.toEntity(contentRequest);
+          contentRepository.save(binaryContent);
+          storage.put(binaryContent.getId(), contentRequest.bytes());
+          return binaryContent;
+        })
+        .toList();
+    log.info("[BINARY_CONTENT_UPLOAD] 첨부파일 업로드 count={}", attachments.size());
 
-        userRepository.save(sender);
-        channelRepository.save(findChannel);
-        messageRepository.save(message);
-        return MessageMapper.toMessageInfo(message);
+    Message message = new Message(request.content(), findChannel, author, attachments);
+    messageRepository.save(message);
+    log.info("[MESSAGE_CREATE] 메시지 생성 id={}", message.getId());
+    return messageMapper.toDto(message);
+  }
+
+  @Override
+  public MessageDto findMessage(UUID messageId) {
+    Message message = messageRepository.findById(messageId)
+        .orElseThrow(() -> new MessageNotFoundException(messageId));
+
+    return messageMapper.toDto(message);
+  }
+
+  @Override
+  public List<MessageDto> findAll() {
+    return toMessageDtoList(messageRepository.findAll());
+  }
+
+  @Override
+  public List<MessageDto> findAllByUserId(UUID userId) {
+    return toMessageDtoList(messageRepository.findAllByAuthorId(userId));
+  }
+
+  @Override
+  public PageResponse<MessageDto> findAllByChannelId(MyPageRequest<UUID> request) {
+    Pageable pageable = PageRequest.of(0, request.pageable().getPageSize() + 1);
+    List<Message> messages =
+        request.currentCursor() == null
+            ? messageRepository.findFirstPageByChannelId(request.t(), pageable)
+            : messageRepository.findNextPageByChannelId(request.t(),
+                (Instant) request.currentCursor(),
+                pageable);
+    boolean hasNext = messages.size() > request.pageable().getPageSize();
+
+    if (hasNext) {
+      messages = messages.subList(0, request.pageable().getPageSize());
     }
 
-    @Override
-    public MessageInfo findMessage(UUID messageId) {
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(MessageNotFoundException::new);
+    Instant nextCursor = hasNext ? messages.get(messages.size() - 1).getCreatedAt() : null;
+    List<MessageDto> messageDtos = toMessageDtoList(messages);
 
-        return MessageMapper.toMessageInfo(message);
-    }
+    return new PageResponse<>(messageDtos, nextCursor, messageDtos.size(), hasNext, null);
+  }
 
-    @Override
-    public List<MessageInfo> findAll() {
-        return toMessageInfoList(messageRepository.findAll());
-    }
+  @Transactional
+  @Override
+  public MessageDto updateMessage(UUID messageId, MessageUpdateRequest request) {
+    log.debug("[MESSAGE_UPDATE] 메시지 수정 시작 id={}", messageId);
+    Message findMessage = messageRepository.findById(messageId)
+        .orElseThrow(() -> new MessageNotFoundException(messageId));
 
-    @Override
-    public List<MessageInfo> findAllByUserId(UUID userId) {
-        return toMessageInfoList(messageRepository.findAllByUserId(userId));
-    }
+    Optional.ofNullable(request.newContent())
+        .ifPresent(findMessage::update);
 
-    @Override
-    public List<MessageInfo> findAllByChannelId(UUID channelId) {
-        return toMessageInfoList(messageRepository.findAllByChannelId(channelId));
-    }
+    log.info("[MESSAGE_UPDATE] 메시지 수정 id={}", findMessage.getId());
+    return messageMapper.toDto(findMessage);
+  }
 
-    @Override
-    public MessageInfo updateMessage(UUID messageId, MessageUpdateInfo messageInfo) {
-        Message findMessage = messageRepository.findById(messageId)
-                .orElseThrow(MessageNotFoundException::new);
+  @Transactional
+  @Override
+  public void deleteMessage(UUID messageId) {
+    log.debug("[MESSAGE_DELETE] 메시지 삭제 시작 id={}", messageId);
+    messageRepository.deleteById(messageId);
+    log.info("[MESSAGE_DELETE] 메시지 삭제 id={}", messageId);
+  }
 
-        Optional.ofNullable(messageInfo.content())
-                .ifPresent(findMessage::updateContent);
-
-        messageRepository.save(findMessage);
-        return MessageMapper.toMessageInfo(findMessage);
-    }
-
-    @Override
-    public void deleteMessage(UUID messageId) {
-        Message findMessage = messageRepository.findById(messageId)
-                .orElseThrow(MessageNotFoundException::new);
-        User findUser = userRepository.findById(findMessage.getSenderId())
-                .orElseThrow(UserNotFoundException::new);
-        Channel findChannel = channelRepository.findById(findMessage.getChannelId())
-                .orElseThrow(ChannelNotFoundException::new);
-
-        findMessage.getAttachmentIds()
-                .forEach(contentRepository::deleteById);
-
-        findUser.removeMessageId(messageId);
-        findChannel.removeMessageId(messageId);
-
-        userRepository.save(findUser);
-        channelRepository.save(findChannel);
-        messageRepository.deleteById(messageId);
-    }
-
-    private List<MessageInfo> toMessageInfoList(List<Message> messages) {
-        return messages.stream()
-                .map(MessageMapper::toMessageInfo)
-                .toList();
-    }
+  private List<MessageDto> toMessageDtoList(List<Message> messages) {
+    return messages.stream()
+        .map(messageMapper::toDto)
+        .toList();
+  }
 }

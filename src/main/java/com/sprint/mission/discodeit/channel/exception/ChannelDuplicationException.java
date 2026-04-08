@@ -1,9 +1,12 @@
 package com.sprint.mission.discodeit.channel.exception;
 
-import com.sprint.mission.discodeit.exception.BusinessException;
+import com.sprint.mission.discodeit.common.exception.ErrorCode;
+import java.util.Map;
 
-public class ChannelDuplicationException extends BusinessException {
-    public ChannelDuplicationException() {
-        super("해당 채널이 이미 존재합니다.");
-    }
+public class ChannelDuplicationException extends ChannelException {
+
+  public ChannelDuplicationException(String name) {
+    super(ErrorCode.CHANNEL_DUPLICATION_ERROR);
+    setDetails(Map.of("channelName", name));
+  }
 }

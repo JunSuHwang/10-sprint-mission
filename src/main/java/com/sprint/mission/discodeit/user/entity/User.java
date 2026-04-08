@@ -1,75 +1,50 @@
 package com.sprint.mission.discodeit.user.entity;
 
-import com.sprint.mission.discodeit.common.CommonEntity;
+import com.sprint.mission.discodeit.base.BaseUpdatableEntity;
+import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
+import com.sprint.mission.discodeit.userstatus.entity.UserStatus;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 @Getter
-public class User extends CommonEntity {
-    private static final long serialVersionUID = 1L;
-    private String userName;
-    private String password;
-    private String email;
-    @Setter
-    private UUID profileId;
-    private final List<UUID> channelIds = new ArrayList<>();
-    private final List<UUID> messageIds = new ArrayList<>();
+@Setter
+@NoArgsConstructor
+@Entity
+@Table(name = "users")
+public class User extends BaseUpdatableEntity {
 
-    public User(String userName, String password, String email) {
-        this.userName = userName;
-        this.password = password;
-        this.email = email;
-    }
+  @Column(unique = true, nullable = false, length = 50)
+  private String username;
 
-    public List<UUID> getChannelIds() {
-        return List.copyOf(channelIds);
-    }
+  @Column(nullable = false, length = 60)
+  private String password;
 
-    public List<UUID> getMessageIds() {
-        return List.copyOf(messageIds);
-    }
+  @Column(unique = true, nullable = false, length = 100)
+  private String email;
 
-    public void updateUserName(String userName) {
-        this.userName = userName;
-        this.updateAt = Instant.now();
-    }
+  @Setter
+  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+  @JoinColumn(name = "profile_id", unique = true)
+  private BinaryContent profile;
 
-    public void updatePassword(String password) {
-        this.password = password;
-        this.updateAt = Instant.now();
-    }
+  @Setter
+  @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+  private UserStatus userStatus;
 
-    public void updateEmail(String email) {
-        this.email = email;
-        this.updateAt = Instant.now();
-    }
+  public User(String username, String password, String email) {
+    this.username = username;
+    this.password = password;
+    this.email = email;
+  }
 
-    public void addChannelId(UUID channelId) {
-        channelIds.add(channelId);
-        this.updateAt = Instant.now();
-    }
-
-    public void removeChannelId(UUID channelId) {
-        channelIds.remove(channelId);
-        this.updateAt = Instant.now();
-    }
-
-    public void addMessageId(UUID messageId) {
-        messageIds.add(messageId);
-        this.updateAt = Instant.now();
-    }
-
-    public void removeMessageId(UUID messageId) {
-        messageIds.remove(messageId);
-        this.updateAt = Instant.now();
-    }
-
-    public boolean isProfileImageUploaded() {
-        return profileId != null;
-    }
+  public boolean isProfileImageUploaded() {
+    return profile != null;
+  }
 }
