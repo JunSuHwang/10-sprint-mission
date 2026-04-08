@@ -28,5 +28,6 @@ public class AwsProperties {
   public static class S3 {
 
     private String bucket;
+    private int presignedUrlExpiration;
   }
 }

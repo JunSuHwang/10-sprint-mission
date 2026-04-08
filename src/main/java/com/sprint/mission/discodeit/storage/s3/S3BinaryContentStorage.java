@@ -90,7 +90,7 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
 
     GetObjectPresignRequest preReq = GetObjectPresignRequest.builder()
         .getObjectRequest(getReq)
-        .signatureDuration(Duration.ofMinutes(5))
+        .signatureDuration(Duration.ofSeconds(props.getS3().getPresignedUrlExpiration()))
         .build();
 
     return presigener.presignGetObject(preReq).url().toString();
