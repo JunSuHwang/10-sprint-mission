@@ -37,7 +37,7 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
   @Override
   public UUID put(UUID id, byte[] bytes) {
     if (bytes == null || bytes.length == 0) {
-      throw new StorageException(id);
+      throw new StorageException(id, new IllegalArgumentException("값이 비어있습니다."));
     }
 
     PutObjectRequest putReq = PutObjectRequest.builder()
@@ -53,7 +53,7 @@ public class S3BinaryContentStorage implements BinaryContentStorage {
       );
       return id;
     } catch (S3Exception e) {
-      throw new StorageException(id);
+      throw new StorageException(id, e);
     }
   }
 

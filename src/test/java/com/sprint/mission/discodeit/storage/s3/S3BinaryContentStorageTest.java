@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.http.AbortableInputStream;
@@ -191,5 +193,39 @@ class S3BinaryContentStorageTest {
     assertEquals("binary-contents/" + id, getObjectRequest.key());
     assertEquals("image/png", getObjectRequest.responseContentType());
     assertTrue(getObjectRequest.responseContentDisposition().contains(id.toString()));
+  }
+
+  @Test
+  @DisplayName("put - S3Exception 발생 시 details에 S3 정보가 담긴다")
+  void put_s3Exception_details() {
+    UUID id = UUID.randomUUID();
+    byte[] bytes = "hello".getBytes();
+
+    S3Exception s3Exception = (S3Exception) S3Exception.builder()
+        .message("S3 업로드 실패")
+        .statusCode(500)
+        .requestId("test-request-id")
+        .awsErrorDetails(AwsErrorDetails.builder()
+            .errorCode("InternalError")
+            .errorMessage("S3 internal error")
+            .build())
+        .build();
+
+    when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class)))
+        .thenThrow(s3Exception);
+
+    StorageException exception = assertThrows(
+        StorageException.class,
+        () -> storage.put(id, bytes)
+    );
+
+    Map<String, Object> details = exception.getDetails();
+
+    assertNotNull(details);
+    assertEquals(id, details.get("contentId"));
+    assertEquals("InternalError", details.get("errorCode"));
+    assertEquals("S3 internal error", details.get("s3Message"));
+    assertEquals(500, details.get("statusCode"));
+    assertEquals("test-request-id", details.get("requestId"));
   }
 }
