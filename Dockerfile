@@ -1,14 +1,10 @@
 # build stage
 FROM gradle:8-jdk17 AS builder
 WORKDIR /build
-COPY gradlew .
-COPY gradle ./gradle
-COPY build.gradle settings.gradle ./
 
-RUN ./gradlew --no-daemon build -x test || true \
- && ./gradlew --no-daemon dependencies || true
+COPY . .
 
-COPY src ./src
+RUN chmod +x gradlew
 RUN ./gradlew --no-daemon clean bootJar -x test
 
 # run stage
