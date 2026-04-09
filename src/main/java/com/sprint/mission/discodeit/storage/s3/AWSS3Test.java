@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,6 +31,7 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 
 @RestController
 @RequestMapping("/files")
+@ConditionalOnProperty(prefix = "discodeit.storage", name = "type", havingValue = "s3")
 @RequiredArgsConstructor
 public class AWSS3Test {
 
