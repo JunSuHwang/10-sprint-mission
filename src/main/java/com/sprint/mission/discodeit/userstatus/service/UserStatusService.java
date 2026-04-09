@@ -11,6 +11,7 @@ import com.sprint.mission.discodeit.userstatus.exception.UserStatusDuplicationEx
 import com.sprint.mission.discodeit.userstatus.exception.UserStatusNotFoundException;
 import com.sprint.mission.discodeit.userstatus.mapper.UserStatusMapper;
 import com.sprint.mission.discodeit.userstatus.repository.UserStatusRepository;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +84,7 @@ public class UserStatusService {
 
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
         .orElseThrow(() -> UserStatusNotFoundException.ByUserId(userId));
-    userStatus.update(request.newLastActiveAt());
+    userStatus.update(Instant.now());
     return userStatusMapper.toDto(userStatus);
   }
 
