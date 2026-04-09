@@ -57,7 +57,7 @@ jobs:
         id: prep
         run: |
           echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
-          echo "REPO_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/codeit-repo" >> $GITHUB_ENV
+          echo "REPO_URI=public.ecr.aws/k8o4i1z5/discodeit" >> $GITHUB_ENV
 
       # 4) Docker 빌드
       - name: Docker build
