@@ -112,10 +112,11 @@ jobs:
 
       # 12) 기존 서비스 중단
       - name: ECS 기존 서비스 중단
-        run: aws ecs update-service \
-          --cluster ${{ secrets.ECS_CLUSTER }} \
-          --service ${{ secrets.ECS_SERVICE }} \
-          --desired-count 0
+        run: |
+          aws ecs update-service \
+            --cluster "${{ secrets.ECS_CLUSTER }}" \
+            --service "${{ secrets.ECS_SERVICE }}" \
+            --desired-count 0
 
 
       # 14) 서비스 완전히 중단될 때까지 대기
