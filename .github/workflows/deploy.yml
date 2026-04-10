@@ -135,7 +135,7 @@ jobs:
             --service ${{ secrets.ECS_SERVICE }} \
             --desired-count 1 \
             --task-definition $TASK_DEF_ARN \
-            --force-new-deployment
+            --deployment-configuration "minimumHealthyPercent=0,maximumPercent=100"
 
       # 16) 배포 완료 대기 (서비스가 안정 상태가 될 때까지)
       #      - name: ECS 배포 완료 대기
