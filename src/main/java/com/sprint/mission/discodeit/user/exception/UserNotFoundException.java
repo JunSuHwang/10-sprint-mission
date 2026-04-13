@@ -11,6 +11,11 @@ public class UserNotFoundException extends UserException {
     setDetails(Map.of("userId", id));
   }
 
+  public UserNotFoundException(String username) {
+    super(ErrorCode.USER_NOT_FOUND);
+    setDetails(Map.of("username", username));
+  }
+
   public static UserNotFoundException ById(UUID id) {
     UserNotFoundException exception = new UserNotFoundException(id);
     exception.setDetails(Map.of("userId", id));
@@ -18,7 +23,7 @@ public class UserNotFoundException extends UserException {
   }
 
   public static UserNotFoundException ByUserName(String username) {
-    UserNotFoundException exception = new UserNotFoundException(null);
+    UserNotFoundException exception = new UserNotFoundException(username);
     exception.setDetails(Map.of("username", username));
     return exception;
   }
