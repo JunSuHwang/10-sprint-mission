@@ -35,7 +35,7 @@ public record ErrorResponse(
         ErrorCode.INVALID_PARAMETER_TYPE.getMessage(),
         details,
         e.getClass().getSimpleName(),
-        HttpStatus.INTERNAL_SERVER_ERROR.value()
+        HttpStatus.BAD_REQUEST.value()
     );
   }
 

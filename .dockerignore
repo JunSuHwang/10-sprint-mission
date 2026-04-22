@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+*.iml
+
+# Gradle
+.gradle
+build
+!build.gradle
+!settings.gradle
+
+# Application data and logs
+data
+.logs
+
+# Documentation
+HELP.md
+*.md
+.github
+
+# Application-specific
+.discodeit
+
+# Development configs
+application-dev.yaml
+
+Dockerfile
+docker-compose.yml
+.env

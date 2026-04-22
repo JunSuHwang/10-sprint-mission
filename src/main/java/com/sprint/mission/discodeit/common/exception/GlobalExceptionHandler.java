@@ -49,14 +49,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handle(MethodArgumentNotValidException e) {
     ErrorResponse response = ErrorResponse.of(e);
-    log.error("[{}] {} details={}", response.code(), response.message(), response.details());
+    log.warn("[{}] {} details={}", response.code(), response.message(), response.details());
     return ResponseEntity.status(response.status()).body(response);
   }
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handle(Exception e) {
     ErrorResponse response = ErrorResponse.of(e);
-    log.error("[{}] {}", response.code(), response.message());
+    log.error("[{}] {}", response.code(), response.message(), e);
     return ResponseEntity.status(response.status()).body(response);
   }
 }
