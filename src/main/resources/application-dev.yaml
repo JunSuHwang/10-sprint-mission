@@ -25,7 +25,7 @@ spring:
 logging:
   level:
     root: debug
-
+    org.springframework.security: trace
 springdoc:
   api-docs:
     enabled: true
