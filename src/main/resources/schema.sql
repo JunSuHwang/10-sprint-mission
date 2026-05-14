@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users
     updated_at timestamptz,
     username   varchar(50) unique  NOT NULL,
     email      varchar(100) unique NOT NULL,
-    password   varchar(60)         NOT NULL,
+    password   varchar(255)         NOT NULL,
     profile_id UUID unique
 );
 CREATE TABLE IF NOT EXISTS channels
