@@ -47,4 +47,11 @@ public class User extends BaseUpdatableEntity {
   public boolean isProfileImageUploaded() {
     return profile != null;
   }
+
+  public void changePassword(String encodedPassword) {
+    if (encodedPassword == null || encodedPassword.isBlank()) {
+      throw new IllegalArgumentException("비밀번호는 필수입니다.");
+    }
+    this.password = encodedPassword;
+  }
 }

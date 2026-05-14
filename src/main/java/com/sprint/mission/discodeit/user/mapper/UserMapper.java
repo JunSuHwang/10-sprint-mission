@@ -19,6 +19,7 @@ public interface UserMapper {
 
   @Mapping(target = "userStatus", ignore = true)
   @Mapping(target = "profile", ignore = true)
+  @Mapping(target = "password", ignore = true)
   User toEntity(UserCreateRequest request);
 
   @Mapping(target = "username", source = "request.newUsername")
