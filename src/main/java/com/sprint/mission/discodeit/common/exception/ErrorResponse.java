@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -64,6 +65,17 @@ public record ErrorResponse(
         details,
         e.getClass().getSimpleName(),
         ErrorCode.INVALID_INPUT_VALUE.getStatus().value()
+    );
+  }
+
+  public static ErrorResponse of(AuthenticationException e) {
+    return new ErrorResponse(
+        Instant.now(),
+        ErrorCode.UNAUTHORIZED.name(),
+        ErrorCode.UNAUTHORIZED.getMessage(),
+        null,
+        e.getClass().getSimpleName(),
+        ErrorCode.UNAUTHORIZED.getStatus().value()
     );
   }
 }
