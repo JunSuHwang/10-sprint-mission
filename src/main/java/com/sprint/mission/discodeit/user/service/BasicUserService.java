@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class BasicUserService implements UserService {
   private final BinaryContentStorage storage;
   private final UserMapper userMapper;
   private final BinaryContentMapper binaryContentMapper;
+  private final PasswordEncoder passwordEncoder;
 
   @Transactional
   @Override
@@ -62,6 +64,8 @@ public class BasicUserService implements UserService {
       storage.put(profileImage.getId(), image.get().bytes());
       log.debug("[BINARY_CONTENT_UPLOAD] 프로필 업로드 id={}", profileImage.getId());
     }
+
+    user.changePassword(passwordEncoder.encode(request.password()));
     userRepository.save(user);
 
     log.info("[USER_CREATE] 사용자 등록 id={}", user.getId());
