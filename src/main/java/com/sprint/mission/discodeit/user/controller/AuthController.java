@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,5 +57,15 @@ public class AuthController {
       @Valid @RequestBody LoginRequest loginInfo
   ) {
     return ResponseEntity.ok(authService.login(loginInfo));
+  }
+
+  @GetMapping("/csrf-token")
+  public ResponseEntity<Void> getCsrfToken(CsrfToken csrfToken) {
+    String tokenValue = csrfToken.getToken();
+    log.info("CSRF 토큰 요청: {}", tokenValue);
+    return ResponseEntity
+        .status(203)
+        .header("X-XSRF-TOKEN", tokenValue)
+        .build();
   }
 }
