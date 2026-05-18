@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -42,6 +43,13 @@ public class GlobalExceptionHandler {
     );
 
     ErrorResponse response = ErrorResponse.of(e, details);
+    log.warn("[{}] {} details={}", response.code(), response.message(), response.details());
+    return ResponseEntity.status(response.status()).body(response);
+  }
+
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  public ResponseEntity<ErrorResponse> handle(AuthorizationDeniedException e) {
+    ErrorResponse response = ErrorResponse.of(e);
     log.warn("[{}] {} details={}", response.code(), response.message(), response.details());
     return ResponseEntity.status(response.status()).body(response);
   }

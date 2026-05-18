@@ -12,16 +12,20 @@ import com.sprint.mission.discodeit.channel.exception.ChannelUpdateNotAllowedExc
 import com.sprint.mission.discodeit.channel.mapper.ChannelMapper;
 import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
 import com.sprint.mission.discodeit.readstatus.entity.ReadStatus;
-import com.sprint.mission.discodeit.readstatus.exception.ReadStatusNotFoundException;
 import com.sprint.mission.discodeit.readstatus.repository.ReadStatusRepository;
+import com.sprint.mission.discodeit.security.DiscodeitUserDetails;
+import com.sprint.mission.discodeit.user.entity.Role;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +41,7 @@ public class BasicChannelService implements ChannelService {
   private final ChannelMapper channelMapper;
 
   @Transactional
+  @PreAuthorize("hasRole('CHANNEL_MANAGER')")
   public ChannelDto createPublicChannel(PublicChannelCreateRequest request) {
     log.debug("[CHANNEL_CREATE] PUBLIC 채널 생성 시작 name={}", request.name());
 
@@ -89,6 +94,7 @@ public class BasicChannelService implements ChannelService {
   }
 
   @Transactional
+  @PreAuthorize("hasRole('CHANNEL_MANAGER')")
   @Override
   public ChannelDto updateChannel(UUID channelId,
       PublicChannelUpdateRequest request) {
@@ -110,8 +116,18 @@ public class BasicChannelService implements ChannelService {
   public void deleteChannel(UUID channelId) {
     log.debug("[CHANNEL_DELETE] 채널 삭제 시작 id={}", channelId);
 
-    channelRepository.findById(channelId)
+    Channel channel = channelRepository.findById(channelId)
         .orElseThrow(() -> new ChannelNotFoundException(channelId));
+
+    if (channel.getType() == ChannelType.PUBLIC) {
+      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+      DiscodeitUserDetails userDetails = (DiscodeitUserDetails) auth.getPrincipal();
+
+      if (userDetails.getUserDto().role() != Role.CHANNEL_MANAGER) {
+        throw new AuthorizationDeniedException("공개 채널은 매니저만 삭제할 수 있습니다.");
+      }
+    }
+
     channelRepository.deleteById(channelId);
 
     log.info("[CHANNEL_DELETE] 채널 삭제 id={}", channelId);

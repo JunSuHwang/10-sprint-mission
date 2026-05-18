@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS users
     username   varchar(50) unique  NOT NULL,
     email      varchar(100) unique NOT NULL,
     password   varchar(255)         NOT NULL,
-    profile_id UUID unique
+    profile_id UUID unique,
+    role varchar(20) NOT NULL
 );
 CREATE TABLE IF NOT EXISTS channels
 (

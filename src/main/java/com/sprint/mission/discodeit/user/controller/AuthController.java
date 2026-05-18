@@ -2,6 +2,8 @@ package com.sprint.mission.discodeit.user.controller;
 
 import com.sprint.mission.discodeit.security.DiscodeitUserDetails;
 import com.sprint.mission.discodeit.user.dto.UserDto;
+import com.sprint.mission.discodeit.user.dto.UserRoleUpdateRequest;
+import com.sprint.mission.discodeit.user.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @Tag(name = "Auth", description = "인증 API")
 public class AuthController {
+
+  private final AuthService authService;
 
   @GetMapping("/csrf-token")
   public ResponseEntity<Void> getCsrfToken(CsrfToken csrfToken) {
@@ -38,5 +44,13 @@ public class AuthController {
         userDetails.getUserDto().username(), userDetails.getUserDto().email(),
         userDetails.getUserDto().profile());
     return ResponseEntity.ok(userDetails.getUserDto());
+  }
+
+  @PutMapping("/role")
+  public ResponseEntity<Void> updateRole(
+      @RequestBody UserRoleUpdateRequest request
+  ) {
+    authService.updateRole(request);
+    return ResponseEntity.ok().build();
   }
 }
