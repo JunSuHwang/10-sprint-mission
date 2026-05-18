@@ -29,6 +29,9 @@ public class User extends BaseUpdatableEntity {
   @Column(unique = true, nullable = false, length = 100)
   private String email;
 
+  @Column(nullable = false)
+  private Role role = Role.USER;
+
   @Setter
   @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
   @JoinColumn(name = "profile_id", unique = true)
