@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -48,6 +49,17 @@ public record ErrorResponse(
         null,
         e.getClass().getSimpleName(),
         HttpStatus.INTERNAL_SERVER_ERROR.value()
+    );
+  }
+
+  public static ErrorResponse of(AuthorizationDeniedException e) {
+    return new ErrorResponse(
+        Instant.now(),
+        ErrorCode.FORBIDDEN.name(),
+        ErrorCode.FORBIDDEN.getMessage(),
+        null,
+        e.getClass().getSimpleName(),
+        HttpStatus.FORBIDDEN.value()
     );
   }
 

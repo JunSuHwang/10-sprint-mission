@@ -6,6 +6,7 @@ import com.sprint.mission.discodeit.user.exception.UserNotFoundException;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class AuthService {
   private final UserRepository userRepository;
 
   @Transactional
+  @PreAuthorize("hasRole('ADMIN')")
   public void updateRole(UserRoleUpdateRequest request) {
     User user = userRepository.findById(request.userId())
         .orElseThrow(() -> new UserNotFoundException(request.userId()));
