@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
+import com.sprint.mission.discodeit.user.entity.Role;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.exception.EmailDuplicationException;
 import com.sprint.mission.discodeit.user.exception.UserDuplicationException;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +40,9 @@ class BasicUserServiceTest {
   @Mock
   private UserMapper userMapper;
 
+  @Mock
+  private PasswordEncoder passwordEncoder;
+
   @InjectMocks
   private BasicUserService userService;
 
@@ -46,6 +51,7 @@ class BasicUserServiceTest {
     // given
     String username = "유저1";
     String password = "qwer123";
+    String encodedPassword = "encoded_qwer123";
     String email = "email1@google.com";
     UUID userId = UUID.randomUUID();
 
@@ -53,13 +59,14 @@ class BasicUserServiceTest {
     ReflectionTestUtils.setField(user, "id", userId);
 
     UserCreateRequest request = new UserCreateRequest(username, password, email);
-    UserDto expectedDto = new UserDto(userId, username, email, null, true);
+    UserDto expectedDto = new UserDto(userId, username, email, null, true, Role.USER);
 
     when(userRepository.existsUserByUsername(username)).thenReturn(false);
     when(userRepository.existsByEmail(email)).thenReturn(false);
     when(userMapper.toEntity(request)).thenReturn(user);
     when(userRepository.save(user)).thenReturn(user);
     when(userMapper.toDto(user)).thenReturn(expectedDto);
+    when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 
     // when
     UserDto dto = userService.createUser(request, Optional.empty());
@@ -74,6 +81,7 @@ class BasicUserServiceTest {
     verify(userRepository).save(user);
     verify(userMapper).toEntity(request);
     verify(userMapper).toDto(user);
+    verify(passwordEncoder).encode(password);
   }
 
   @Test
@@ -113,7 +121,7 @@ class BasicUserServiceTest {
     ReflectionTestUtils.setField(user, "id", userId);
 
     UserUpdateRequest request = new UserUpdateRequest(newUsername, null, newEmail);
-    UserDto expectedDto = new UserDto(userId, newUsername, newEmail, null, true);
+    UserDto expectedDto = new UserDto(userId, newUsername, newEmail, null, true, Role.USER);
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
     when(userMapper.toDto(user)).thenReturn(expectedDto);
